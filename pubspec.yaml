@@ -1,0 +1,107 @@
+name: viteezy
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  onesignal_flutter: ^5.4.1
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.2.3
+
+
+  get: ^4.7.3
+  http: ^1.6.0
+  dio: ^5.9.1
+  gap: ^3.0.1
+  flutter_screenutil: ^5.9.3
+  shared_preferences: ^2.5.4
+  intl: ^0.20.2
+  fluttertoast: ^9.0.0
+  video_player: ^2.11.0
+  pinput: ^6.0.2
+  webview_flutter: ^4.13.1
+  cached_network_image: ^3.4.1
+  lottie: ^3.3.2
+  url_launcher: ^6.3.2
+  share_plus:  ^12.0.1
+  shimmer: ^3.0.0
+  flutter_widget_from_html: ^0.17.1
+  sliding_up_panel_custom: ^2.1.1+1
+  image_picker: ^1.2.1
+  permission_handler: ^12.0.1
+  flutter_cupertino_datetime_picker: ^3.0.0
+  flutter_time_picker_spinner: ^2.0.0
+
+
+
+  #firebase
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
+  firebase_remote_config: ^6.1.4
+  google_sign_in: ^6.3.0
+  sign_in_with_apple: ^7.0.1
+
+dev_dependencies:
+  build_runner: ^2.11.1
+  flutter_gen_runner: ^5.12.0
+  flutter_lints: ^6.0.0
+  change_app_package_name: ^1.5.0
+  flutter_test:
+    sdk: flutter
+
+flutter_gen:
+  integrations:
+    flutter_svg: true
+    lottie: true
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+    - assets/icons/
+    - assets/images/
+    - assets/video/
+    - assets/animations/
+
+  fonts:
+    - family: saansTrial
+      fonts:
+        - asset: assets/fonts/SaansTRIAL-Light.ttf
+          weight: 300
+        - asset: assets/fonts/SaansTRIAL-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/SaansTRIAL-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/SaansTRIAL-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/SaansTRIAL-Bold.ttf
+          weight: 700
+    - family: poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: headline
+      fonts:
+        - asset: assets/fonts/HEADLINES-BOLD.OTF
+          weight: 700
+
+flutter_intl:
+  enabled: true

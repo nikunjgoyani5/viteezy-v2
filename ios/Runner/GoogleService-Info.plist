@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>26828450688-fjt7osq052h836tk44fl3ehaj4s0u5ak.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.26828450688-fjt7osq052h836tk44fl3ehaj4s0u5ak</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>26828450688-dspl51gl6cfhmfdm962i9f89bgvls30c.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCOljPxW-Wr3Agp40-j81SQ2fG12KJlHaY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>26828450688</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.viteezy.app</string>
+	<key>PROJECT_ID</key>
+	<string>viteezy-mobile</string>
+	<key>STORAGE_BUCKET</key>
+	<string>viteezy-mobile.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:26828450688:ios:03696dabdb88005538ef65</string>
+</dict>
+</plist>
