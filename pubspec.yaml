@@ -16,8 +16,6 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.2.3
-
-
   get: ^4.7.3
   http: ^1.6.0
   dio: ^5.9.1
