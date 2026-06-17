@@ -12,6 +12,9 @@ class FamilyController extends GetxController {
   final RxString role = ''.obs;
   final RxString errorMessage = ''.obs;
 
+  /// Tracks which member IDs are currently being removed (shows per-row loading)
+  final RxSet<String> removingIds = <String>{}.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -25,6 +28,7 @@ class FamilyController extends GetxController {
     await _familyRepository.getFamilyInfo(
       onSuccess: (data) {
         role.value = data.role;
+        // Family screen lists sub-members only; mainMember is intentionally excluded.
         subMembers.assignAll(data.subMembers);
         isLoading.value = false;
       },
@@ -32,6 +36,30 @@ class FamilyController extends GetxController {
         isLoading.value = false;
         errorMessage.value = error.message;
         AppFunctions().showToast(error.message, bgColor: AppColors.red);
+      },
+    );
+  }
+
+  Future<void> removeFamilyMember(String userId) async {
+    removingIds.add(userId);
+
+    await _familyRepository.removeFamilyMember(
+      userId: userId,
+      onSuccess: (_) {
+        // Remove the member locally on success
+        subMembers.removeWhere((m) => m.id == userId);
+        removingIds.remove(userId);
+        AppFunctions().showToast(
+          'Family member removed successfully',
+          bgColor: AppColors.blackColor,
+        );
+      },
+      onError: (error) {
+        removingIds.remove(userId);
+        AppFunctions().showToast(
+          'Something went wrong',
+          bgColor: AppColors.red,
+        );
       },
     );
   }

@@ -56,7 +56,7 @@ class AddressesScreen extends GetView<AddressesController> {
                         EmptyState(
                           icon: Icons.location_on_outlined,
                           title: 'addresses_no_found'.tr,
-                          message: 'You haven\'t added any addresses yet. Add your first address to get started.',
+                          message: 'addresses_empty_message'.tr,
                         )
                       // Show address cards
                       else

@@ -45,7 +45,7 @@ class AppFunctions {
         onPressed: () {
           Get.back();
         },
-        child: Text('Dismiss', style: TextStyles.regular(16.sp)),
+        child: Text('toast_dismiss'.tr, style: TextStyles.regular(16.sp)),
       ),
       snackPosition: SnackPosition.TOP,
       backgroundColor: bgColor ?? Colors.green,

@@ -111,7 +111,7 @@ class NotificationView extends GetView<NotificationController> {
       controller: controller.searchController,
       autofocus: true,
       decoration: InputDecoration(
-        hintText: 'Search notifications...',
+        hintText: 'notification_search_hint'.tr,
         hintStyle: TextStyles.regular(14.sp, fontColor: AppColors.black1414141),
         border: InputBorder.none,
         isDense: true,
@@ -258,7 +258,7 @@ class NotificationView extends GetView<NotificationController> {
             Text('notification_none'.tr, style: TextStyles.semiBold(18.sp, fontColor: AppColors.black1414141)),
             SizedBox(height: 8.h),
             Text(
-              'You don\'t have any notifications yet.',
+              'notification_empty'.tr,
               style: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
               textAlign: TextAlign.center,
             ),
@@ -280,7 +280,7 @@ class NotificationView extends GetView<NotificationController> {
             Text('notification_no_data'.tr, style: TextStyles.semiBold(18.sp, fontColor: AppColors.black1414141)),
             SizedBox(height: 8.h),
             Text(
-              'No notifications match your search query.',
+              'notification_no_match'.tr,
               style: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
               textAlign: TextAlign.center,
             ),

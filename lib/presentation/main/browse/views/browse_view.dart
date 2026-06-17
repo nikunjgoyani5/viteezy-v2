@@ -153,7 +153,7 @@ class _BrowseViewState extends State<BrowseView> {
       controller: controller.searchController,
       autofocus: true,
       decoration: InputDecoration(
-        hintText: 'Search for products...',
+        hintText: 'browse_search_hint'.tr,
         hintStyle: TextStyles.regular(14.sp, fontColor: AppColors.black1414141),
         border: InputBorder.none,
         isDense: true,
@@ -402,7 +402,7 @@ class _BrowseViewState extends State<BrowseView> {
                   if (!isLoggedIn) {
                     // Show login dialog - don't update UI
                     DialogService.showLoginRequiredDialog(
-                      message: 'Please login to add products to your wishlist.',
+                      message: 'product_detail_login_wishlist'.tr,
                       onLogin: () {
                         Get.toNamed(AppRoutes.login);
                       },
@@ -437,7 +437,7 @@ class _BrowseViewState extends State<BrowseView> {
                     }
                     return result;
                   }
-                  return {'success': false, 'message': 'Failed to add to cart'};
+                  return {'success': false, 'message': 'home_failed_to_add_cart_short'.tr};
                 },
                 onGoToCart: () {
                   Get.find<DashboardController>().changeBottomNav(2);
@@ -588,7 +588,7 @@ class _BrowseViewState extends State<BrowseView> {
               if (!isLoggedIn) {
                 // Show login dialog - don't update UI
                 DialogService.showLoginRequiredDialog(
-                  message: 'Please login to add products to your wishlist.',
+                  message: 'product_detail_login_wishlist'.tr,
                   onLogin: () {
                     Get.toNamed(AppRoutes.login);
                   },
@@ -623,7 +623,7 @@ class _BrowseViewState extends State<BrowseView> {
                 }
                 return result;
               }
-              return {'success': false, 'message': 'Failed to add to cart'};
+              return {'success': false, 'message': 'home_failed_to_add_cart_short'.tr};
             },
             onGoToCart: () {
               Get.find<DashboardController>().changeBottomNav(2);

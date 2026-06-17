@@ -175,7 +175,7 @@ class AddAddressController extends GetxController {
 
   void validateCity() {
     if (cityController.text.trim().isEmpty) {
-      cityError = 'City required';
+      cityError = 'validator_city_required'.tr;
     } else {
       cityError = '';
     }
@@ -244,6 +244,7 @@ class AddAddressController extends GetxController {
     return {
       'firstName': firstNameController.text.trim(),
       'lastName': lastNameController.text.trim(),
+      'memberID': selectedMemberId.value,
       'streetName': streetName,
       'houseNumber': houseNoController.text.trim(),
       'houseNumberAddition': houseNoAdditionController.text.trim(),
@@ -342,6 +343,13 @@ class AddAddressController extends GetxController {
           subMembers.clear();
           debugPrint('loadSubMembers parse: $e');
         }
+
+        // Auto-select the logged-in user's own memberId as default,
+        // but only if nothing is already selected (e.g. not in edit mode).
+        if (selectedMemberId.value == null || selectedMemberId.value!.isEmpty) {
+          _setDefaultMemberId();
+        }
+
         update();
       },
       onError: (AppException error) {
@@ -351,6 +359,49 @@ class AddAddressController extends GetxController {
         update();
       },
     );
+  }
+
+  /// Prepends the logged-in user's own profile as the first item in [subMembers]
+  /// and sets [selectedMemberId] to their memberId so the dropdown pre-selects
+  /// it. Falls back to the first sub-member already in the list if the profile
+  /// is unavailable.
+  void _setDefaultMemberId() {
+    if (Get.isRegistered<ProfileController>()) {
+      final pc = Get.find<ProfileController>();
+      final user = pc.userData.user;
+      final loggedInMemberId = user?.memberId?.trim() ?? '';
+
+      if (loggedInMemberId.isNotEmpty) {
+        // Build a SubMember entry for the logged-in user so the dropdown item exists.
+        final selfEntry = SubMember(
+          id: user?.id?.toString() ?? '',
+          firstName: user?.firstName?.trim(),
+          lastName: user?.lastName?.trim(),
+          memberId: loggedInMemberId,
+          email: user?.email?.trim(),
+        );
+
+        // Prepend only if not already present.
+        final alreadyPresent = subMembers.any(
+          (m) => (m.memberId?.trim() ?? '') == loggedInMemberId,
+        );
+        if (!alreadyPresent) {
+          subMembers.insert(0, selfEntry);
+        }
+
+        selectedMemberId.value = loggedInMemberId;
+        return;
+      }
+    }
+
+    // Fallback: select the first sub-member's dropdown value if list is non-empty.
+    if (subMembers.isNotEmpty) {
+      final first = subMembers.first;
+      final v = (first.memberId != null && first.memberId!.trim().isNotEmpty)
+          ? first.memberId!
+          : first.id;
+      selectedMemberId.value = v;
+    }
   }
 
   Map<String, dynamic> _memberIdPayload() {
@@ -383,7 +434,7 @@ class AddAddressController extends GetxController {
             Get.back();
           }
           AppFunctions().showToast(
-            response.message ?? 'Something went wrong',
+            response.message ?? 'common_error'.tr,
             bgColor: AppColors.green,
           );
           // Refresh addresses in AddressesController if registered
@@ -400,7 +451,7 @@ class AddAddressController extends GetxController {
         } catch (e) {
           isLoading.value = false;
           AppFunctions().showToast(
-            response.message ?? 'Something went wrong',
+            response.message ?? 'common_error'.tr,
             bgColor: AppColors.red,
           );
           debugPrint('error:::${e.toString()} ');
@@ -418,7 +469,7 @@ class AddAddressController extends GetxController {
 
   Future<void> _updateAddress() async {
     if (editingAddressId == null || editingAddressId!.isEmpty) {
-      AppFunctions().showToast('Address ID is missing', bgColor: AppColors.red);
+      AppFunctions().showToast('address_id_missing'.tr, bgColor: AppColors.red);
       return;
     }
 
@@ -434,7 +485,7 @@ class AddAddressController extends GetxController {
             Get.back();
           }
           AppFunctions().showToast(
-            response.message ?? 'Address updated successfully',
+            response.message ?? 'address_updated_success'.tr,
             bgColor: AppColors.green,
           );
           // Refresh addresses in AddressesController if registered
@@ -451,7 +502,7 @@ class AddAddressController extends GetxController {
         } catch (e) {
           isLoading.value = false;
           AppFunctions().showToast(
-            response.message ?? 'Something went wrong',
+            response.message ?? 'common_error'.tr,
             bgColor: AppColors.red,
           );
           debugPrint('error:::${e.toString()} ');
@@ -500,7 +551,7 @@ class AddAddressController extends GetxController {
             _prefillForm(addressData);
           } else {
             AppFunctions().showToast(
-              'Address not found',
+              'address_not_found'.tr,
               bgColor: AppColors.red,
             );
             Get.back();
@@ -508,7 +559,7 @@ class AddAddressController extends GetxController {
         } catch (e) {
           isFetchingAddress.value = false;
           AppFunctions().showToast(
-            'Error loading address',
+            'address_load_error'.tr,
             bgColor: AppColors.red,
           );
           debugPrint('Error parsing address: $e');

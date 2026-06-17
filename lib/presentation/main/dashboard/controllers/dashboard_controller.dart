@@ -76,16 +76,16 @@ class DashboardController extends GetxController {
         String message;
         switch (index) {
           case 1:
-            message = 'Please login to browse products.';
+            message = 'browse_login_required'.tr;
             break;
           case 2:
-            message = 'Please login to access your cart.';
+            message = 'product_detail_login_cart'.tr;
             break;
           case 3:
-            message = 'Please login to access your wishlist.';
+            message = 'wishlist_login_required'.tr;
             break;
           default:
-            message = 'Please login to access this feature.';
+            message = 'auth_login_required_message'.tr;
         }
 
         // Store pending navigation action

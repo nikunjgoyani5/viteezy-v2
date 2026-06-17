@@ -78,14 +78,36 @@ class LoginScreen extends GetView<LoginController> {
                         // ),
                         CommonMainTextField(
                           onChanged: (val) {
-                            controller.validateEmail();
+                            controller.onLoginIdentifierChanged(val);
                           },
                           errorText: controller.emailError,
-                          hintText: 'auth_email'.tr,
+                          hintText: 'auth_email_or_member_id'.tr,
                           controller: controller.emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          labelText: 'auth_email'.tr,
+                          keyboardType: controller.isMemberIdLogin
+                              ? TextInputType.text
+                              : TextInputType.emailAddress,
+                          labelText: 'auth_email_or_member_id'.tr,
+                          inputFormatters: controller.isMemberIdLogin
+                              ? [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[A-Za-z0-9-]'),
+                                  ),
+                                  LengthLimitingTextInputFormatter(12),
+                                ]
+                              : null,
                         ),
+                        if ( controller. emailController.text.trim().startsWith('M')) ...[
+                          Gap(15.h),
+                          CommonMainTextField(
+                            onChanged: (val) {
+                              controller.validateName();
+                            },
+                            errorText: controller.nameError,
+                            hintText: 'auth_user_name'.tr,
+                            controller: controller.nameController,
+                            labelText: 'auth_user_name'.tr,
+                          ),
+                        ],
                         Gap(15.h),
 
                         // CommonTextField(
@@ -151,20 +173,17 @@ class LoginScreen extends GetView<LoginController> {
                         ),
                         Gap(30.h),
                         Obx(() {
+                          final bool isFormValid = controller.emailController.text.trim().isNotEmpty &&
+                              controller.passController.text.trim().isNotEmpty &&
+                              (!controller.isMemberIdLogin || controller.nameController.text.trim().isNotEmpty);
+
                           return CommonButtonWidget(
                             height: 48.h,
-                            color:
-                                controller.emailController.text.isNotEmpty &&
-                                    controller.passController.text.isNotEmpty &&
-                                    controller.emailError.isEmpty &&
-                                    controller.passwordError.isEmpty
+                            color: isFormValid
                                 ? AppColors.primaryColor
                                 : AppColors.lightPrimaryColor,
                             onPressed: () async {
-                              if (controller.emailController.text.isNotEmpty &&
-                                  controller.passController.text.isNotEmpty &&
-                                  controller.emailError.isEmpty &&
-                                  controller.passwordError.isEmpty) {
+                              if (isFormValid) {
                                 AppFunctions().closeKeyboard();
                                 if (controller.onTapLogin() == true) {
                                   if (controller.isAgree == false) {
@@ -264,7 +283,7 @@ class LoginScreen extends GetView<LoginController> {
                             onPressed: () async {
                               if (controller.isAgree == false) {
                                 AppFunctions().showToast(
-                                  'Please accept terms and privacy policy',
+                                  'auth_accept_terms'.tr,
                                   bgColor: AppColors.red,
                                 );
                                 return;

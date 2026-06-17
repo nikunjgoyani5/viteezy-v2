@@ -48,14 +48,14 @@ class OrderCompleteView extends GetView<CheckoutController> {
                     Center(
                       child: Text(
                         textAlign: TextAlign.center,
-                        fromSubscriptionUpdate ? 'Your Product Has Been Updated' : 'Thank you for your purchase!',
+                        fromSubscriptionUpdate ? 'order_complete_updated'.tr : 'order_complete_thanks'.tr,
                         style: TextStyles.bold(28.sp, fontColor: AppColors.green),
                       ),
                     ),
                     if (fromSubscriptionUpdate) ...[
                       Gap(12.h),
                       Text(
-                        "The new product will be delivered from your next billing cycle.",
+                        'order_complete_next_cycle'.tr,
                         style: TextStyles.regular(14.sp, fontColor: AppColors.gray919191),
                         textAlign: TextAlign.center,
                       ),
@@ -68,7 +68,7 @@ class OrderCompleteView extends GetView<CheckoutController> {
                         text: TextSpan(
                           style: TextStyles.regular(15.sp, fontColor: AppColors.black1414141),
                           children: [
-                            TextSpan(text: 'ORDER NUMBER: '),
+                            TextSpan(text: '${'order_complete_order_number'.tr} '),
                             TextSpan(
                               text: orderData?.orderNumber ?? 'N/A',
                               style: TextStyles.regular(
@@ -105,7 +105,7 @@ class OrderCompleteView extends GetView<CheckoutController> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 40.h),
                               child: Text(
-                                'No items in order',
+                                'order_complete_no_items'.tr,
                                 style: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
                               ),
                             ),
@@ -240,7 +240,7 @@ class OrderCompleteView extends GetView<CheckoutController> {
         decoration: BoxDecoration(color: AppColors.yellowF0EFE4, borderRadius: BorderRadius.circular(12.r)),
         child: Center(
           child: Text(
-            'Payment details not available',
+            'order_payment_unavailable'.tr,
             style: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
           ),
         ),
@@ -254,27 +254,27 @@ class OrderCompleteView extends GetView<CheckoutController> {
       child: Column(
         children: [
           if (pricing.subTotal != null)
-            _buildPaymentDetailRow('Subtotal', '$currency${pricing.subTotal!.toStringAsFixed(2)}'),
+            _buildPaymentDetailRow('cart_subtotal'.tr, '$currency${pricing.subTotal!.toStringAsFixed(2)}'),
           if (pricing.subTotal != null) Gap(12.h),
           if (pricing.discountedPrice != null && pricing.discountedPrice! > 0)
-            _buildPaymentDetailRow('Discount', '-$currency${pricing.discountedPrice!.toStringAsFixed(2)}'),
+            _buildPaymentDetailRow('cart_discount'.tr, '-$currency${pricing.discountedPrice!.toStringAsFixed(2)}'),
           if (pricing.discountedPrice != null && pricing.discountedPrice! > 0) Gap(12.h),
           if (pricing.membershipDiscountAmount != null && pricing.membershipDiscountAmount! > 0) ...[
             _buildPaymentDetailRow(
-              'Membership Discount',
+              'cart_membership_discount'.tr,
               '-$currency${pricing.membershipDiscountAmount!.toStringAsFixed(2)}',
             ),
             Gap(12.h),
           ],
           if (pricing.subscriptionPlanDiscountAmount != null && pricing.subscriptionPlanDiscountAmount! > 0) ...[
             _buildPaymentDetailRow(
-              'Subscription Discount',
+              'cart_subscription_discount'.tr,
               '-$currency${pricing.subscriptionPlanDiscountAmount!.toStringAsFixed(2)}',
             ),
             Gap(12.h),
           ],
           if (pricing.couponDiscountAmount != null && pricing.couponDiscountAmount! > 0) ...[
-            _buildPaymentDetailRow('Coupon Discount', '-$currency${pricing.couponDiscountAmount!.toStringAsFixed(2)}'),
+            _buildPaymentDetailRow('cart_coupon_discount'.tr, '-$currency${pricing.couponDiscountAmount!.toStringAsFixed(2)}'),
             Gap(12.h),
           ],
           if (pricing.taxAmount != null && pricing.taxAmount! > 0) ...[
@@ -285,7 +285,7 @@ class OrderCompleteView extends GetView<CheckoutController> {
           Divider(height: 1, color: AppColors.grayE3E3DC),
           Gap(16.h),
           if (pricing.grandTotal != null)
-            _buildPaymentDetailRow('Grand Total', '$currency${pricing.grandTotal!.toStringAsFixed(2)}', isBold: true),
+            _buildPaymentDetailRow('cart_grand_total'.tr, '$currency${pricing.grandTotal!.toStringAsFixed(2)}', isBold: true),
         ],
       ),
     );

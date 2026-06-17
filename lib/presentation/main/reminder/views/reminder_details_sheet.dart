@@ -58,7 +58,7 @@ class ReminderDetailsSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Reminder Details",
+                'reminder_details_title'.tr,
                 style: TextStyles.semiBold(
                   22.sp,
                   fontColor: AppColors.textPrimary,
@@ -86,7 +86,7 @@ class ReminderDetailsSheet extends StatelessWidget {
               children: [
                 _buildInfoRow(
                   icon: Icons.notes_rounded,
-                  label: "Remind me to",
+                  label: 'reminder_remind_me_to'.tr,
                   value: reminder.note,
                 ),
                 Padding(
@@ -95,7 +95,7 @@ class ReminderDetailsSheet extends StatelessWidget {
                 ),
                 _buildInfoRow(
                   icon: Icons.access_time_filled_rounded,
-                  label: "Scheduled Time",
+                  label: 'reminder_scheduled_time'.tr,
                   value: reminder.formattedTime,
                 ),
               ],
@@ -108,7 +108,7 @@ class ReminderDetailsSheet extends StatelessWidget {
             children: [
               Expanded(
                 child: CommonButton(
-                  text: "Update",
+                  text: 'reminder_update_title'.tr,
                   height: 52.h,
                   textSize: 16.sp,
                   radius: 16.r,
@@ -127,7 +127,7 @@ class ReminderDetailsSheet extends StatelessWidget {
               Gap(12.w),
               Expanded(
                 child: CommonButton(
-                  text: "Remove",
+                  text: 'common_remove'.tr,
                   height: 52.h,
                   textSize: 16.sp,
                   radius: 16.r,

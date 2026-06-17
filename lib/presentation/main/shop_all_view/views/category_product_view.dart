@@ -259,7 +259,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                 if (!isLoggedIn) {
                   // Show login dialog - don't update UI
                   DialogService.showLoginRequiredDialog(
-                    message: 'Please login to add products to your wishlist.',
+                    message: 'product_detail_login_wishlist'.tr,
                     onLogin: () {
                       Get.toNamed(AppRoutes.login);
                     },

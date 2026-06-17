@@ -88,7 +88,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             // Otherwise, show payment status dialog (membership flow)
             _showPaymentStatusDialog(
               title: 'payment_successful'.tr,
-              message: 'Your payment has been processed successfully. Your membership is now active.',
+              message: 'payment_success_membership_message'.tr,
               isSuccess: true,
             );
           }
@@ -111,7 +111,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             // For membership flow, show dialog
             _showPaymentStatusDialog(
               title: 'payment_failed'.tr,
-              message: 'Your payment could not be processed. Please try again.',
+              message: 'payment_failed_retry_message'.tr,
               isSuccess: false,
             );
           }
@@ -133,7 +133,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             // For membership flow, show dialog
             _showPaymentStatusDialog(
               title: 'payment_cancelled'.tr,
-              message: 'Your payment has been cancelled.',
+              message: 'payment_cancelled_message'.tr,
               isSuccess: false,
             );
           }
@@ -150,7 +150,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
         if (mounted) {
           _showPaymentStatusDialog(
             title: 'payment_refunded'.tr,
-            message: 'Your payment has been refunded.',
+            message: 'payment_refunded_message'.tr,
             isSuccess: false,
           );
         }
@@ -328,7 +328,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
           title: Text('payment_cancel_confirm'.tr, style: TextStyles.bold(20.sp, fontColor: AppColors.black1414141)),
           content: Text(
-            'Are you sure you want to cancel the payment? Your transaction will be cancelled.',
+            'payment_cancel_transaction_message'.tr,
             style: TextStyles.regular(14.sp, fontColor: AppColors.grey888888),
           ),
           actions: [
@@ -348,7 +348,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     );
 
     if (shouldPop == true) {
-      CustomToast.show(context: context, message: 'Payment cancelled');
+      CustomToast.show(context: context, message: 'payment_cancelled'.tr);
       return true;
     }
     return false;
@@ -395,7 +395,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 40.w),
                         child: Text(
-                          'Do not refresh or close the app while payment is processing',
+                          'payment_do_not_refresh'.tr,
                           style: TextStyles.regular(14.sp, fontColor: AppColors.grey888888),
                           textAlign: TextAlign.center,
                         ),

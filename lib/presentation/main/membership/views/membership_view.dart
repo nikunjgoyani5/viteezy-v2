@@ -261,7 +261,7 @@ class _MembershipViewState extends State<MembershipView> {
                 children: [
                   Center(
                     child: Text(
-                      'YOUR BENEFITS',
+                      'membership_your_benefits'.tr,
                       style: TextStyles.semiBold(14.sp, fontColor: const Color(0xFF00373B)).copyWith(letterSpacing: 5),
                     ),
                   ),
@@ -302,7 +302,7 @@ class _MembershipViewState extends State<MembershipView> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.h),
                           child: Text(
-                            'No plans available',
+                            'membership_no_plans'.tr,
                             style: TextStyles.regular(14.sp, fontColor: AppColors.grey888888),
                           ),
                         ),
@@ -359,7 +359,7 @@ class _MembershipViewState extends State<MembershipView> {
                                 }
                               },
                               child: _planCard(
-                                title: plan.name ?? 'Plan',
+                                title: plan.name ?? 'common_plan'.tr,
                                 price: priceText,
                                 subPrice: subPriceText,
                                 isHighlight: isSelected,
@@ -382,7 +382,7 @@ class _MembershipViewState extends State<MembershipView> {
                   Gap(16.h),
                   Center(
                     child: Text(
-                      'Auto - renewable. Cancel anytime',
+                      'membership_auto_renew'.tr,
                       style: TextStyles.medium(12.sp, fontColor: AppColors.grey888888),
                     ),
                   ),
@@ -398,7 +398,7 @@ class _MembershipViewState extends State<MembershipView> {
                                   PrefService.getString(PrefKeys.accessToken).isNotEmpty;
                               if (!isLoggedIn) {
                                 DialogService.showLoginRequiredDialog(
-                                  message: 'Please login to continue with membership.',
+                                  message: 'membership_login_required'.tr,
                                   onLogin: () {
                                     Get.toNamed(AppRoutes.login);
                                   },
@@ -601,7 +601,7 @@ class _MembershipViewState extends State<MembershipView> {
                       _buildPaymentOption(
                         context: bottomSheetContext,
                         title: 'checkout_stripe'.tr,
-                        description: 'Pay securely with Stripe',
+                        description: 'checkout_pay_stripe_desc'.tr,
                         icon: Icons.payment,
                         onTap: () {
                           Get.back();
@@ -612,7 +612,7 @@ class _MembershipViewState extends State<MembershipView> {
                       _buildPaymentOption(
                         context: bottomSheetContext,
                         title: 'checkout_mollie'.tr,
-                        description: 'Pay securely with Mollie',
+                        description: 'checkout_pay_mollie_desc'.tr,
                         icon: Icons.account_balance_wallet,
                         onTap: () {
                           Get.back();
@@ -685,7 +685,7 @@ class _MembershipViewState extends State<MembershipView> {
   void _processPayment(String paymentMethod) {
     final selectedPlanId = controller.selectedPlanId.value;
     if (selectedPlanId.isEmpty) {
-      CustomToast.show(context: context, message: 'Please select a plan');
+      CustomToast.show(context: context, message: 'membership_select_plan'.tr);
       return;
     }
 
@@ -703,7 +703,7 @@ class _MembershipViewState extends State<MembershipView> {
               CircularProgressIndicator(color: AppColors.primaryColor),
               Gap(24.h),
               Text(
-                'Redirecting to payment...',
+                'membership_redirecting_payment'.tr,
                 style: TextStyles.semiBold(16.sp, fontColor: AppColors.black1414141),
                 textAlign: TextAlign.center,
               ),

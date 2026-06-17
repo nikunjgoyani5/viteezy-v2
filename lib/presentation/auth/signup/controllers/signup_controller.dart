@@ -20,6 +20,7 @@ class SignupController extends GetxController {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController memberIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
@@ -28,6 +29,7 @@ class SignupController extends GetxController {
   bool isAgree = false;
   String selectedLanguage = PrefService.getString(PrefKeys.locale);
   String passwordError = '';
+  String memberIdError = '';
   String emailError = '';
   String firstNameError = '';
   String lastNameError = '';
@@ -37,10 +39,12 @@ class SignupController extends GetxController {
   RxBool isAppleLoading = false.obs;
 
   validatePass() {
-    passwordError = ValidationUtils.validatePassword(passwordController.text) ?? '';
+    passwordError =
+        ValidationUtils.validatePassword(passwordController.text) ?? '';
 
     update();
   }
+
   String localeCodeToNameFromCode(String code) {
     switch (code) {
       case 'nl':
@@ -65,6 +69,7 @@ class SignupController extends GetxController {
         return 'English';
     }
   }
+
   validateEmail() {
     emailError = ValidationUtils.validateEmail(emailController.text) ?? '';
     update();
@@ -82,12 +87,19 @@ class SignupController extends GetxController {
   }
 
   validateFName() {
-    firstNameError = ValidationUtils.validateName(firstNameController.text) ?? '';
+    firstNameError =
+        ValidationUtils.validateName(firstNameController.text) ?? '';
     update();
   }
 
   validateLName() {
     lastNameError = ValidationUtils.validateName(lastNameController.text) ?? '';
+    update();
+  }
+
+  void validateMemberId() {
+    memberIdError =
+        ValidationUtils.validateMemberId(memberIdController.text) ?? '';
     update();
   }
 
@@ -113,11 +125,13 @@ class SignupController extends GetxController {
     validateCPass();
     validateFName();
     validateLName();
+    validateMemberId();
     if (passwordError.isEmpty &&
         emailError.isEmpty &&
         cPassError.isEmpty &&
         firstNameError.isEmpty &&
-        lastNameError.isEmpty) {
+        lastNameError.isEmpty &&
+        memberIdError.isEmpty) {
       return true;
     } else {
       return false;
@@ -135,19 +149,32 @@ class SignupController extends GetxController {
         "password": passwordController.text,
         "firstName": firstNameController.text,
         "lastName": lastNameController.text,
+        if (memberIdController.text.trim().isNotEmpty)
+          "mainMemberId": memberIdController.text.trim().toUpperCase(),
+        if (memberIdController.text.trim().isNotEmpty)
+          "relationshipToParent": "Child",
+        if (memberIdController.text.trim().isNotEmpty)
+          "registrationSource": "registration",
       },
       onSuccess: (ApiResponse response) {
         try {
           isLoading.value = false;
-          Get.toNamed(AppRoutes.verifyOtp, arguments: {'email': emailController.text, 'isFromSignUp': true});
-          AppFunctions.showCustomToast(context, message: response.message ?? '', isSuccess: true);
+          Get.toNamed(
+            AppRoutes.verifyOtp,
+            arguments: {'email': emailController.text, 'isFromSignUp': true},
+          );
+          AppFunctions.showCustomToast(
+            context,
+            message: response.message ?? '',
+            isSuccess: true,
+          );
         } catch (e) {
           debugPrint('error:::${e.toString()} ');
 
           isLoading.value = false;
           AppFunctions.showCustomToast(
             context,
-            message: response.message ?? 'Something went wrong!!',
+            message: response.message ?? 'common_error'.tr,
             isSuccess: false,
           );
         }
@@ -155,7 +182,11 @@ class SignupController extends GetxController {
       onError: (AppException error) {
         isLoading.value = false;
         String message = error.message;
-        AppFunctions.showCustomToast(context, message: message, isSuccess: false);
+        AppFunctions.showCustomToast(
+          context,
+          message: message,
+          isSuccess: false,
+        );
       },
     );
     isLoading.value = false;
@@ -167,14 +198,22 @@ class SignupController extends GetxController {
       await FirebaseAuth.instance.signOut();
 
       GoogleSignIn googleSignIn = GoogleSignIn(
-        scopes: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'],
+        scopes: [
+          'https://www.googleapis.com/auth/userinfo.profile',
+          'https://www.googleapis.com/auth/userinfo.email',
+        ],
       );
 
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
         isGoogleLoading.value = false;
-        AppFunctions.showCustomToast(context, message: 'Google login cancelled!', isSuccess: false);
+        AppFunctions.showCustomToast(
+          context,
+          message: 'Google login cancelled!',
+          isSuccess: false,
+        );
+        AppFunctions.showCustomToast(context, message: 'auth_google_login_cancelled'.tr, isSuccess: false);
         return;
       }
 
@@ -185,7 +224,9 @@ class SignupController extends GetxController {
         accessToken: googleAuth.accessToken,
       );
 
-      var userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      var userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
       String? idToken = await userCredential.user?.getIdToken();
       log('Id Token :- $idToken}');
       log('userCredential :- ${userCredential.credential}');
@@ -197,8 +238,14 @@ class SignupController extends GetxController {
         onSuccess: (ApiResponse response) async {
           try {
             isGoogleLoading.value = false;
-            PrefService.setValue(PrefKeys.accessToken, response.data['accessToken'] ?? "");
-            PrefService.setValue(PrefKeys.refreshToken, response.data['refreshToken'] ?? "");
+            PrefService.setValue(
+              PrefKeys.accessToken,
+              response.data['accessToken'] ?? "",
+            );
+            PrefService.setValue(
+              PrefKeys.refreshToken,
+              response.data['refreshToken'] ?? "",
+            );
             PrefService.setValue(PrefKeys.isLogin, true);
             final userId = response.data['user']?['_id']?.toString();
             if (userId != null && userId.isNotEmpty) {
@@ -208,7 +255,11 @@ class SignupController extends GetxController {
             await LoginRefreshHelper.handlePostLoginActions();
             // Use Get.back() instead of Get.offAllNamed() to avoid controller disposal issues
             Get.close(3);
-            AppFunctions.showCustomToast(context, message: response.message ?? '', isSuccess: true);
+            AppFunctions.showCustomToast(
+              context,
+              message: response.message ?? '',
+              isSuccess: true,
+            );
           } catch (e) {
             await FirebaseAuth.instance.signOut();
             await GoogleSignIn().signOut();
@@ -217,7 +268,7 @@ class SignupController extends GetxController {
             isGoogleLoading.value = false;
             AppFunctions.showCustomToast(
               context,
-              message: response.message ?? 'Something went wrong!!',
+              message: response.message ?? 'common_error'.tr,
               isSuccess: false,
             );
           }
@@ -227,12 +278,16 @@ class SignupController extends GetxController {
           await GoogleSignIn().signOut();
           isGoogleLoading.value = false;
           String message = error.message;
-          AppFunctions.showCustomToast(context, message: message, isSuccess: false);
+          AppFunctions.showCustomToast(
+            context,
+            message: message,
+            isSuccess: false,
+          );
         },
       );
     } catch (e) {
       isGoogleLoading.value = false;
-      AppFunctions.showCustomToast(context, message: 'Something went wrong!!', isSuccess: false);
+      AppFunctions.showCustomToast(context, message: 'common_error'.tr, isSuccess: false);
       debugPrint("Google Sign-In Error: $e");
     }
   }
@@ -241,19 +296,25 @@ class SignupController extends GetxController {
     try {
       isAppleLoading.value = true;
       final userCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [AppleIDAuthorizationScopes.email, AppleIDAuthorizationScopes.fullName],
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
       );
 
-      final oauthCredential = OAuthProvider(
-        'apple.com',
-      ).credential(accessToken: userCredential.authorizationCode, idToken: userCredential.identityToken);
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        accessToken: userCredential.authorizationCode,
+        idToken: userCredential.identityToken,
+      );
 
-      final authUser = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      final authUser = await FirebaseAuth.instance.signInWithCredential(
+        oauthCredential,
+      );
 
       log('Apple User Details === $authUser $userCredential');
       if (oauthCredential.idToken == null) {
         isAppleLoading.value = false;
-        AppFunctions.showCustomToast(context, message: 'Something went wrong!!', isSuccess: false);
+        AppFunctions.showCustomToast(context, message: 'common_error'.tr, isSuccess: false);
         return;
       }
       String idToken = oauthCredential.idToken ?? '';
@@ -263,8 +324,14 @@ class SignupController extends GetxController {
         onSuccess: (ApiResponse response) async {
           try {
             isAppleLoading.value = false;
-            PrefService.setValue(PrefKeys.accessToken, response.data['accessToken'] ?? "");
-            PrefService.setValue(PrefKeys.refreshToken, response.data['refreshToken'] ?? "");
+            PrefService.setValue(
+              PrefKeys.accessToken,
+              response.data['accessToken'] ?? "",
+            );
+            PrefService.setValue(
+              PrefKeys.refreshToken,
+              response.data['refreshToken'] ?? "",
+            );
             PrefService.setValue(PrefKeys.isLogin, true);
             final userId = response.data['user']?['_id']?.toString();
             if (userId != null && userId.isNotEmpty) {
@@ -274,7 +341,11 @@ class SignupController extends GetxController {
             await LoginRefreshHelper.handlePostLoginActions();
             // Use Get.back() instead of Get.offAllNamed() to avoid controller disposal issues
             Get.close(3);
-            AppFunctions.showCustomToast(context, message: response.message ?? '', isSuccess: true);
+            AppFunctions.showCustomToast(
+              context,
+              message: response.message ?? '',
+              isSuccess: true,
+            );
           } catch (e) {
             await FirebaseAuth.instance.signOut();
 
@@ -283,7 +354,7 @@ class SignupController extends GetxController {
             isAppleLoading.value = false;
             AppFunctions.showCustomToast(
               context,
-              message: response.message ?? 'Something went wrong!!',
+              message: response.message ?? 'common_error'.tr,
               isSuccess: false,
             );
           }
@@ -293,11 +364,15 @@ class SignupController extends GetxController {
 
           isAppleLoading.value = false;
           String message = error.message;
-          AppFunctions.showCustomToast(context, message: message, isSuccess: false);
+          AppFunctions.showCustomToast(
+            context,
+            message: message,
+            isSuccess: false,
+          );
         },
       );
     } catch (e) {
-      AppFunctions.showCustomToast(context, message: 'Something went wrong!!', isSuccess: false);
+      AppFunctions.showCustomToast(context, message: 'common_error'.tr, isSuccess: false);
       log('Apple Login Error :===== $e');
       isAppleLoading.value = false;
     }
@@ -308,6 +383,7 @@ class SignupController extends GetxController {
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
+    memberIdController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
     super.onClose();

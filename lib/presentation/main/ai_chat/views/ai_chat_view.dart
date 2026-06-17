@@ -773,12 +773,12 @@ class _AiChatViewState extends State<AiChatView> with TickerProviderStateMixin {
                       if (result['success'] == true) {
                         CustomToast.showItemAddedToCart(
                           context: context,
-                          message: result['message'] as String? ?? 'Item added to cart',
+                          message: result['message'] as String? ?? 'home_item_added_to_cart'.tr,
                         );
                       } else {
                         CustomToast.show(
                           context: context,
-                          message: result['message'] as String? ?? 'Failed to add item to cart',
+                          message: result['message'] as String? ?? 'home_failed_to_add_cart_short'.tr,
                         );
                       }
                     }
@@ -883,7 +883,7 @@ class _AiChatViewState extends State<AiChatView> with TickerProviderStateMixin {
       // Use first chatData item's reply content if available, otherwise show default text
       final questionText = controller.chatData.isNotEmpty && controller.chatData.first.reply?.content != null
           ? controller.chatData.first.reply!.content!
-          : 'How can I help you today?';
+          : 'chat_help_today'.tr;
 
       return Text(
         questionText,
@@ -1188,7 +1188,7 @@ class _AiChatViewState extends State<AiChatView> with TickerProviderStateMixin {
               maxLines: 5,
               minLines: 3,
               decoration: InputDecoration(
-                hintText: 'Ask your question...',
+                hintText: 'chat_question_hint'.tr,
                 hintStyle: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
                 border: InputBorder.none,
                 isDense: true,

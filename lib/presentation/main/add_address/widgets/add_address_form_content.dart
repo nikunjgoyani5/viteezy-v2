@@ -3,6 +3,7 @@ import 'package:viteezy/core/utils/exports.dart';
 import 'package:viteezy/core/widgets/common_checkbox.dart';
 import 'package:viteezy/core/widgets/common_textfield.dart';
 import 'package:viteezy/presentation/main/add_address/controllers/add_address_controller.dart';
+import 'package:viteezy/presentation/main/profile/controllers/profile_controller.dart';
 
 /// New UI (sections + white fields) with all legacy address fields in **Additional details**.
 class AddAddressFormContent extends StatelessWidget {
@@ -327,11 +328,46 @@ class _MemberIdDropdown extends StatelessWidget {
 
   final AddAddressController controller;
 
+  String _memberIdLabel(SubMember member) {
+    final memberId = member.memberId?.trim();
+    return (memberId != null && memberId.isNotEmpty) ? memberId : '—';
+  }
+
+  String? _memberIdValue(SubMember member) {
+    final memberId = member.memberId?.trim();
+    if (memberId != null && memberId.isNotEmpty) return memberId;
+    if (member.id.isNotEmpty) return member.id;
+    return null;
+  }
+
+  List<SubMember> _memberOptions() {
+    final members = List<SubMember>.from(controller.subMembers);
+    if (!Get.isRegistered<ProfileController>()) return members;
+
+    final user = Get.find<ProfileController>().userData.user;
+    final memberId = user?.memberId?.trim();
+    if (memberId == null || memberId.isEmpty) return members;
+
+    final alreadyListed = members.any((m) => _memberIdValue(m) == memberId);
+    if (alreadyListed) return members;
+
+    members.insert(
+      0,
+      SubMember(
+        id: user?.id ?? '',
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        memberId: memberId,
+        email: user?.email,
+      ),
+    );
+    return members;
+  }
+
   bool _valueInItems(String? value, List<SubMember> members) {
     if (value == null || value.isEmpty) return true;
     for (final m in members) {
-      final v = (m.memberId != null && m.memberId!.trim().isNotEmpty) ? m.memberId! : m.id;
-      if (v == value) return true;
+      if (_memberIdValue(m) == value) return true;
     }
     return false;
   }
@@ -358,7 +394,7 @@ class _MemberIdDropdown extends StatelessWidget {
         );
       }
 
-      final members = controller.subMembers;
+      final members = _memberOptions();
       final raw = controller.selectedMemberId.value;
       final String? safeValue = (raw != null && raw.isNotEmpty && !_valueInItems(raw, members)) ? null : raw;
 
@@ -396,11 +432,10 @@ class _MemberIdDropdown extends StatelessWidget {
                   ),
                   style: TextStyles.medium(16.sp, fontColor: AppColors.black1414141),
                   items: members.map((m) {
-                    final v = (m.memberId != null && m.memberId!.trim().isNotEmpty) ? m.memberId! : m.id;
                     return DropdownMenuItem<String?>(
-                      value: v,
+                      value: _memberIdValue(m),
                       child: Text(
-                        m.displayLabel,
+                        _memberIdLabel(m),
                         overflow: TextOverflow.ellipsis,
                         style: TextStyles.regular(16.sp),
                       ),

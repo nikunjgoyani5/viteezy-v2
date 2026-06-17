@@ -25,4 +25,17 @@ class FamilyRepository extends BaseRepository {
       onError: onError,
     );
   }
+
+  Future<void> removeFamilyMember({
+    required String userId,
+    Function(dynamic data)? onSuccess,
+    Function(AppException error)? onError,
+  }) async {
+    await apiClient.request(
+      url: getFullUrl(ApiEndpoints.removeFamilyMember(userId)),
+      type: RequestType.delete,
+      onSuccess: (response) => onSuccess?.call(response),
+      onError: onError,
+    );
+  }
 }

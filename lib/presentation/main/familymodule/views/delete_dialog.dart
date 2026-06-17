@@ -25,9 +25,9 @@ void showDeleteFamilyDialog({required VoidCallback onConfirm}) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              "Delete Member",
-              style: TextStyle(
+            Text(
+              'family_delete_title'.tr,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -36,10 +36,10 @@ void showDeleteFamilyDialog({required VoidCallback onConfirm}) {
 
             const SizedBox(height: 14),
 
-            const Text(
-              "Are you sure you want to delete?",
+            Text(
+              'family_delete_confirm'.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 17,
                 color: AppColors.black141414,
                 fontWeight: FontWeight.w400,
@@ -62,9 +62,9 @@ void showDeleteFamilyDialog({required VoidCallback onConfirm}) {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(
+                      child: Text(
+                        'common_cancel'.tr,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -76,7 +76,6 @@ void showDeleteFamilyDialog({required VoidCallback onConfirm}) {
 
                 const SizedBox(width: 12),
 
-                /// Confirm Delete Button
                 Expanded(
                   child: SizedBox(
                     height: 52,
@@ -92,9 +91,9 @@ void showDeleteFamilyDialog({required VoidCallback onConfirm}) {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text(
-                        "Delete",
-                        style: TextStyle(
+                      child: Text(
+                        'common_delete'.tr,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

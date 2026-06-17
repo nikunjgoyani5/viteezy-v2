@@ -316,8 +316,8 @@ class ProfileScreen extends GetView<ProfileController> {
                               height: 18,
                               width: 18,
                             ),
-                            title: 'Family Member'.tr,
-                            subtitle: 'Manage all your connected members'.tr,
+                            title: 'profile_family_member'.tr,
+                            subtitle: 'profile_family_member_subtitle'.tr,
                             onTap: () {
                               Get.toNamed(AppRoutes.familyscreen);
                             },
@@ -335,8 +335,8 @@ class ProfileScreen extends GetView<ProfileController> {
                           _buildMenuItem(
                             context: context,
                             icon: Assets.icons.icMember.svg(),
-                            title: 'Membership'.tr,
-                            subtitle: 'Manage your membership & benefits'.tr,
+                            title: 'profile_membership'.tr,
+                            subtitle: 'profile_membership_subtitle'.tr,
                             onTap: () {
                               Get.toNamed(AppRoutes.memberScreen);
                             },

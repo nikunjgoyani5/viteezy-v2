@@ -484,7 +484,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   );
                 },
                 child: Text(
-                  'Terms and Privacy Policy',
+                  'drawer_terms_privacy'.tr,
                   style: TextStyles.bold(
                     14.sp,
                     fontColor: AppColors.textPrimary,
@@ -576,7 +576,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
       //   Get.snackbar('Error', 'Could not open the link');
       // }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to open social media link');
+      Get.snackbar('common_error'.tr, 'drawer_social_link_failed'.tr);
     }
   }
 }

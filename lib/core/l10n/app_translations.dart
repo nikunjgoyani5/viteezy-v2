@@ -1,15 +1,18 @@
 import 'package:get/get.dart';
 
+import 'app_translations_extra.dart';
+import 'app_translations_extra_batch2.dart';
+
 /// GetX translations for English (en), Dutch (nl), German (de), French (fr), Spanish (es).
 /// Use in UI: 'key'.tr (e.g. 'profile_my_profile'.tr)
 class AppTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
-        'en': _en,
-        'nl': _nl,
-        'de': _de,
-        'fr': _fr,
-        'es': _es,
+        'en': {..._en, ...AppTranslationsExtra.en, ...AppTranslationsExtraBatch2.en},
+        'nl': {..._nl, ...AppTranslationsExtra.nl, ...AppTranslationsExtraBatch2.nl},
+        'de': {..._de, ...AppTranslationsExtra.de, ...AppTranslationsExtraBatch2.de},
+        'fr': {..._fr, ...AppTranslationsExtra.fr, ...AppTranslationsExtraBatch2.fr},
+        'es': {..._es, ...AppTranslationsExtra.es, ...AppTranslationsExtraBatch2.es},
       };
 
   static const Map<String, String> _en = {
@@ -45,7 +48,7 @@ class AppTranslations extends Translations {
     // Profile
     'profile_my_profile': 'My Profile',
     'profile_guest_user': 'Guest User',
-    'profile_edit_info': 'edit info',
+    'profile_edit_info': 'Edit info',
     'profile_login': 'Login',
     'profile_membership': 'Membership',
     'profile_pro': 'Pro',
@@ -136,6 +139,7 @@ class AppTranslations extends Translations {
 
     // Auth - Login
     'auth_email': 'Email',
+    'auth_email_or_member_id': 'Email / Member ID',
     'auth_password': 'Password',
     'auth_login': 'Login',
     'auth_login_google': 'Login with Google',
@@ -150,6 +154,7 @@ class AppTranslations extends Translations {
     'auth_terms_of_use': 'Terms of Use ',
     'auth_and': 'and ',
     'auth_privacy_policy': 'Privacy Policy.',
+    'auth_user_name': 'User Name',
 
     // Auth - Signup
     'auth_first_name': 'First name',
@@ -192,6 +197,8 @@ class AppTranslations extends Translations {
     'validator_street_required': 'Street is required',
     'validator_street_min': 'Street must be at least 3 characters',
     'validator_note_required': 'Note required',
+    'validator_member_id_invalid':
+        'Invalid member ID format. Expected: MEM-XXXXXXXX',
 
     // Orders
     'orders_my_orders': 'My Orders',
@@ -434,7 +441,7 @@ class AppTranslations extends Translations {
     // Profile
     'profile_my_profile': 'Mijn profiel',
     'profile_guest_user': 'Gastgebruiker',
-    'profile_edit_info': 'info bewerken',
+    'profile_edit_info': 'Info bewerken',
     'profile_login': 'Inloggen',
     'profile_membership': 'Lidmaatschap',
     'profile_pro': 'Pro',
@@ -525,6 +532,7 @@ class AppTranslations extends Translations {
 
     // Auth - Login
     'auth_email': 'E-mail',
+    'auth_email_or_member_id': 'E-mail / lid-ID',
     'auth_password': 'Wachtwoord',
     'auth_login': 'Inloggen',
     'auth_login_google': 'Inloggen met Google',
@@ -539,6 +547,7 @@ class AppTranslations extends Translations {
     'auth_terms_of_use': 'Gebruiksvoorwaarden ',
     'auth_and': ' en ',
     'auth_privacy_policy': 'Privacybeleid.',
+    'auth_user_name': 'Gebruikersnaam',
 
     // Auth - Signup
     'auth_first_name': 'Voornaam',
@@ -581,6 +590,8 @@ class AppTranslations extends Translations {
     'validator_street_required': 'Straat is verplicht',
     'validator_street_min': 'Straat moet minimaal 3 tekens zijn',
     'validator_note_required': 'Notitie verplicht',
+    'validator_member_id_invalid':
+        'Ongeldig lid-ID-formaat. Verwacht: MEM-XXXXXXXX',
 
     // Orders
     'orders_my_orders': 'Mijn bestellingen',
@@ -896,6 +907,7 @@ class AppTranslations extends Translations {
     'cart_apply': 'Anwenden',
     'cart_enter_code': 'Gutscheincode eingeben',
     'auth_email': 'E-Mail',
+    'auth_email_or_member_id': 'E-Mail / Mitglieder-ID',
     'auth_password': 'Passwort',
     'auth_login': 'Anmelden',
     'auth_login_google': 'Mit Google anmelden',
@@ -910,6 +922,7 @@ class AppTranslations extends Translations {
     'auth_terms_of_use': 'Nutzungsbedingungen ',
     'auth_and': ' und ',
     'auth_privacy_policy': 'Datenschutzrichtlinie zu.',
+    'auth_user_name': 'Benutzername',
     'auth_first_name': 'Vorname',
     'auth_last_name': 'Nachname',
     'auth_confirm_password': 'Passwort bestätigen',
@@ -944,6 +957,8 @@ class AppTranslations extends Translations {
     'validator_street_required': 'Straße ist erforderlich',
     'validator_street_min': 'Straße muss mindestens 3 Zeichen haben',
     'validator_note_required': 'Notiz erforderlich',
+    'validator_member_id_invalid':
+        'Ungültiges Mitglieder-ID-Format. Erwartet: MEM-XXXXXXXX',
     'orders_my_orders': 'Meine Bestellungen',
     'orders_featured_products': 'Ausgewählte Produkte',
     'orders_order_placed': 'Bestellung aufgegeben:',
@@ -1225,6 +1240,7 @@ class AppTranslations extends Translations {
     'cart_apply': 'Appliquer',
     'cart_enter_code': 'Code promo',
     'auth_email': 'E-mail',
+    'auth_email_or_member_id': 'E-mail / ID membre',
     'auth_password': 'Mot de passe',
     'auth_login': 'Connexion',
     'auth_login_google': 'Se connecter avec Google',
@@ -1239,6 +1255,7 @@ class AppTranslations extends Translations {
     'auth_terms_of_use': 'Conditions d\'utilisation ',
     'auth_and': ' et la ',
     'auth_privacy_policy': 'Politique de confidentialité de Viteezy.',
+    'auth_user_name': 'Nom d\'utilisateur',
     'auth_first_name': 'Prénom',
     'auth_last_name': 'Nom',
     'auth_confirm_password': 'Confirmer le mot de passe',
@@ -1273,6 +1290,8 @@ class AppTranslations extends Translations {
     'validator_street_required': 'La rue est requise',
     'validator_street_min': 'La rue doit contenir au moins 3 caractères',
     'validator_note_required': 'Note requise',
+    'validator_member_id_invalid':
+        'Format d\'ID membre invalide. Attendu : MEM-XXXXXXXX',
     'orders_my_orders': 'Mes commandes',
     'orders_featured_products': 'Produits vedettes',
     'orders_order_placed': 'Commande passée :',
@@ -1555,6 +1574,7 @@ class AppTranslations extends Translations {
     'cart_apply': 'Aplicar',
     'cart_enter_code': 'Código promocional',
     'auth_email': 'Correo electrónico',
+    'auth_email_or_member_id': 'Correo / ID de miembro',
     'auth_password': 'Contraseña',
     'auth_login': 'Iniciar sesión',
     'auth_login_google': 'Iniciar sesión con Google',
@@ -1569,6 +1589,7 @@ class AppTranslations extends Translations {
     'auth_terms_of_use': 'Términos de uso ',
     'auth_and': ' y la ',
     'auth_privacy_policy': 'Política de privacidad de Viteezy.',
+    'auth_user_name': 'Nombre de usuario',
     'auth_first_name': 'Nombre',
     'auth_last_name': 'Apellidos',
     'auth_confirm_password': 'Confirmar contraseña',
@@ -1603,6 +1624,8 @@ class AppTranslations extends Translations {
     'validator_street_required': 'La calle es obligatoria',
     'validator_street_min': 'La calle debe tener al menos 3 caracteres',
     'validator_note_required': 'Nota obligatoria',
+    'validator_member_id_invalid':
+        'Formato de ID de miembro no válido. Se esperaba: MEM-XXXXXXXX',
     'orders_my_orders': 'Mis pedidos',
     'orders_featured_products': 'Productos destacados',
     'orders_order_placed': 'Pedido realizado:',

@@ -48,7 +48,7 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
                       Text('auth_forgot_password_title'.tr, style: TextStyles.bold(24.sp)),
                       Gap(10.h),
                       Text(
-                        'Enter your email to get an OTP for password reset.',
+                        'auth_forgot_instructions'.tr,
                         style: TextStyles.regular(14.sp, fontColor: AppColors.grey545454),
                       ),
                       Gap(40.h),
@@ -88,7 +88,7 @@ class ForgotPasswordScreen extends GetView<ForgotPasswordController> {
                                 await controller.forgotPassApi();
                               }
                             } else if (controller.emailController.text.isEmpty) {
-                              AppFunctions().showToast('Please enter email', bgColor: AppColors.red);
+                              AppFunctions().showToast('auth_enter_email'.tr, bgColor: AppColors.red);
                               return;
                             }
                           },

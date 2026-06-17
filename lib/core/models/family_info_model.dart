@@ -6,10 +6,13 @@ class FamilyInfoModel {
   FamilyInfoModel({required this.success, required this.message, required this.data});
 
   factory FamilyInfoModel.fromJson(Map<String, dynamic> json) {
+    final rawData = json['data'];
     return FamilyInfoModel(
       success: json['success'] == true,
       message: (json['message'] ?? '').toString(),
-      data: FamilyInfoData.fromJson((json['data'] ?? <String, dynamic>{}) as Map<String, dynamic>),
+      data: FamilyInfoData.fromJson(
+        rawData is Map ? Map<String, dynamic>.from(rawData) : <String, dynamic>{},
+      ),
     );
   }
 }
@@ -23,14 +26,16 @@ class FamilyInfoData {
 
   factory FamilyInfoData.fromJson(Map<String, dynamic> json) {
     final rawSubMembers = (json['subMembers'] as List?) ?? <dynamic>[];
+    final rawMainMember = json['mainMember'];
+
     return FamilyInfoData(
       role: (json['role'] ?? '').toString(),
-      mainMember: json['mainMember'] is Map<String, dynamic>
-          ? FamilyMember.fromJson(json['mainMember'] as Map<String, dynamic>)
+      mainMember: rawMainMember is Map
+          ? FamilyMember.fromJson(Map<String, dynamic>.from(rawMainMember))
           : null,
       subMembers: rawSubMembers
-          .whereType<Map<String, dynamic>>()
-          .map(FamilyMember.fromJson)
+          .where((item) => item is Map)
+          .map((item) => FamilyMember.fromJson(Map<String, dynamic>.from(item as Map)))
           .toList(),
     );
   }

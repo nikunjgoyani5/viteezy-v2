@@ -5,16 +5,11 @@ import 'package:get/get.dart';
 import 'package:gap/gap.dart';
 import 'package:viteezy/presentation/main/home/views/home_view.dart';
 
-import '../../gen/assets.gen.dart';
-import '../../presentation/main/shop_all_view/controller/shop_all_controller.dart';
-import '../models/product_response_model.dart';
 import '../models/product_review_response_model.dart';
 import '../routes/app_routes.dart';
-import '../services/global_settings_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/text_styles.dart';
 import 'common_network_image.dart';
-import 'custom_toast.dart';
 
 /// Reusable Customer Review Card Widget
 class CustomerReviewCard extends StatelessWidget {
@@ -31,6 +26,7 @@ class CustomerReviewCard extends StatelessWidget {
       },
       child: Container(
         width: 200.w,
+        height: 375.h,
         margin: EdgeInsets.only(right: 16.w),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
@@ -74,27 +70,30 @@ class CustomerReviewCard extends StatelessWidget {
                       ),
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Description
-                        Gap(40.h),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            review?.products?.first.shortDescription ?? '',
-                            textAlign: TextAlign.center,
-                            style: TextStyles.regular(12.sp, fontColor: AppColors.black1414141),
+                        SizedBox(height: 40.h),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                review?.products?.first.shortDescription ?? '',
+                                textAlign: TextAlign.center,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyles.regular(12.sp, fontColor: AppColors.black1414141),
+                              ),
+                            ),
                           ),
                         ),
-                        Gap(15.h),
-
-                        // Pricing
+                        Gap(8.h),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: .center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 '${review?.products?.first.sachetPrices?.thirtyDays?.currency} '
@@ -103,7 +102,6 @@ class CustomerReviewCard extends StatelessWidget {
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                '${review?.products?.first.sachetPrices?.thirtyDays?.currency} '
                                 '${review?.products?.first.sachetPrices?.thirtyDays?.amount}',
                                 style: TextStyles.medium(
                                   14.sp,
@@ -114,15 +112,9 @@ class CustomerReviewCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(width: 8.w),
-                        Spacer(),
-                        // ADD+ Button with Animation
-                        SizedBox(
-                          width: double.infinity,
-                          child: AnimatedReviewAddButton(
-                            key: ValueKey('${review?.id}_${review?.products?.first.isInCart}'),
-                            product: review?.products?.first,
-                          ),
+                        AnimatedReviewAddButton(
+                          key: ValueKey('${review?.id}_${review?.products?.first.isInCart}'),
+                          product: review?.products?.first,
                         ),
                       ],
                     ),

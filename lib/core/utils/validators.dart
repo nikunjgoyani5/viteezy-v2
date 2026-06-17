@@ -108,4 +108,37 @@ class ValidationUtils {
     return null;
   }
 
+  /// Optional member ID: empty is valid; otherwise must match MEM-XXXXXXXX (8 chars).
+  static String? validateMemberId(String? value) {
+    final trimmed = value?.trim().toUpperCase() ?? '';
+    if (trimmed.isEmpty) return null;
+
+    const expectedLength = 12; // MEM- + 8 characters
+    if (trimmed.length != expectedLength) {
+      return 'validator_member_id_invalid'.tr;
+    }
+
+    final memberIdRegex = RegExp(r'^MEM-[A-Z0-9]{8}$');
+    if (!memberIdRegex.hasMatch(trimmed)) {
+      return 'validator_member_id_invalid'.tr;
+    }
+    return null;
+  }
+
+  /// Login field: uppercase input → member ID, otherwise email.
+  static bool isMemberIdInput(String? value) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) return false;
+    return trimmed.contains(RegExp(r'[A-Z]'));
+  }
+
+  static String? validateLoginIdentifier(String? value) {
+    if (isMemberIdInput(value)) {
+      final memberIdError = validateMemberId(value);
+      if (memberIdError != null) return memberIdError;
+      return null;
+    }
+    return validateEmail(value);
+  }
+
 }

@@ -37,4 +37,7 @@ class AppRoutes {
   static const String reminderView = '/reminderView';
   static const String memberScreen = '/memberScreen';
   static const String familyscreen = '/familyscreen';
+  static const String quiz = '/quiz';
+  static const String quizFlow = '/quiz-flow';
+  static const String recommendation = '/recommendation';
 }

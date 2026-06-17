@@ -243,7 +243,7 @@ class ShopAllController extends GetxController {
     if (!isLoggedIn) {
       // Store pending like action
       DialogService.showLoginRequiredDialog(
-        message: 'Please login to add products to your wishlist.',
+        message: 'product_detail_login_wishlist'.tr,
         pendingActionType: 'toggle_like',
         pendingActionData: {'productId': product.id},
         pendingCallback: () {
@@ -727,7 +727,7 @@ class ShopAllController extends GetxController {
     final isLoggedIn = PrefService.getBool(PrefKeys.isLogin) && PrefService.getString(PrefKeys.accessToken).isNotEmpty;
     if (!isLoggedIn) {
       DialogService.showLoginRequiredDialog(
-        message: 'Please login to add products to your cart.',
+        message: 'product_detail_login_cart'.tr,
         pendingActionType: 'add_to_cart',
         pendingActionData: {
           'productId': productId,
@@ -742,7 +742,7 @@ class ShopAllController extends GetxController {
           Get.toNamed(AppRoutes.login);
         },
       );
-      return {'success': false, 'message': 'Please login to add products to your cart.'};
+      return {'success': false, 'message': 'product_detail_login_cart'.tr};
     }
 
     final completer = Completer<Map<String, dynamic>>();
@@ -788,13 +788,13 @@ class ShopAllController extends GetxController {
 
         completer.complete({
           'success': true,
-          'message': message != null && message.isNotEmpty ? message : 'Item added to cart',
+          'message': message != null && message.isNotEmpty ? message : 'product_detail_item_added'.tr,
         });
       },
       onError: (error) {
         completer.complete({
           'success': false,
-          'message': error.message.isNotEmpty ? error.message : 'Failed to add item to cart. Please try again.',
+          'message': error.message.isNotEmpty ? error.message : 'home_failed_to_add_cart'.tr,
         });
       },
     );

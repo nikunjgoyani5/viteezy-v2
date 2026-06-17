@@ -54,7 +54,7 @@ class HelpDetailsController extends GetxController {
         } catch (e) {
           isLoading.value = false;
           hasError.value = true;
-          errorMessage = 'Failed to load FAQs';
+          errorMessage = 'help_load_faqs_failed'.tr;
           debugPrint('error:::${e.toString()} ');
           update();
         }

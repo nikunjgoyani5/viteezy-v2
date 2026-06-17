@@ -668,12 +668,12 @@ class AiChatController extends GetxController {
     if (!isLoggedIn) {
       // Show login dialog
       DialogService.showLoginRequiredDialog(
-        message: 'Please login to add products to your cart.',
+        message: 'product_detail_login_add_cart'.tr,
         onLogin: () {
           Get.toNamed(AppRoutes.login);
         },
       );
-      return {'success': false, 'message': 'Please login to add products to your cart.'};
+      return {'success': false, 'message': 'product_detail_login_add_cart'.tr};
     }
 
     final completer = Completer<Map<String, dynamic>>();
@@ -699,13 +699,13 @@ class AiChatController extends GetxController {
 
         completer.complete({
           'success': true,
-          'message': message != null && message.isNotEmpty ? message : 'Item added to cart',
+          'message': message != null && message.isNotEmpty ? message : 'product_detail_item_added'.tr,
         });
       },
       onError: (error) {
         completer.complete({
           'success': false,
-          'message': error.message.isNotEmpty ? error.message : 'Failed to add item to cart. Please try again.',
+          'message': error.message.isNotEmpty ? error.message : 'home_failed_to_add_cart'.tr,
         });
       },
     );

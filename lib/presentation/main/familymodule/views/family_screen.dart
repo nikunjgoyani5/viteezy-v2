@@ -16,7 +16,7 @@ class FamilyScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: const CommonAppbar(title: "Family Member"),
+      appBar: CommonAppbar(title: 'family_title'.tr),
       body: Obx(() {
         if (familyController.isLoading.value) {
           return const Center(
@@ -27,7 +27,7 @@ class FamilyScreen extends StatelessWidget {
         if (familyController.subMembers.isEmpty) {
           return Center(
             child: Text(
-              "No family members found",
+              'family_no_members'.tr,
               style: TextStyles.medium(14.sp, fontColor: AppColors.grey898989),
             ),
           );
@@ -40,7 +40,7 @@ class FamilyScreen extends StatelessWidget {
             itemCount: familyController.subMembers.length,
             itemBuilder: (context, index) {
               final member = familyController.subMembers[index];
-              return _buildFamilyCard(member);
+              return _buildFamilyCard(member, familyController);
             },
           ),
         );
@@ -48,7 +48,7 @@ class FamilyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFamilyCard(FamilyMember member) {
+  Widget _buildFamilyCard(FamilyMember member, FamilyController familyController) {
     final displayName = member.name.isNotEmpty
         ? member.name
         : '${member.firstName} ${member.lastName}'.trim();
@@ -68,7 +68,7 @@ class FamilyScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Name",
+                'family_label_name'.tr,
                 style: TextStyles.regular(
                   13.sp,
                   fontColor: AppColors.grey898989,
@@ -76,12 +76,12 @@ class FamilyScreen extends StatelessWidget {
               ),
               Gap(4.h),
               Text(
-                displayName.isNotEmpty ? displayName : "Family Member",
+                displayName.isNotEmpty ? displayName : 'family_member_default_name'.tr,
                 style: TextStyles.medium(15.sp),
               ),
               Gap(10.h),
               Text(
-                "Membership id",
+                'family_label_membership_id'.tr,
                 style: TextStyles.regular(
                   13.sp,
                   fontColor: AppColors.grey898989,
@@ -94,21 +94,37 @@ class FamilyScreen extends StatelessWidget {
               ),
             ],
           ),
-          GestureDetector(
-            onTap: () {
-              showDeleteFamilyDialog(
-                onConfirm: () {
-                  // TODO: delete logic here
-                  print("Deleted!");
-                },
-              );
-            },
-            child: SvgPicture.asset(
-              Assets.icons.icDelete.path,
-              height: 16.h,
-              width: 16.w,
-            ),
-          ),
+          Obx(() {
+            final isRemoving = familyController.removingIds.contains(member.id);
+            return GestureDetector(
+              onTap: isRemoving
+                  ? null
+                  : () {
+                      showDeleteFamilyDialog(
+                        onConfirm: () {
+                          familyController.removeFamilyMember(member.id);
+                        },
+                      );
+                    },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: isRemoving
+                    ? SizedBox(
+                        height: 16.h,
+                        width: 16.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.blackColor,
+                        ),
+                      )
+                    : SvgPicture.asset(
+                        Assets.icons.icDelete.path,
+                        height: 16.h,
+                        width: 16.w,
+                      ),
+              ),
+            );
+          }),
         ],
       ),
     );

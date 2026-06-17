@@ -97,10 +97,10 @@ class _SubscriptionDetailsBodyState extends State<_SubscriptionDetailsBody> with
                 child: Icon(Icons.cancel_outlined, size: 28.sp, color: AppColors.red),
               ),
               Gap(16.h),
-              Text('Cancel Subscription', style: TextStyles.bold(18.sp, fontColor: AppColors.black1414141)),
+              Text('subscription_cancel_title'.tr, style: TextStyles.bold(18.sp, fontColor: AppColors.black1414141)),
               Gap(8.h),
               Text(
-                'Are you sure you want to cancel this subscription? This action cannot be undone.',
+                'subscription_cancel_full_confirm'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
               ),
@@ -116,7 +116,7 @@ class _SubscriptionDetailsBodyState extends State<_SubscriptionDetailsBody> with
                         borderRadius: 12,
                         onPressed: isCancelling ? () {} : () => Get.back(),
                         child: Center(
-                          child: Text('Keep Plan', style: TextStyles.medium(15.sp, fontColor: AppColors.black1414141)),
+                          child: Text('subscription_keep_plan'.tr, style: TextStyles.medium(15.sp, fontColor: AppColors.black1414141)),
                         ),
                       ),
                     ),
@@ -130,7 +130,7 @@ class _SubscriptionDetailsBodyState extends State<_SubscriptionDetailsBody> with
                         child: Center(
                           child: isCancelling
                               ? CommonLoader(size: 20, color: Colors.white)
-                              : Text('Yes, Cancel', style: TextStyles.medium(15.sp, fontColor: AppColors.white)),
+                              : Text('subscription_yes_cancel'.tr, style: TextStyles.medium(15.sp, fontColor: AppColors.white)),
                         ),
                       ),
                     ),
@@ -155,7 +155,7 @@ class _SubscriptionDetailsBodyState extends State<_SubscriptionDetailsBody> with
           mainAxisSize: MainAxisSize.min,
           children: [
             CommonAppbar(
-              title: 'Subscription Details',
+              title: 'subscription_details_title'.tr,
               showBackButton: true,
               actionWidget: PopupMenuButton<String>(
                 icon: Icon(Icons.more_vert, size: 24.sp, color: AppColors.black1414141),
@@ -173,7 +173,7 @@ class _SubscriptionDetailsBodyState extends State<_SubscriptionDetailsBody> with
                       children: [
                         Icon(Icons.cancel_outlined, size: 18.sp, color: AppColors.red),
                         Gap(8.w),
-                        Text('Cancel Subscription', style: TextStyles.medium(14.sp, fontColor: AppColors.red)),
+                        Text('subscription_cancel_title'.tr, style: TextStyles.medium(14.sp, fontColor: AppColors.red)),
                       ],
                     ),
                   ),
@@ -197,12 +197,12 @@ class _SubscriptionDetailsBodyState extends State<_SubscriptionDetailsBody> with
                 labelStyle: TextStyles.semiBold(14.sp, fontColor: AppColors.black1414141),
                 unselectedLabelStyle: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
                 labelPadding: EdgeInsets.symmetric(horizontal: 16.w),
-                tabs: const [
-                  Tab(text: 'Plan History'),
-                  Tab(text: 'Product History'),
-                  Tab(text: 'Transaction History'),
-                  Tab(text: 'Delivery Postponement'),
-                  Tab(text: 'Shipping Address'),
+                tabs: [
+                  Tab(text: 'subscription_tab_plan_history'.tr),
+                  Tab(text: 'subscription_tab_product_history'.tr),
+                  Tab(text: 'subscription_tab_transaction_history'.tr),
+                  Tab(text: 'subscription_tab_delivery_postponement'.tr),
+                  Tab(text: 'subscription_tab_shipping_address'.tr),
                 ],
               ),
             ),
@@ -345,7 +345,7 @@ class _PlanHistoryTab extends StatelessWidget {
         children: [
           Assets.icons.icEmptyWhishlist.svg(),
           Gap(12.h),
-          Text('No plan history', style: TextStyles.medium(16.sp, fontColor: AppColors.grey898989)),
+          Text('subscription_no_plan_history'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.grey898989)),
         ],
       ),
     );
@@ -394,7 +394,7 @@ class _PlanHistoryTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Start Date', style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
+                    Text('subscription_start_date'.tr, style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
                     Gap(2.h),
                     Text(dateStr, style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141)),
                   ],
@@ -404,7 +404,7 @@ class _PlanHistoryTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Next Delivery', style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
+                    Text('subscription_next_delivery'.tr, style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
                     Gap(2.h),
                     Text(nextDeliveryStr, style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141)),
                   ],
@@ -420,7 +420,7 @@ class _PlanHistoryTab extends StatelessWidget {
           //       child: Column(
           //         crossAxisAlignment: CrossAxisAlignment.start,
           //         children: [
-          //           Text('Next Delivery', style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
+          //           Text('subscription_next_delivery'.tr, style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
           //           Gap(2.h),
           //           Text(nextDeliveryStr, style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141)),
           //         ],
@@ -439,7 +439,7 @@ class _PlanHistoryTab extends StatelessWidget {
           //   ],
           // ),
           Gap(10.h),
-          Text('Reason', style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
+          Text('subscription_reason'.tr, style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
           Gap(2.h),
           Text(reason, style: TextStyles.regular(14.sp, fontColor: AppColors.black1414141)),
         ],
@@ -488,8 +488,8 @@ class _ProductHistoryTab extends StatelessWidget {
     );
   }
 
-  static const String _disclaimer =
-      'If you change the product 10 days before the next billing date, the new product will be applied.';
+  static   final String _disclaimer =
+      'subscription_product_change_notice'.tr;
 
   Widget _buildShimmer() {
     return SingleChildScrollView(
@@ -592,7 +592,7 @@ class _ProductHistoryTab extends StatelessWidget {
         children: [
           Assets.icons.icEmptyWhishlist.svg(),
           Gap(12.h),
-          Text('No products in this subscription', style: TextStyles.medium(16.sp, fontColor: AppColors.grey898989)),
+          Text('subscription_no_products'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.grey898989)),
         ],
       ),
     );
@@ -669,7 +669,7 @@ class _ProductHistoryTab extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('Change Product', style: TextStyles.semiBold(16.sp, fontColor: AppColors.black1414141)),
+                        Text('subscription_change_product'.tr, style: TextStyles.semiBold(16.sp, fontColor: AppColors.black1414141)),
                         GestureDetector(
                           onTap: () => _showChooseHowToBuyDialog(context),
                           child: Container(
@@ -678,7 +678,7 @@ class _ProductHistoryTab extends StatelessWidget {
                               color: AppColors.black1414141,
                               borderRadius: BorderRadius.circular(20.r),
                             ),
-                            child: Text('Change Order', style: TextStyles.medium(14.sp, fontColor: AppColors.white)),
+                            child: Text('subscription_change_order'.tr, style: TextStyles.medium(14.sp, fontColor: AppColors.white)),
                           ),
                         ),
                       ],
@@ -718,13 +718,13 @@ class _ChooseHowToBuyDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Choose How You Want to Buy.',
+            'subscription_choose_buy_method'.tr,
             textAlign: TextAlign.center,
             style: TextStyles.semiBold(18.sp, fontColor: AppColors.black1414141),
           ),
           Gap(8.h),
           Text(
-            'Select an option to change your product.',
+            'subscription_choose_buy_subtitle'.tr,
             textAlign: TextAlign.center,
             style: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
           ),
@@ -752,7 +752,7 @@ class _ChooseHowToBuyDialog extends StatelessWidget {
                   ),
                   Gap(6.w),
                   Text(
-                    'Take Quiz & Get Best Product',
+                    'subscription_take_quiz_product'.tr,
                     style: TextStyles.semiBold(14.sp, fontColor: AppColors.black1414141),
                   ),
                 ],
@@ -785,7 +785,7 @@ class _ChooseHowToBuyDialog extends StatelessWidget {
                     ),
                   ),
                   Gap(12.w),
-                  Text('Buy Now', style: TextStyles.semiBold(15.sp, fontColor: AppColors.white)),
+                  Text('product_detail_buy_now'.tr, style: TextStyles.semiBold(15.sp, fontColor: AppColors.white)),
                 ],
               ),
             ),
@@ -896,7 +896,7 @@ class _TransactionHistoryTab extends StatelessWidget {
             children: [
               Assets.icons.icEmptyWhishlist.svg(),
               Gap(12.h),
-              Text('No transaction history', style: TextStyles.medium(16.sp, fontColor: AppColors.grey898989)),
+              Text('subscription_no_transactions'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.grey898989)),
             ],
           ),
         );
@@ -936,7 +936,7 @@ class _TransactionHistoryTab extends StatelessWidget {
             ],
           ),
           Gap(8.h),
-          Text('Transaction ID', style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
+          Text('member_transaction_id'.tr, style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
           Gap(2.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1052,10 +1052,10 @@ class _DeliveryPostponementTab extends StatelessWidget {
         children: [
           Assets.icons.icEmptyWhishlist.svg(),
           Gap(12.h),
-          Text('No Postponement Requests Found', style: TextStyles.medium(16.sp, fontColor: AppColors.black1414141)),
+          Text('subscription_no_postponements'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.black1414141)),
           Gap(6.h),
           Text(
-            'No delivery postponements have been\nrequested yet. You can reschedule your\ndelivery anytime from here.',
+            'subscription_postponement_empty'.tr,
             textAlign: TextAlign.center,
             style: TextStyles.regular(13.sp, fontColor: AppColors.grey898989),
           ),
@@ -1102,14 +1102,14 @@ class _DeliveryPostponementTab extends StatelessWidget {
             ],
           ),
           Gap(10.h),
-          Text('New Delivery Date', style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
+          Text('subscription_new_delivery_date'.tr, style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
           Gap(2.h),
           Text(
             _formatDate(item.requestedDeliveryDate),
             style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141),
           ),
           Gap(8.h),
-          Text('Reason', style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
+          Text('subscription_reason'.tr, style: TextStyles.regular(12.sp, fontColor: AppColors.grey898989)),
           Gap(2.h),
           Text(
             item.reason?.isNotEmpty == true ? item.reason! : '—',
@@ -1135,10 +1135,10 @@ class _DeliveryPostponementTab extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Delivery Postponements', style: TextStyles.semiBold(16.sp, fontColor: AppColors.black1414141)),
+                Text('subscription_delivery_postponements'.tr, style: TextStyles.semiBold(16.sp, fontColor: AppColors.black1414141)),
                 GestureDetector(
                   onTap: () => _showAddPostponementSheet(context),
-                  child: Text('+ Add Postponement', style: TextStyles.medium(14.sp, fontColor: AppColors.primaryColor)),
+                  child: Text('subscription_add_postponement'.tr, style: TextStyles.medium(14.sp, fontColor: AppColors.primaryColor)),
                 ),
               ],
             ),
@@ -1235,8 +1235,8 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
   bool _validate() {
     bool valid = true;
     setState(() {
-      _dateError = _selectedDate == null ? 'Please select a new delivery date' : null;
-      _reasonError = _reasonController.text.trim().isEmpty ? 'Please enter a reason for postponement' : null;
+      _dateError = _selectedDate == null ? 'subscription_select_delivery_date'.tr : null;
+      _reasonError = _reasonController.text.trim().isEmpty ? 'subscription_postponement_reason_required'.tr : null;
     });
     if (_dateError != null || _reasonError != null) valid = false;
     return valid;
@@ -1246,7 +1246,7 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
     if (!_validate()) return;
     final orderId = widget.subscription?.orderId?.id ?? '';
     if (orderId.isEmpty) {
-      AppFunctions().showToast('Order ID not available', bgColor: AppColors.red);
+      AppFunctions().showToast('subscription_order_id_missing'.tr, bgColor: AppColors.red);
       return;
     }
     final nav = Navigator.of(context);
@@ -1293,7 +1293,7 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(width: 40.w),
-                    Text('Delivery Postponement', style: TextStyles.semiBold(20.sp, fontColor: AppColors.black1414141)),
+                    Text('subscription_postponement_title'.tr, style: TextStyles.semiBold(20.sp, fontColor: AppColors.black1414141)),
                     IconButton(
                       onPressed: isSubmitting ? null : () => Navigator.of(context).pop(),
                       icon: Icon(Icons.close, size: 24.sp, color: AppColors.black1414141),
@@ -1306,7 +1306,7 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Current Delivery Date',
+                    'subscription_current_delivery_date'.tr,
                     style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141),
                   ),
                 ),
@@ -1328,7 +1328,7 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
                 // New Delivery Date (date picker)
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('New Delivery Date', style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141)),
+                  child: Text('subscription_new_delivery_date'.tr, style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141)),
                 ),
                 Gap(6.h),
                 GestureDetector(
@@ -1368,7 +1368,7 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Reason for Postponement',
+                    'subscription_reason_for_postponement'.tr,
                     style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141),
                   ),
                 ),
@@ -1390,7 +1390,7 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
                         maxLength: _reasonMaxLength,
                         enabled: !isSubmitting,
                         decoration: InputDecoration(
-                          hintText: 'Enter reason for postponement',
+                          hintText: 'subscription_postponement_reason_hint'.tr,
                           hintStyle: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.zero,
@@ -1431,7 +1431,7 @@ class _AddPostponementBottomSheetState extends State<_AddPostponementBottomSheet
                               width: 22.h,
                               child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.white),
                             )
-                          : Text('Submit Request', style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
+                          : Text('subscription_submit_request'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
                     ),
                   ),
                 ),
@@ -1559,13 +1559,13 @@ class _ShippingAddressTab extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Are you sure you want to change the shipping address for this subscription?',
+                'subscription_address_change_confirm'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyles.medium(16.sp, fontColor: AppColors.black1414141),
               ),
               Gap(8.h),
               Text(
-                'This change will apply to upcoming deliveries only.',
+                'subscription_address_change_note'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
               ),
@@ -1579,7 +1579,7 @@ class _ShippingAddressTab extends StatelessWidget {
                       borderRadius: 30,
                       onPressed: () => Get.back(),
                       child: Center(
-                        child: Text('Cancel', style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
+                        child: Text('common_cancel'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
                       ),
                     ),
                   ),
@@ -1601,7 +1601,7 @@ class _ShippingAddressTab extends StatelessWidget {
                         child: Center(
                           child: isLoading
                               ? CommonLoader(size: 20, color: Colors.white)
-                              : Text('Confirm', style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
+                              : Text('subscription_confirm'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
                         ),
                       );
                     }),
@@ -1730,7 +1730,7 @@ class _ShippingAddressTab extends StatelessWidget {
                 Text('checkout_shipping_address'.tr, style: TextStyles.bold(18.sp, fontColor: AppColors.black1414141)),
                 GestureDetector(
                   onTap: () => Get.toNamed(AppRoutes.addAddress, arguments: {'isEdit': false}),
-                  child: Text('+ New address', style: TextStyles.medium(14.sp, fontColor: AppColors.primaryColor)),
+                  child: Text('subscription_new_address'.tr, style: TextStyles.medium(14.sp, fontColor: AppColors.primaryColor)),
                 ),
               ],
             ),

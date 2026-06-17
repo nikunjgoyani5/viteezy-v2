@@ -5,9 +5,9 @@ import '../../presentation/main/ member/controller/member_controller.dart';
 import '../theme/app_colors.dart';
 
 void showCancelMembershipDialog(BuildContext context) {
-  final ctrl = Get.find<MemberController>();
+  Get.find<MemberController>();
 
-  final endDate = "Mar 31, 2026";
+  const endDate = 'Mar 31, 2026';
 
   Get.dialog(
     Dialog(
@@ -29,22 +29,17 @@ void showCancelMembershipDialog(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
-
-            const Text(
-              "Cancel Membership",
-              style: TextStyle(
+            Text(
+              'member_cancel_title'.tr,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
               ),
             ),
-
             const SizedBox(height: 14),
-
-
             Text(
-              "You’ll keep full access until $endDate. After that, your membership benefits will end.",
+              'member_cancel_message'.trParams({'date': endDate}),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 17,
@@ -52,14 +47,9 @@ void showCancelMembershipDialog(BuildContext context) {
                 fontWeight: FontWeight.w400,
               ),
             ),
-
             const SizedBox(height: 26),
-
-
             Row(
               children: [
-
-
                 Expanded(
                   child: SizedBox(
                     height: 52,
@@ -72,9 +62,9 @@ void showCancelMembershipDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text(
-                        "Keep Plan",
-                        style: TextStyle(
+                      child: Text(
+                        'subscription_keep_plan'.tr,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -83,15 +73,12 @@ void showCancelMembershipDialog(BuildContext context) {
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 12),
-
                 Expanded(
                   child: SizedBox(
                     height: 52,
                     child: ElevatedButton(
                       onPressed: () {
-              //          ctrl.cancelMembership("",);
                         Get.back();
                       },
                       style: ElevatedButton.styleFrom(
@@ -101,9 +88,9 @@ void showCancelMembershipDialog(BuildContext context) {
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      child: const Text(
-                        "Confirm Cancel",
-                        style: TextStyle(
+                      child: Text(
+                        'subscription_confirm_cancel'.tr,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

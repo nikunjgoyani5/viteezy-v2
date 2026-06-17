@@ -39,6 +39,11 @@ import 'package:viteezy/presentation/main/products/views/product_detail_view.dar
 import 'package:viteezy/presentation/main/profile/bindings/profile_binding.dart';
 import 'package:viteezy/presentation/main/profile/views/edit_profile_screen.dart';
 import 'package:viteezy/presentation/main/profile/views/profile_screen.dart';
+import 'package:viteezy/presentation/main/quiz_chat/bindings/quiz_binding.dart';
+import 'package:viteezy/presentation/main/quiz_chat/screens/quiz_questions_screen.dart';
+import 'package:viteezy/presentation/main/quiz_chat/screens/quiz_screen.dart';
+import 'package:viteezy/presentation/main/recommendation/recommendation_binding.dart';
+import 'package:viteezy/presentation/main/recommendation/recommendation_screen.dart';
 import 'package:viteezy/presentation/main/shop_all_view/bindings/shop_all_binding.dart';
 import 'package:viteezy/presentation/main/shop_all_view/views/category_product_view.dart';
 import 'package:viteezy/presentation/main/shop_all_view/views/shop_all_view.dart';
@@ -221,6 +226,21 @@ class AppPages {
       name: AppRoutes.familyscreen,
       page: () => const FamilyScreen(),
       binding: FamilyBinding(),
+    ),
+/*    GetPage(
+      name: AppRoutes.quiz,
+      page: () => const QuizQuestionsScreen(),
+      binding: QuizBinding(),
+    ),*/
+    GetPage(
+      name: AppRoutes.quizFlow,
+      page: () => const QuizScreen(),
+      binding: QuizBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.recommendation,
+      page: () => const RecommendationScreen(),
+      binding: RecommendationBinding(),
     ),
   ];
 }

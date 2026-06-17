@@ -327,14 +327,14 @@ class _AnimatedAddToCartButtonState extends State<_AnimatedAddToCartButton> with
         if (widget.onGoToCart != null) {
           CustomToast.showItemAddedToCart(
             context: context,
-            message: message.isNotEmpty ? message : 'Item added to cart',
+            message: message.isNotEmpty ? message : 'product_detail_item_added'.tr,
             onGoToCart: () {
               // Let parent handle navigation
               widget.onGoToCart?.call();
             },
           );
         } else {
-          CustomToast.show(context: context, message: message.isNotEmpty ? message : 'Item added to cart');
+          CustomToast.show(context: context, message: message.isNotEmpty ? message : 'product_detail_item_added'.tr);
         }
 
         // After animation completes, show "Added" state
@@ -381,7 +381,7 @@ class _AnimatedAddToCartButtonState extends State<_AnimatedAddToCartButton> with
       });
 
       // Show error message
-      CustomToast.show(context: context, message: 'An error occurred. Please try again.');
+      CustomToast.show(context: context, message: 'common_try_again_error'.tr);
     }
   }
 

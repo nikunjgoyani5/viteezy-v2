@@ -161,7 +161,7 @@ class ProfileController extends GetxController {
           debugPrint('error:::${e.toString()} ');
 
           loader.value = false;
-          AppFunctions().showToast(response.message ?? 'Something went wrong!!', bgColor: AppColors.red);
+          AppFunctions().showToast(response.message ?? 'common_error'.tr, bgColor: AppColors.red);
         }
       },
       onError: (AppException error) {
@@ -218,7 +218,7 @@ class ProfileController extends GetxController {
         } catch (e) {
           debugPrint('error:::${e.toString()} ');
           loader.value = false;
-          AppFunctions().showToast('Something went wrong!!', bgColor: AppColors.red);
+          AppFunctions().showToast('common_error'.tr, bgColor: AppColors.red);
         }
       },
       onError: (AppException error) {

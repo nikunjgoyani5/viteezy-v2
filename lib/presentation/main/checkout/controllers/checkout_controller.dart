@@ -216,11 +216,11 @@ class CheckoutController extends GetxController {
   void continueFromAddressStepWithSubscriptionSummary() {
     final addressId = selectedAddress.value?.id;
     if(addresses.isEmpty){
-      AppFunctions().showToast('Please add a shipping address', bgColor: AppColors.red);
+      AppFunctions().showToast('checkout_add_address_required'.tr, bgColor: AppColors.red);
       return;
     }
     if (addressId == null || addressId.toString().trim().isEmpty) {
-      AppFunctions().showToast('Please select a shipping address', bgColor: AppColors.red);
+      AppFunctions().showToast('checkout_select_address_required'.tr, bgColor: AppColors.red);
       return;
     }
     isLoadingSubscriptionPlans.value = true;
@@ -254,7 +254,7 @@ class CheckoutController extends GetxController {
         } catch (e, stackTrace) {
           log('Error parsing subscription actions summary: $e');
           log('Stack trace: $stackTrace');
-          AppFunctions().showToast('Failed to update summary', bgColor: AppColors.red);
+          AppFunctions().showToast('checkout_update_summary_failed'.tr, bgColor: AppColors.red);
         } finally {
           isLoadingSubscriptionPlans.value = false;
         }
@@ -351,7 +351,7 @@ class CheckoutController extends GetxController {
   /// Call checkout page summary API with plan and address details
   void _callCheckoutPageSummaryWithParams({VoidCallback? onSuccessCallback}) {
     // Show loading dialog
-    DialogService.showProgressDialog(message: 'Updating checkout details...');
+    DialogService.showProgressDialog(message: 'checkout_updating_details'.tr);
 
     final cart = Get.find<CartController>().cartData.value?.cart;
     final sachetsPlanDurationDays = selectedSubscriptionPlan.value?.durationDays ?? 180;
@@ -568,13 +568,13 @@ class CheckoutController extends GetxController {
             children: [
               Align(
                 alignment: Alignment.center,
-                child: Text('Remove item', style: TextStyles.medium(21.sp, fontColor: AppColors.black1414141)),
+                child: Text('checkout_remove_item'.tr, style: TextStyles.medium(21.sp, fontColor: AppColors.black1414141)),
               ),
               Gap(6.h),
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Are you sure you want to remove this item from cart?',
+                  'checkout_remove_item_confirm'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyles.regular(16.sp, fontColor: AppColors.black1414141),
                 ),
@@ -602,7 +602,7 @@ class CheckoutController extends GetxController {
                         Get.back();
                         final cartController = Get.isRegistered<CartController>() ? Get.find<CartController>() : null;
                         if (cartController == null || cartController.cartData.value?.cart?.items == null) {
-                          CustomToast.show(message: 'Cart not available', context: Get.context!);
+                          CustomToast.show(message: 'checkout_cart_unavailable'.tr, context: Get.context!);
                           return;
                         }
                         cart_model.CartItem? cartItem;
@@ -613,7 +613,7 @@ class CheckoutController extends GetxController {
                           }
                         }
                         if (cartItem == null) {
-                          CustomToast.show(message: 'Item not found in cart', context: Get.context!);
+                          CustomToast.show(message: 'checkout_item_not_found'.tr, context: Get.context!);
                           return;
                         }
                         standUpPouchQuantityByProductId.remove(productId);
@@ -629,7 +629,7 @@ class CheckoutController extends GetxController {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.r)),
                         elevation: 0,
                       ),
-                      child: Text('Remove', style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
+                      child: Text('common_remove'.tr, style: TextStyles.medium(16.sp, fontColor: AppColors.white)),
                     ),
                   ),
                 ],
@@ -671,7 +671,7 @@ class CheckoutController extends GetxController {
   void createOrder(String paymentMethod) {
     final checkoutData = checkoutSummaryData.value;
     if (checkoutData == null) {
-      Get.snackbar('Error', 'Checkout data not available');
+      Get.snackbar('common_error'.tr, 'checkout_data_unavailable'.tr);
       return;
     }
 
@@ -704,7 +704,7 @@ class CheckoutController extends GetxController {
       body['couponCode'] = appliedDiscountCode.value;
     }
 
-    DialogService.showProgressDialog(message: 'Processing order...');
+    DialogService.showProgressDialog(message: 'checkout_processing_order'.tr);
 
     _checkoutRepository.createOrder(
       body: body,
@@ -731,7 +731,7 @@ class CheckoutController extends GetxController {
 
   /// Create payment for the order
   void _createPayment({required String orderId, required String paymentMethod}) {
-    DialogService.showProgressDialog(message: 'Processing payment...');
+    DialogService.showProgressDialog(message: 'checkout_processing_payment'.tr);
     final Map<String, dynamic> body = {'orderId': orderId.isEmpty ? '' : orderId, 'paymentMethod': paymentMethod};
 
     _checkoutRepository.createPayment(
@@ -775,15 +775,15 @@ class CheckoutController extends GetxController {
     final cartId = checkoutSummaryData.value?.cart?.cartId?.toString();
     final subId = subscriptionId.value.toString().trim();
     if (cartId == null || cartId.isEmpty) {
-      AppFunctions().showToast('Cart not available', bgColor: AppColors.red);
+      AppFunctions().showToast('checkout_cart_unavailable'.tr, bgColor: AppColors.red);
       return;
     }
     if (subId.isEmpty) {
-      AppFunctions().showToast('Subscription not available', bgColor: AppColors.red);
+      AppFunctions().showToast('checkout_subscription_unavailable'.tr, bgColor: AppColors.red);
       return;
     }
 
-    DialogService.showProgressDialog(message: 'Updating your plan...');
+    DialogService.showProgressDialog(message: 'checkout_updating_plan'.tr);
 
     _checkoutRepository.confirmSubscriptionUpdate(
       subscriptionId: subId,
@@ -795,14 +795,14 @@ class CheckoutController extends GetxController {
               : null;
           if (renewalOrderId == null || renewalOrderId.isEmpty) {
             DialogService.hideProgressDialog();
-            AppFunctions().showToast('Invalid response', bgColor: AppColors.red);
+            AppFunctions().showToast('common_invalid_response'.tr, bgColor: AppColors.red);
             return;
           }
           _fetchOrderAndRedirectToOrderComplete(renewalOrderId);
         } catch (e) {
           DialogService.hideProgressDialog();
           log('Error parsing subscription update confirm: $e');
-          AppFunctions().showToast('Something went wrong', bgColor: AppColors.red);
+          AppFunctions().showToast('common_error'.tr, bgColor: AppColors.red);
         }
       },
       onError: (error) {
@@ -948,7 +948,7 @@ class CheckoutController extends GetxController {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Are you sure want to delete address?',
+                  'checkout_delete_address_confirm'.tr,
                   style: TextStyles.regular(16.sp, fontColor: AppColors.black1414141),
                 ),
               ),
@@ -1019,7 +1019,7 @@ class CheckoutController extends GetxController {
       onSuccess: (response) {
         isDeletingAddress.value = false;
         Get.back(); // Close dialog
-        CustomToast.show(message: response.message ?? 'Address deleted successfully', context: Get.context!);
+        CustomToast.show(message: response.message ?? 'address_deleted_success'.tr, context: Get.context!);
 
         // Remove address from list with animation
         final index = addresses.indexWhere((a) => a.id == address.id);
@@ -1067,12 +1067,12 @@ class CheckoutController extends GetxController {
     }
 
     if (cartController == null || cartController.cartData.value?.cart?.id == null) {
-      CustomToast.show(message: 'Cart not found', context: Get.context!);
+      CustomToast.show(message: 'checkout_cart_unavailable'.tr, context: Get.context!);
       return;
     }
 
     // Show loading state
-    DialogService.showProgressDialog(message: 'Applying discount code...');
+    DialogService.showProgressDialog(message: 'cart_applying_discount'.tr);
 
     // Call API to validate coupon code (using CartRepository)
     final cartRepository = CartRepository();
@@ -1148,7 +1148,7 @@ class CheckoutController extends GetxController {
             } else {
               // Coupon validation failed
               DialogService.hideProgressDialog();
-              final message = data.message ?? 'Invalid discount code';
+              final message = data.message ?? 'cart_invalid_discount_code'.tr;
             }
           } else {
             DialogService.hideProgressDialog();
@@ -1177,12 +1177,12 @@ class CheckoutController extends GetxController {
     }
 
     if (cartController == null || cartController.cartData.value?.cart?.id == null) {
-      CustomToast.show(message: 'Cart not found', context: Get.context!);
+      CustomToast.show(message: 'checkout_cart_unavailable'.tr, context: Get.context!);
       return;
     }
 
     // Show loading state
-    DialogService.showProgressDialog(message: 'Removing coupon code...');
+    DialogService.showProgressDialog(message: 'cart_removing_coupon'.tr);
 
     // Call API to remove coupon code by sending without couponCode
     final cartRepository = CartRepository();

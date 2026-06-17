@@ -112,7 +112,7 @@ class CheckoutView extends GetView<CheckoutController> {
                         // Stand-up pouch section: one card per productId in standUpPouchPlans
                         if (hasStandUpPouch) ...[
                           _buildExpandableSection(
-                            title: 'Stand-up pouch',
+                            title: 'product_detail_stand_up_pouch'.tr,
                             children: standUpPouchPlans.entries.map((entry) {
                               final productId = entry.key;
                               final plans = entry.value;
@@ -137,7 +137,7 @@ class CheckoutView extends GetView<CheckoutController> {
                         // Viteezy Sachets section
                         if (hasSachets && hasSachetsPlans) ...[
                           _buildExpandableSection(
-                            title: 'Viteezy Sachets',
+                            title: 'product_detail_viteezy_sachets'.tr,
                             children: controller.subscriptionPlans
                                 .asMap()
                                 .entries
@@ -223,7 +223,7 @@ class CheckoutView extends GetView<CheckoutController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'One-time purchase',
+                        'product_detail_one_time_purchase'.tr,
                         style: TextStyles.medium(
                           16.sp,
                           fontColor: AppColors.black1414141,
@@ -366,7 +366,7 @@ class CheckoutView extends GetView<CheckoutController> {
           child: DropdownButton<SubscriptionPlan?>(
             value: valueInList,
             hint: Text(
-              'Select',
+              'common_select'.tr,
               style: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
             ),
             isExpanded: true,
@@ -897,8 +897,8 @@ class CheckoutView extends GetView<CheckoutController> {
           !controller.isLoadingAddresses.value &&
           controller.addresses.isEmpty;
       final buttonText = isPaymentStep
-          ? (fromSubscriptionUpdate ? 'Update My Plan' : 'Place Order')
-          : (isAddressStepEmpty ? 'checkout_add_address'.tr : 'Continue');
+          ? (fromSubscriptionUpdate ? 'checkout_update_plan'.tr : 'checkout_place_order'.tr)
+          : (isAddressStepEmpty ? 'checkout_add_address'.tr : 'common_continue'.tr);
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
@@ -925,13 +925,13 @@ class CheckoutView extends GetView<CheckoutController> {
                     if (Get.isRegistered<AddAddressController>(tag: CheckoutInlineAddressHelper.tag)) {
                       Get.find<AddAddressController>(tag: CheckoutInlineAddressHelper.tag).saveAddress();
                     } else {
-                      AppFunctions().showToast('Please add a shipping address', bgColor: AppColors.red);
+                      AppFunctions().showToast('checkout_add_address_required'.tr, bgColor: AppColors.red);
                     }
                     return;
                   }
                   final addressId = controller.selectedAddress.value?.id;
                   if (addressId == null || addressId.toString().trim().isEmpty) {
-                    AppFunctions().showToast('Please select a shipping address', bgColor: AppColors.red);
+                    AppFunctions().showToast('checkout_select_address_required'.tr, bgColor: AppColors.red);
                     return;
                   }
                   if (fromSubscriptionUpdate) {
@@ -1036,7 +1036,7 @@ class CheckoutView extends GetView<CheckoutController> {
                       _buildPaymentOption(
                         context: bottomSheetContext,
                         title: 'checkout_stripe'.tr,
-                        description: 'Pay securely with Stripe',
+                        description: 'checkout_pay_stripe'.tr,
                         icon: Icons.payment,
                         onTap: () {
                           Get.back();
@@ -1047,7 +1047,7 @@ class CheckoutView extends GetView<CheckoutController> {
                       _buildPaymentOption(
                         context: bottomSheetContext,
                         title: 'checkout_mollie'.tr,
-                        description: 'Pay securely with Mollie',
+                        description: 'checkout_pay_mollie'.tr,
                         icon: Icons.account_balance_wallet,
                         onTap: () {
                           Get.back();
@@ -1243,7 +1243,7 @@ class CheckoutView extends GetView<CheckoutController> {
                                       .isNotEmpty
                                   ? '${address.firstName ?? ''} ${address.lastName ?? ''}'
                                         .trim()
-                                  : 'Address',
+                                  : 'checkout_address_label'.tr,
                               style: TextStyles.bold(
                                 16.sp,
                                 fontColor: AppColors.black1414141,
@@ -1520,7 +1520,7 @@ class CheckoutView extends GetView<CheckoutController> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(vertical: 60.h),
                           child: Text(
-                            'No items in cart',
+                            'checkout_no_items'.tr,
                             style: TextStyles.regular(
                               14.sp,
                               fontColor: AppColors.gray949391,
@@ -1778,8 +1778,8 @@ class CheckoutView extends GetView<CheckoutController> {
         Expanded(
           child: CommonMainTextField(
             controller: controller.discountCodeController,
-            hintText: 'Enter discount code',
-            labelText: 'Enter discount code',
+            hintText: 'cart_enter_code'.tr,
+            labelText: 'cart_enter_code'.tr,
             fillColor: AppColors.surfaceColor,
             borderColor: AppColors.grayE3E3DC,
             radius: BorderRadius.circular(8.r),
@@ -1836,7 +1836,7 @@ class CheckoutView extends GetView<CheckoutController> {
           ),
           child: Center(
             child: Text(
-              'Loading payment details...',
+              'checkout_loading_payment'.tr,
               style: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
             ),
           ),
@@ -1853,14 +1853,14 @@ class CheckoutView extends GetView<CheckoutController> {
           children: [
             if (overall?.subTotal != null)
               _buildPaymentDetailRow(
-                'Subtotal',
+                'cart_subtotal'.tr,
                 '$currency${overall!.subTotal!.toStringAsFixed(2)}',
               ),
             if (overall?.subTotal != null) Gap(12.h),
             if (overall?.discountedPrice != null &&
                 overall!.discountedPrice! > 0) ...[
               _buildPaymentDetailRow(
-                'Discount',
+                'cart_discount'.tr,
                 '-$currency${overall.discountedPrice!.toStringAsFixed(2)}',
               ),
               Gap(12.h),
@@ -1868,7 +1868,7 @@ class CheckoutView extends GetView<CheckoutController> {
             if (overall?.membershipDiscountAmount != null &&
                 overall!.membershipDiscountAmount! > 0) ...[
               _buildPaymentDetailRow(
-                'Membership Discount',
+                'cart_membership_discount'.tr,
                 '-$currency${overall.membershipDiscountAmount!.toStringAsFixed(2)}',
               ),
               Gap(12.h),
@@ -1876,7 +1876,7 @@ class CheckoutView extends GetView<CheckoutController> {
             if (overall?.subscriptionPlanDiscountAmount != null &&
                 overall!.subscriptionPlanDiscountAmount! > 0) ...[
               _buildPaymentDetailRow(
-                'Subscription Discount',
+                'cart_subscription_discount'.tr,
                 '-$currency${overall.subscriptionPlanDiscountAmount!.toStringAsFixed(2)}',
               ),
               Gap(12.h),
@@ -1884,7 +1884,7 @@ class CheckoutView extends GetView<CheckoutController> {
             if (overall?.couponDiscountAmount != null &&
                 overall!.couponDiscountAmount! > 0) ...[
               _buildPaymentDetailRow(
-                'Coupon Discount',
+                'cart_coupon_discount'.tr,
                 '-$currency${overall.couponDiscountAmount!.toStringAsFixed(2)}',
               ),
               Gap(12.h),
@@ -1897,7 +1897,7 @@ class CheckoutView extends GetView<CheckoutController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildPaymentDetailRow(
-                    'Grand Total',
+                    'cart_grand_total'.tr,
                     '$currency${overall!.grandTotal!.toStringAsFixed(2)}',
                     isBold: true,
                   ),
@@ -1982,7 +1982,7 @@ class CheckoutView extends GetView<CheckoutController> {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              'Remove',
+              'common_remove'.tr,
               style: TextStyles.medium(14.sp, fontColor: AppColors.primaryColor)
                   .copyWith(
                     decoration: TextDecoration.underline,
@@ -2067,11 +2067,11 @@ class _CheckoutAppBar extends GetView<CheckoutController>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildProgressStep(1, 'Packaging', controller.currentStep.value >= 1),
+          _buildProgressStep(1, 'checkout_step_packaging'.tr, controller.currentStep.value >= 1),
           _buildProgressLine(controller.currentStep.value > 1),
-          _buildProgressStep(2, 'Address', controller.currentStep.value >= 2),
+          _buildProgressStep(2, 'checkout_step_address'.tr, controller.currentStep.value >= 2),
           _buildProgressLine(controller.currentStep.value > 2),
-          _buildProgressStep(3, 'Payment', controller.currentStep.value >= 3),
+          _buildProgressStep(3, 'checkout_step_payment'.tr, controller.currentStep.value >= 3),
         ],
       ),
     );

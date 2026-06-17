@@ -137,7 +137,7 @@ class _CartViewState extends State<CartView> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16.w),
                               child: Text(
-                                'Payment Details',
+                                'orders_payment_details'.tr,
                                 style: TextStyles.bold(
                                   18.sp,
                                   fontColor: AppColors.black1414141,
@@ -326,7 +326,7 @@ class _CartViewState extends State<CartView> {
         ),
       ),
       child: Text(
-        'Free delivery on all USA orders over \$40',
+        'cart_free_delivery_banner'.tr,
         textAlign: TextAlign.center,
         style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141),
       ),
@@ -359,7 +359,7 @@ class _CartViewState extends State<CartView> {
                 ),
                 Gap(8.h),
                 Text(
-                  'Items added to your Cart will be saved here.',
+                  'cart_empty_subtitle'.tr,
                   style: TextStyles.regular(
                     15.sp,
                     fontColor: AppColors.grey6D6D6D,
@@ -427,13 +427,13 @@ class _CartViewState extends State<CartView> {
         child: Column(
           children: [
             _buildPaymentDetailRow(
-              'Subtotal',
+              'cart_subtotal'.tr,
               '$currency${mrp.toStringAsFixed(2)}',
             ),
             Gap(12.h),
             ...[
               _buildPaymentDetailRow(
-                'Discount',
+                'cart_discount'.tr,
                 '-$currency${discount.toStringAsFixed(2)}',
               ),
               Gap(12.h),
@@ -441,21 +441,21 @@ class _CartViewState extends State<CartView> {
             // Display coupon discount if applied
             if (couponDiscountAmount > 0) ...[
               _buildPaymentDetailRow(
-                'Coupon Discount',
+                'cart_coupon_discount'.tr,
                 '-$currency${couponDiscountAmount.toStringAsFixed(2)}',
               ),
               Gap(12.h),
             ],
             ...[
               _buildPaymentDetailRow(
-                'Membership Discount',
+                'cart_membership_discount'.tr,
                 '-$currency${discount.toStringAsFixed(2)}',
               ),
               Gap(12.h),
             ],
             ...[
               _buildPaymentDetailRow(
-                'Shipping',
+                'cart_shipping'.tr,
                 '$currency${shipping.toStringAsFixed(2)}',
               ),
               Gap(12.h),
@@ -472,7 +472,7 @@ class _CartViewState extends State<CartView> {
             Divider(height: 1, color: AppColors.grayE3E3DC),
             Gap(16.h),
             _buildPaymentDetailRow(
-              'Grand Total \nInc. of all taxes',
+              'cart_grand_total_inc_tax'.tr,
               '$currency${grandTotal.toStringAsFixed(2)}',
               isBold: true,
             ),
@@ -955,7 +955,7 @@ class _CartViewState extends State<CartView> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      'Discount code or referred by a friend?',
+                                      'cart_discount_referral_prompt'.tr,
                                       style: TextStyles.medium(
                                         14.sp,
                                         fontColor: AppColors.black1414141,
@@ -996,9 +996,9 @@ class _CartViewState extends State<CartView> {
                                               child: CommonMainTextField(
                                                 controller: controller
                                                     .discountCodeController,
-                                                hintText: 'Enter discount code',
+                                                hintText: 'cart_enter_code'.tr,
                                                 labelText:
-                                                    'Enter discount code',
+                                                    'cart_enter_code'.tr,
                                                 focusedErrorBorderSide:
                                                     BorderSide.none,
                                                 fillColor:
@@ -1048,7 +1048,7 @@ class _CartViewState extends State<CartView> {
                                                 elevation: 0,
                                               ),
                                               child: Text(
-                                                'Apply',
+                                                'cart_apply'.tr,
                                                 style: TextStyles.semiBold(
                                                   14.sp,
                                                   fontColor:
@@ -1180,7 +1180,7 @@ class _CartViewState extends State<CartView> {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             child: Text(
-              'Remove',
+              'common_remove'.tr,
               style: TextStyles.medium(14.sp, fontColor: AppColors.primaryColor)
                   .copyWith(
                     decoration: TextDecoration.underline,

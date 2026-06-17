@@ -79,7 +79,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  controller.isUpdate.value ? "Update Reminder" : "Set Reminder",
+                  controller.isUpdate.value ? 'reminder_update_title'.tr : 'reminder_set_sheet_title'.tr,
                   style: TextStyles.semiBold(22.sp, fontColor: AppColors.textPrimary),
                 ),
                 IconButton(
@@ -136,7 +136,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Reminder note",
+                'reminder_note_label'.tr,
                 style: TextStyles.medium(16.sp, fontColor: AppColors.textPrimary.withValues(alpha: 0.65)),
               ),
             ),
@@ -145,7 +145,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
         
             CommonTextField(
               controller: controller.noteController,
-              hintText: "Add a note for your medicine reminder",
+              hintText: 'reminder_note_hint'.tr,
               maxLine: 5,
               textStyle: TextStyles.regular(15.sp, fontColor: AppColors.textPrimary),
               hintColor: AppColors.grey999999,
@@ -163,7 +163,9 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                 child: Opacity(
                   opacity: saving ? 0.6 : 1,
                   child: CommonButton(
-                    text: saving ? (update ? "Updating..." : "Saving...") : (update ? "Update Reminder" : "Set My Reminder"),
+                    text: saving
+                        ? (update ? 'reminder_updating'.tr : 'reminder_saving'.tr)
+                        : (update ? 'reminder_update_title'.tr : 'reminder_set_my_reminder'.tr),
                     width: double.infinity,
                     height: 48.h,
                     textSize: 18.sp,

@@ -191,7 +191,7 @@ class SupportView extends GetView<SupportController> {
                 child: TextField(
                   controller: controller.messageController,
                   decoration: InputDecoration(
-                    hintText: 'Type a message...',
+                    hintText: 'support_message_hint'.tr,
                     hintStyle: TextStyles.regular(14.sp, fontColor: AppColors.textSecondary),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),

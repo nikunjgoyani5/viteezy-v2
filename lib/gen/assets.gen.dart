@@ -127,6 +127,13 @@ class $AssetsIconsGen {
   AssetGenImage get icBackArrow =>
       const AssetGenImage('assets/icons/ic_back_arrow.png');
 
+  /// File path: assets/icons/ic_balance.svg
+  SvgGenImage get icBalance => const SvgGenImage('assets/icons/ic_balance.svg');
+
+  /// File path: assets/icons/ic_brain_data.svg
+  SvgGenImage get icBrainData =>
+      const SvgGenImage('assets/icons/ic_brain_data.svg');
+
   /// File path: assets/icons/ic_browse.svg
   SvgGenImage get icBrowse => const SvgGenImage('assets/icons/ic_browse.svg');
 
@@ -164,6 +171,10 @@ class $AssetsIconsGen {
   SvgGenImage get icDiscount =>
       const SvgGenImage('assets/icons/ic_discount.svg');
 
+  /// File path: assets/icons/ic_discover.svg
+  SvgGenImage get icDiscover =>
+      const SvgGenImage('assets/icons/ic_discover.svg');
+
   /// File path: assets/icons/ic_double_check_icon.svg
   SvgGenImage get icDoubleCheckIcon =>
       const SvgGenImage('assets/icons/ic_double_check_icon.svg');
@@ -191,8 +202,15 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_failed.svg
   SvgGenImage get icFailed => const SvgGenImage('assets/icons/ic_failed.svg');
 
+  /// File path: assets/icons/ic_family.png
+  AssetGenImage get icFamily =>
+      const AssetGenImage('assets/icons/ic_family.png');
+
   /// File path: assets/icons/ic_fav.png
   AssetGenImage get icFav => const AssetGenImage('assets/icons/ic_fav.png');
+
+  /// File path: assets/icons/ic_fitness.svg
+  SvgGenImage get icFitness => const SvgGenImage('assets/icons/ic_fitness.svg');
 
   /// File path: assets/icons/ic_flag_dutch.png
   AssetGenImage get icFlagDutch =>
@@ -218,6 +236,14 @@ class $AssetsIconsGen {
   AssetGenImage get icGoogle =>
       const AssetGenImage('assets/icons/ic_google.png');
 
+  /// File path: assets/icons/ic_gut_problems.svg
+  SvgGenImage get icGutProblems =>
+      const SvgGenImage('assets/icons/ic_gut_problems.svg');
+
+  /// File path: assets/icons/ic_hair_nails.svg
+  SvgGenImage get icHairNails =>
+      const SvgGenImage('assets/icons/ic_hair_nails.svg');
+
   /// File path: assets/icons/ic_history.svg
   SvgGenImage get icHistory => const SvgGenImage('assets/icons/ic_history.svg');
 
@@ -238,6 +264,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_language_logo.png
   AssetGenImage get icLanguageLogo =>
       const AssetGenImage('assets/icons/ic_language_logo.png');
+
+  /// File path: assets/icons/ic_libido.svg
+  SvgGenImage get icLibido => const SvgGenImage('assets/icons/ic_libido.svg');
 
   /// File path: assets/icons/ic_like.png
   AssetGenImage get icLike => const AssetGenImage('assets/icons/ic_like.png');
@@ -270,6 +299,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_order.png
   AssetGenImage get icOrder => const AssetGenImage('assets/icons/ic_order.png');
 
+  /// File path: assets/icons/ic_overall.svg
+  SvgGenImage get icOverall => const SvgGenImage('assets/icons/ic_overall.svg');
+
   /// File path: assets/icons/ic_persentage.svg
   SvgGenImage get icPersentage =>
       const SvgGenImage('assets/icons/ic_persentage.svg');
@@ -292,6 +324,13 @@ class $AssetsIconsGen {
   SvgGenImage get icReminder =>
       const SvgGenImage('assets/icons/ic_reminder.svg');
 
+  /// File path: assets/icons/ic_resistance.svg
+  SvgGenImage get icResistance =>
+      const SvgGenImage('assets/icons/ic_resistance.svg');
+
+  /// File path: assets/icons/ic_rights.svg
+  SvgGenImage get icRights => const SvgGenImage('assets/icons/ic_rights.svg');
+
   /// File path: assets/icons/ic_search.svg
   SvgGenImage get icSearch => const SvgGenImage('assets/icons/ic_search.svg');
 
@@ -301,11 +340,22 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_share.svg
   SvgGenImage get icShare => const SvgGenImage('assets/icons/ic_share.svg');
 
+  /// File path: assets/icons/ic_skin.svg
+  SvgGenImage get icSkin => const SvgGenImage('assets/icons/ic_skin.svg');
+
   /// File path: assets/icons/ic_sleep.svg
   SvgGenImage get icSleep => const SvgGenImage('assets/icons/ic_sleep.svg');
 
+  /// File path: assets/icons/ic_sleep_data.svg
+  SvgGenImage get icSleepData =>
+      const SvgGenImage('assets/icons/ic_sleep_data.svg');
+
   /// File path: assets/icons/ic_spark.svg
   SvgGenImage get icSpark => const SvgGenImage('assets/icons/ic_spark.svg');
+
+  /// File path: assets/icons/ic_specific.svg
+  SvgGenImage get icSpecific =>
+      const SvgGenImage('assets/icons/ic_specific.svg');
 
   /// File path: assets/icons/ic_stress.svg
   SvgGenImage get icStress => const SvgGenImage('assets/icons/ic_stress.svg');
@@ -324,6 +374,10 @@ class $AssetsIconsGen {
   SvgGenImage get icWishlist =>
       const SvgGenImage('assets/icons/ic_wishlist.svg');
 
+  /// File path: assets/icons/ic_yellow_star.svg
+  SvgGenImage get icYellowStar =>
+      const SvgGenImage('assets/icons/ic_yellow_star.svg');
+
   /// File path: assets/icons/ic_youtube.svg
   SvgGenImage get icYoutube => const SvgGenImage('assets/icons/ic_youtube.svg');
 
@@ -336,6 +390,8 @@ class $AssetsIconsGen {
     icApple,
     icArrowNext,
     icBackArrow,
+    icBalance,
+    icBrainData,
     icBrowse,
     icCancel,
     icCart,
@@ -347,6 +403,7 @@ class $AssetsIconsGen {
     icCopyLink,
     icDelete,
     icDiscount,
+    icDiscover,
     icDoubleCheckIcon,
     icEdit,
     icEmail,
@@ -355,19 +412,24 @@ class $AssetsIconsGen {
     icEye,
     icFacebook,
     icFailed,
+    icFamily,
     icFav,
+    icFitness,
     icFlagDutch,
     icFlagUs,
     icFloatingChat,
     icFreeDelivery,
     icFreeShipping,
     icGoogle,
+    icGutProblems,
+    icHairNails,
     icHistory,
     icHome,
     icHone,
     icImmunity,
     icInstagram,
     icLanguageLogo,
+    icLibido,
     icLike,
     icLinkedin,
     icLock,
@@ -377,28 +439,39 @@ class $AssetsIconsGen {
     icMountains,
     icNotification,
     icOrder,
+    icOverall,
     icPersentage,
     icPhone,
     icPlaceholder,
     icPlus,
     icProfile,
     icReminder,
+    icResistance,
+    icRights,
     icSearch,
     icSend,
     icShare,
+    icSkin,
     icSleep,
+    icSleepData,
     icSpark,
+    icSpecific,
     icStress,
     icSubscription,
     icSuccess,
     icTools,
     icWishlist,
+    icYellowStar,
     icYoutube,
   ];
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
+
+  /// File path: assets/images/Essential Bundle.png
+  AssetGenImage get essentialBundle =>
+      const AssetGenImage('assets/images/Essential Bundle.png');
 
   /// File path: assets/images/dark_green_bg.png
   AssetGenImage get darkGreenBg =>
@@ -430,6 +503,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/img-immune.png
   AssetGenImage get imgImmune =>
       const AssetGenImage('assets/images/img-immune.png');
+
+  /// File path: assets/images/img_advanced_bundle.png
+  AssetGenImage get imgAdvancedBundle =>
+      const AssetGenImage('assets/images/img_advanced_bundle.png');
+
+  /// File path: assets/images/img_alternating.png
+  AssetGenImage get imgAlternating =>
+      const AssetGenImage('assets/images/img_alternating.png');
 
   /// File path: assets/images/img_boost_energy.png
   AssetGenImage get imgBoostEnergy =>
@@ -471,9 +552,32 @@ class $AssetsImagesGen {
   AssetGenImage get imgHomePlace =>
       const AssetGenImage('assets/images/img_home_place.png');
 
+  /// File path: assets/images/img_one_sachet _day.png
+  AssetGenImage get imgOneSachetDay =>
+      const AssetGenImage('assets/images/img_one_sachet _day.png');
+
+  /// File path: assets/images/img_one_sachet_con.png
+  AssetGenImage get imgOneSachetCon =>
+      const AssetGenImage('assets/images/img_one_sachet_con.png');
+
+  /// File path: assets/images/img_our_recommendations.png
+  AssetGenImage get imgOurRecommendations =>
+      const AssetGenImage('assets/images/img_our_recommendations.png');
+
   /// File path: assets/images/img_placeholder.png
   AssetGenImage get imgPlaceholder =>
       const AssetGenImage('assets/images/img_placeholder.png');
+
+  /// File path: assets/images/img_s.png
+  AssetGenImage get imgS => const AssetGenImage('assets/images/img_s.png');
+
+  /// File path: assets/images/img_separate.png
+  AssetGenImage get imgSeparate =>
+      const AssetGenImage('assets/images/img_separate.png');
+
+  /// File path: assets/images/img_separate_con.png
+  AssetGenImage get imgSeparateCon =>
+      const AssetGenImage('assets/images/img_separate_con.png');
 
   /// File path: assets/images/img_supports.png
   AssetGenImage get imgSupports =>
@@ -485,6 +589,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/membership.png
   AssetGenImage get membership =>
       const AssetGenImage('assets/images/membership.png');
+
+  /// File path: assets/images/one_sachet.png
+  AssetGenImage get oneSachet =>
+      const AssetGenImage('assets/images/one_sachet.png');
 
   /// File path: assets/images/order.png
   AssetGenImage get order => const AssetGenImage('assets/images/order.png');
@@ -499,6 +607,10 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/sad.png
   AssetGenImage get sad => const AssetGenImage('assets/images/sad.png');
+
+  /// File path: assets/images/separate_am.png
+  AssetGenImage get separateAm =>
+      const AssetGenImage('assets/images/separate_am.png');
 
   /// File path: assets/images/shipping.png
   AssetGenImage get shipping =>
@@ -519,6 +631,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    essentialBundle,
     darkGreenBg,
     discountDialogBg,
     frenchFlag,
@@ -527,6 +640,8 @@ class $AssetsImagesGen {
     howWorks,
     icSpanishFlag,
     imgImmune,
+    imgAdvancedBundle,
+    imgAlternating,
     imgBoostEnergy,
     imgCatOne,
     imgCatThree,
@@ -537,14 +652,22 @@ class $AssetsImagesGen {
     imgDrawerCat3,
     imgGluten,
     imgHomePlace,
+    imgOneSachetDay,
+    imgOneSachetCon,
+    imgOurRecommendations,
     imgPlaceholder,
+    imgS,
+    imgSeparate,
+    imgSeparateCon,
     imgSupports,
     logo,
     membership,
+    oneSachet,
     order,
     productOne,
     productTwo,
     sad,
+    separateAm,
     shipping,
     smile,
     splashImg,

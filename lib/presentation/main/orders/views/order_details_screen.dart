@@ -64,15 +64,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   }
 
   Widget _buildOrderDetails(order_model.OrderData order) {
-    final orderNumber = order.orderNumber ?? 'N/A';
+    final orderNumber = order.orderNumber ?? 'orders_na'.tr;
     final orderDate = order.createdAt != null
         ? _formatDate(order.createdAt!)
-        : 'N/A';
+        : 'orders_na'.tr;
     final estimatedDelivery = order.deliveredAt != null
         ? _formatDate(order.deliveredAt!)
         : (order.shippedAt != null
-              ? 'Arriving ${_formatDate(order.shippedAt!)}'
-              : 'To be determined');
+              ? 'orders_arriving'.trParams({'date': _formatDate(order.shippedAt!)})
+              : 'orders_delivery_tbd'.tr);
     final pricing = order.pricing?.overall;
     final currency = pricing?.currency ?? '\$';
 
@@ -89,12 +89,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow(label: 'Order number:', value: orderNumber),
+                      _buildInfoRow(label: 'orders_order_number_label'.tr, value: orderNumber),
                       Gap(2.h),
-                      _buildInfoRow(label: 'Order Date:', value: orderDate),
+                      _buildInfoRow(label: 'orders_order_date_label'.tr, value: orderDate),
                       Gap(2.h),
                       _buildInfoRow(
-                        label: 'Estimated Delivery:',
+                        label: 'orders_estimated_delivery_label'.tr,
                         value: estimatedDelivery,
                       ),
                     ],
@@ -150,21 +150,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         children: [
                           if (pricing?.subTotal != null)
                             _buildPaymentRow(
-                              label: 'Subtotal',
+                              label: 'cart_subtotal'.tr,
                               value:
                                   '$currency${pricing!.subTotal!.toStringAsFixed(2)}',
                             ),
                           if (pricing?.subTotal != null) Gap(6.h),
                           if (pricing?.discountedPrice != null)
                             _buildPaymentRow(
-                              label: 'Discount',
+                              label: 'cart_discount'.tr,
                               value:
                                   '$currency${(pricing!.subTotal! - pricing.discountedPrice!).toStringAsFixed(2)}',
                             ),
                           if (pricing?.discountedPrice != null) Gap(6.h),
                           if (pricing?.membershipDiscountAmount != null)
                             _buildPaymentRow(
-                              label: 'Membership Discount',
+                              label: 'cart_membership_discount'.tr,
                               value:
                                   '$currency${pricing!.membershipDiscountAmount!.toStringAsFixed(2)}',
                             ),
@@ -172,21 +172,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                             Gap(6.h),
                           if (pricing?.taxAmount != null)
                             _buildPaymentRow(
-                              label: 'Tax',
+                              label: 'orders_tax'.tr,
                               value:
                                   '$currency${pricing!.taxAmount!.toStringAsFixed(2)}',
                             ),
                           if (pricing?.taxAmount != null) Gap(6.h),
                           _buildPaymentRow(
-                            label: 'Shipping',
-                            value: 'To be calculated at checkout',
+                            label: 'cart_shipping'.tr,
+                            value: 'orders_shipping_tbd'.tr,
                           ),
                           Gap(6.h),
                           Container(height: 1, color: AppColors.greyF7F6F0),
                           Gap(10.h),
                           if (pricing?.grandTotal != null)
                             _buildPaymentRow(
-                              label: 'Grand Total \nInc. of all taxes',
+                              label: 'cart_grand_total_inc_tax'.tr,
                               value:
                                   '$currency${pricing!.grandTotal!.toStringAsFixed(2)}',
                               isBold: true,
@@ -552,10 +552,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
   Widget _buildOrderItem(order_model.Item item, OrdersController controller) {
     final productImage = item.productId?.productImage ?? '';
-    final productName = item.productId?.title ?? item.name ?? 'Product';
+    final productName = item.productId?.title ?? item.name ?? 'common_product'.tr;
     final packInfo = item.durationDays != null
-        ? 'Pack ${item.durationDays} days'
-        : (item.capsuleCount != null ? '${item.capsuleCount} capsules' : '');
+        ? 'orders_pack_days'.trParams({'days': '${item.durationDays}'})
+        : (item.capsuleCount != null ? 'orders_capsules_count'.trParams({'count': '${item.capsuleCount}'}) : '');
     final currentPrice = item.discountedPrice ?? item.totalAmount ?? 0.0;
     final originalPrice = item.amount ?? 0.0;
     final currency =
@@ -650,11 +650,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         height: 28.h,
                         color: AppColors.greyEBEBEB,
                         borderRadius: 6,
-                        onPressed: () {
-                          if (productId != null) {
-                            controller.reviewProduct(productId);
-                          }
-                        },
+                        onPressed: () => controller.reviewProduct(item),
                         child: Center(
                           child: Text(
                             'orders_review'.tr,
@@ -794,12 +790,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
     // Phone
     if (address.phone != null && address.phone!.isNotEmpty) {
-      addressParts.add('Phone: ${address.phone}');
+      addressParts.add('${'orders_phone_label'.tr} ${address.phone}');
     }
 
     // Note
     if (address.note != null && address.note!.isNotEmpty) {
-      addressParts.add('Note: ${address.note}');
+      addressParts.add('${'orders_note_label'.tr} ${address.note}');
     }
 
     if (addressParts.isEmpty) {

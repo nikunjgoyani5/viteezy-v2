@@ -182,7 +182,7 @@ class ShareProductBottomSheet extends StatelessWidget {
                     onTap: () {
                       Get.back();
                       _shareProduct();
-                      Get.snackbar('Success', 'Link copied to clipboard');
+                      Get.snackbar('common_success'.tr, 'share_link_copied'.tr);
                     },
                   ),
                   Gap(40.w),
@@ -239,11 +239,11 @@ class ShareProductBottomSheet extends StatelessWidget {
     try {
       // Construct shareable product link
       final productId = product.id ?? '';
-      final productTitle = product.title ?? 'Product';
+      final productTitle = product.title ?? 'common_product'.tr;
       final productLink = 'https://viteezy.com/product/$productId'; // Adjust this URL as needed
 
       // Create share text with product name and link
-      final shareText = 'Check out this product: $productTitle\n\n$productLink';
+      final shareText = 'share_product_message'.trParams({'title': productTitle, 'link': productLink});
 
       // Use share_plus to show native share sheet with all shareable apps
       await Share.share(shareText);
@@ -252,16 +252,16 @@ class ShareProductBottomSheet extends StatelessWidget {
       // If sharing fails, copy to clipboard as fallback
       try {
         final productId = product.id ?? '';
-        final productTitle = product.title ?? 'Product';
+        final productTitle = product.title ?? 'common_product'.tr;
         final productLink = 'https://viteezy.com/product/$productId';
-        final shareText = 'Check out this product: $productTitle\n\n$productLink';
+        final shareText = 'share_product_message'.trParams({'title': productTitle, 'link': productLink});
 
         await Clipboard.setData(ClipboardData(text: shareText));
         Get.back();
-        Get.snackbar('Success', 'Product link copied to clipboard');
+        Get.snackbar('common_success'.tr, 'share_product_link_copied'.tr);
       } catch (clipboardError) {
         Get.back();
-        Get.snackbar('Error', 'Failed to share product');
+        Get.snackbar('common_error'.tr, 'share_product_failed'.tr);
       }
     }
   }

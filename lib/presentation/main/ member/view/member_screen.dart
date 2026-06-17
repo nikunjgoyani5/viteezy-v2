@@ -19,7 +19,7 @@ class MemberScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      appBar: CommonAppbar(title: "Membership", showBackButton: true),
+      appBar: CommonAppbar(title: 'profile_membership'.tr, showBackButton: true),
       body: Obx(() {
         if (memberController.isLoading.value) {
           return membershipShimmer();
@@ -29,7 +29,7 @@ class MemberScreen extends StatelessWidget {
           return Center(
             child: Padding(
               padding: EdgeInsets.only(top: 50.h),
-              child: Text('No active membership', style: TextStyles.medium(16, fontColor: AppColors.grey999999)),
+              child: Text('member_no_active'.tr, style: TextStyles.medium(16, fontColor: AppColors.grey999999)),
             ),
           );
         }
@@ -82,14 +82,14 @@ class MemberScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: .start,
               children: [
-                Flexible(child: _infoColumn("Plan", membership.planSnapshot?.name ?? 'N/A')),
-                Flexible(child: _infoColumn("Interval", membership.planSnapshot?.interval ?? 'N/A')),
-                Flexible(child: _infoColumn("Amount", membership.amountDisplay)),
+                Flexible(child: _infoColumn('member_label_plan'.tr, membership.planSnapshot?.name ?? 'orders_na'.tr)),
+                Flexible(child: _infoColumn('member_label_interval'.tr, membership.planSnapshot?.interval ?? 'orders_na'.tr)),
+                Flexible(child: _infoColumn('member_label_amount'.tr, membership.amountDisplay)),
               ],
             ),
             Gap(20.h),
             Text(
-              "To avoid being charged for the next billing cycle, please cancel your plan at least 10 days before your next billing date.",
+              'member_cancel_notice'.tr,
               style: TextStyles.medium(12, fontWeight: FontWeight.w500),
             ),
           ],

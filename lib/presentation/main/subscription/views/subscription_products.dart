@@ -44,11 +44,11 @@ class _CategoryProductViewState extends State<SubscriptionProducts> {
 
   void _onCartIconPressed(BuildContext context) {
     if (subscriptionId == null || subscriptionId!.isEmpty) {
-      AppFunctions().showToast('Subscription not found', bgColor: AppColors.red);
+      AppFunctions().showToast('subscription_not_found'.tr, bgColor: AppColors.red);
       return;
     }
     if (controller.subscriptionSelectedProductIds.isEmpty) {
-      AppFunctions().showToast('Add at least one product to continue', bgColor: AppColors.red);
+      AppFunctions().showToast('subscription_add_product_required'.tr, bgColor: AppColors.red);
       return;
     }
     Get.dialog(
@@ -73,7 +73,7 @@ class _CategoryProductViewState extends State<SubscriptionProducts> {
               ),
               Gap(12.h),
               Text(
-                'Updating subscription...',
+                'subscription_updating'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyles.medium(14.sp, fontColor: AppColors.black1414141),
               ),
@@ -105,7 +105,7 @@ class _CategoryProductViewState extends State<SubscriptionProducts> {
 
   @override
   Widget build(BuildContext context) {
-    final title = 'Subscription Products';
+    final title = 'subscription_products_title'.tr;
     return Scaffold(
       appBar: CommonAppbar(
         title: title,

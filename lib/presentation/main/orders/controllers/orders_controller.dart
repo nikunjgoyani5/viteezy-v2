@@ -1,10 +1,12 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/repositories/order_repository.dart';
 import '../../../../core/repositories/product_repository.dart';
-import '../../../../core/models/oders_history_model.dart';
+import '../../../../core/models/oders_history_model.dart' as order_model;
+import '../views/order_review_bottom_sheet.dart';
 import '../../../../core/models/product_response_model.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -36,12 +38,12 @@ class MostLikedProduct {
 }
 
 class OrdersController extends GetxController {
-  final RxList<OrderData> orders = <OrderData>[].obs;
+  final RxList<order_model.OrderData> orders = <order_model.OrderData>[].obs;
   List<MostLikedProduct> mostLikedProducts = [];
   final _ordersRepository = OrdersRepository();
   final ProductRepository _productRepository = ProductRepository();
   final RxBool isLoading = false.obs;
-  final Rx<OrderData?> selectedOrderData = Rx<OrderData?>(null);
+  final Rx<order_model.OrderData?> selectedOrderData = Rx<order_model.OrderData?>(null);
   final RxBool isLoadingOrderDetail = false.obs;
 
   // Featured Products
@@ -57,9 +59,32 @@ class OrdersController extends GetxController {
     _loadOrders();
   }
 
-  void reviewProduct(String productId) {
-    // TODO: Navigate to review screen
-    Get.snackbar('Review', 'Review product $productId');
+  void reviewProduct(order_model.Item item) {
+    Get.bottomSheet(
+      OrderReviewBottomSheet(item: item),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Future<bool> submitProductReview({
+    required String productId,
+    required double rating,
+    required String content,
+  }) async {
+    var success = false;
+    await _productRepository.submitProductReview(
+      productId: productId,
+      body: {
+        'rating': rating,
+        'content': content,
+      },
+      onSuccess: (_) => success = true,
+      onError: (error) {
+        AppFunctions().showToast(error.message, bgColor: AppColors.red);
+      },
+    );
+    return success;
   }
 
   /// Buy-now flow: add product to cart then navigate to checkout (same as product detail "Buy Now").
@@ -80,7 +105,7 @@ class OrdersController extends GetxController {
       }
     } catch (e) {
       log('buyAgain error: $e');
-      AppFunctions().showToast('Failed to add to cart. Please try again.', bgColor: AppColors.red);
+      AppFunctions().showToast('home_failed_to_add_cart'.tr, bgColor: AppColors.red);
     } finally {
       buyingAgainProductId.value = null;
     }
@@ -93,7 +118,7 @@ class OrdersController extends GetxController {
         isLoading.value = false;
         if (data.data != null) {
           try {
-            final orderHistoryModel = List<OrderData>.from(data.data.map((x) => OrderData.fromJson(x)));
+            final orderHistoryModel = List<order_model.OrderData>.from(data.data.map((x) => order_model.OrderData.fromJson(x)));
             orders.assignAll(orderHistoryModel);
 
             // Call getFeaturedProduct only if orders list is empty
@@ -201,7 +226,7 @@ class OrdersController extends GetxController {
         if (data.data != null) {
           try {
             // print("-----------------------${data.data['order'].runtimeType}");
-            final orderData = OrderData.fromJson(data.data['order']);
+            final orderData = order_model.OrderData.fromJson(data.data['order']);
             selectedOrderData.value = orderData;
           } catch (e) {
             selectedOrderData.value = null;

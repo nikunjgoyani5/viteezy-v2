@@ -125,7 +125,7 @@ class ImagePickerBottomSheet extends StatelessWidget {
               children: [
                 Icon(Icons.close, size: 30.sp, color: Colors.transparent),
                 Text(
-                  'Select Image',
+                  'image_picker_select'.tr,
                   style: TextStyles.bold(
                     24.sp,
                     fontColor: AppColors.black1414141,

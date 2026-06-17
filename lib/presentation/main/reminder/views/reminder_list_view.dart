@@ -62,7 +62,7 @@ class _ReminderListViewState extends State<ReminderListView> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: CommonAppbar(
-        title: 'Reminder history',
+        title: 'reminder_history_title'.tr,
         centerTitle: true,
       ),
       body: Obx(() {
@@ -81,7 +81,7 @@ class _ReminderListViewState extends State<ReminderListView> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Text(
-                'No reminder activity yet.\nPull down to refresh.',
+                'reminder_history_empty'.tr,
                 style: TextStyles.regular(15.sp, fontColor: AppColors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -150,8 +150,8 @@ class _ReminderListViewState extends State<ReminderListView> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    if (_isSameDay(day, today)) return 'Today';
-    if (_isSameDay(day, yesterday)) return 'Yesterday';
+    if (_isSameDay(day, today)) return 'reminder_today'.tr;
+    if (_isSameDay(day, yesterday)) return 'reminder_yesterday'.tr;
     return DateFormat('EEEE, MMM d').format(day);
   }
 
@@ -219,7 +219,7 @@ class _ReminderListViewState extends State<ReminderListView> {
           if ((item.triggeredBy ?? '').isNotEmpty) ...[
             Gap(6.h),
             Text(
-              'By ${item.triggeredBy}',
+              'reminder_history_by'.trParams({'name': item.triggeredBy ?? ''}),
               style: TextStyles.regular(12.sp, fontColor: AppColors.grey),
             ),
           ],
@@ -231,19 +231,19 @@ class _ReminderListViewState extends State<ReminderListView> {
   String _eventTypeLabel(String type) {
     switch (type) {
       case 'CREATED':
-        return 'Created';
+        return 'reminder_event_created'.tr;
       case 'DISABLED':
-        return 'Disabled';
+        return 'reminder_event_disabled'.tr;
       case 'ENABLED':
-        return 'Enabled';
+        return 'reminder_event_enabled'.tr;
       case 'MESSAGE_UPDATED':
-        return 'Note updated';
+        return 'reminder_event_note_updated'.tr;
       case 'TIME_UPDATED':
-        return 'Time updated';
+        return 'reminder_event_time_updated'.tr;
       case 'DELETED':
-        return 'Deleted';
+        return 'reminder_event_deleted'.tr;
       default:
-        if (type.isEmpty) return 'Activity';
+        if (type.isEmpty) return 'reminder_event_activity'.tr;
         return type.replaceAll('_', ' ').toLowerCase().split(' ').map((w) {
           if (w.isEmpty) return w;
           return '${w[0].toUpperCase()}${w.substring(1)}';

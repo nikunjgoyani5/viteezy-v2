@@ -89,6 +89,26 @@ class SignupScreen extends GetView<SignupController> {
                   Gap(13.h),
                   CommonMainTextField(
                     onChanged: (val) {
+                      controller.validateMemberId();
+                    },
+                    hintText: 'address_member_id'.tr,
+                    labelText: 'address_member_id'.tr,
+                    controller: controller.memberIdController,
+                    errorText: controller.memberIdError,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9-]')),
+                      LengthLimitingTextInputFormatter(12),
+                      TextInputFormatter.withFunction(
+                        (oldValue, newValue) => TextEditingValue(
+                          text: newValue.text.toUpperCase(),
+                          selection: newValue.selection,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Gap(13.h),
+                  CommonMainTextField(
+                    onChanged: (val) {
                       controller.validatePass();
                     },
                     // validator: ValidationUtils.validatePassword,
@@ -150,7 +170,8 @@ class SignupScreen extends GetView<SignupController> {
                               controller.lastNameError.isEmpty &&
                               controller.emailError.isEmpty &&
                               controller.passwordError.isEmpty &&
-                              controller.cPassError.isEmpty
+                              controller.cPassError.isEmpty &&
+                              controller.memberIdError.isEmpty
                           ? AppColors.primaryColor
                           : AppColors.lightPrimaryColor,
                       child: controller.isLoading.value
@@ -236,7 +257,7 @@ class SignupScreen extends GetView<SignupController> {
                             ),
                       onPressed: () async {
                         if (controller.isAgree == false) {
-                          AppFunctions().showToast('Please accept terms and privacy policy', bgColor: AppColors.red);
+                          AppFunctions().showToast('auth_accept_terms'.tr, bgColor: AppColors.red);
                           return;
                         }
                         AppFunctions().closeKeyboard();
@@ -303,7 +324,7 @@ class SignupScreen extends GetView<SignupController> {
                       child: RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
-                          text: 'By continuing, you agree to Viteezy ',
+                          text: 'auth_by_continuing'.tr,
                           style: TextStyles.regular(14.sp, fontColor: AppColors.grey545454),
                           children: [
                             TextSpan(
@@ -311,14 +332,14 @@ class SignupScreen extends GetView<SignupController> {
                                 ..onTap = () {
                                   Get.toNamed(
                                     AppRoutes.webview,
-                                    arguments: {'title': 'Terms of Use', 'url': 'https://example.com/terms'},
+                                    arguments: {'title': 'auth_terms_of_use'.tr, 'url': 'https://example.com/terms'},
                                   );
                                 },
-                              text: 'Terms of Use ',
+                              text: 'auth_terms_of_use'.tr,
                               style: TextStyles.regular(14.sp, fontColor: AppColors.primaryColor),
                             ),
                             TextSpan(
-                              text: 'and ',
+                              text: 'auth_and'.tr,
                               style: TextStyles.regular(14.sp, fontColor: AppColors.grey545454),
                             ),
                             TextSpan(
@@ -326,10 +347,10 @@ class SignupScreen extends GetView<SignupController> {
                                 ..onTap = () {
                                   Get.toNamed(
                                     AppRoutes.webview,
-                                    arguments: {'title': 'Privacy Policy', 'url': 'https://example.com/privacy'},
+                                    arguments: {'title': 'auth_privacy_policy'.tr, 'url': 'https://example.com/privacy'},
                                   );
                                 },
-                              text: 'Privacy Policy.',
+                              text: 'auth_privacy_policy'.tr,
                               style: TextStyles.regular(14.sp, fontColor: AppColors.primaryColor),
                             ),
                           ],

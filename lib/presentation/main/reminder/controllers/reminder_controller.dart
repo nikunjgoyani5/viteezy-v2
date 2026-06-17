@@ -175,7 +175,7 @@ class ReminderController extends GetxController {
 
     final note = noteController.text.trim();
     if (note.isEmpty) {
-      AppFunctions.showCustomToast(context, message: 'Please enter a note.!', isSuccess: false);
+      AppFunctions.showCustomToast(context, message: 'reminder_note_required'.tr, isSuccess: false);
       return;
     }
 
@@ -211,7 +211,7 @@ class ReminderController extends GetxController {
             }
           }
           Get.back();
-          AppFunctions.showCustomToast(context, message: 'Reminder updated successfully', isSuccess: true);
+          AppFunctions.showCustomToast(context, message: 'reminder_updated_success'.tr, isSuccess: true);
           resetForm();
           loadReminders(force: true);
         },
@@ -226,7 +226,7 @@ class ReminderController extends GetxController {
 
         onSuccess: (created) {
           Get.back();
-          AppFunctions.showCustomToast(context, message: 'Reminder created successfully', isSuccess: true);
+          AppFunctions.showCustomToast(context, message: 'reminder_created_success'.tr, isSuccess: true);
 
           resetForm();
           loadReminders(force: true);
@@ -252,7 +252,7 @@ class ReminderController extends GetxController {
       reminderId: id,
       onSuccess: () {
         reminders.removeWhere((r) => r.id == id);
-        AppFunctions.showCustomToast(context, message: 'Reminder deleted successfully', isSuccess: true);
+        AppFunctions.showCustomToast(context, message: 'reminder_deleted_success'.tr, isSuccess: true);
       },
       onError: (error) {
         AppFunctions.showCustomToast(context, message: error.message, isSuccess: false);

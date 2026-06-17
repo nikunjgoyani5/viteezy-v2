@@ -36,7 +36,7 @@ class MemberController extends GetxController {
       );
     } catch (e) {
       isLoading.value = false;
-      AppFunctions.showCustomToast(Get.context!, message: 'Error loading memberships', isSuccess: false);
+      AppFunctions.showCustomToast(Get.context!, message: 'member_load_error'.tr, isSuccess: false);
     }
   }
 
@@ -83,7 +83,7 @@ class MemberController extends GetxController {
       );
     } catch (e) {
       isLoadingTransactions.value = false;
-      AppFunctions.showCustomToast(Get.context!, message: 'Error loading transactions', isSuccess: false);
+      AppFunctions.showCustomToast(Get.context!, message: 'member_transactions_load_error'.tr, isSuccess: false);
     }
   }
 
@@ -114,7 +114,7 @@ class MemberController extends GetxController {
         onSuccess: (data) {
           AppFunctions.showCustomToast(
             context,
-            message: data.message ?? 'Membership canceled successfully',
+            message: data.message ?? 'member_cancelled_success'.tr,
             isSuccess: true,
           );
           loadMemberships();
@@ -125,7 +125,7 @@ class MemberController extends GetxController {
       );
     } catch (e) {
       isLoadingTransactions.value = false;
-      AppFunctions.showCustomToast(context, message: 'Error loading transactions', isSuccess: false);
+      AppFunctions.showCustomToast(context, message: 'member_transactions_load_error'.tr, isSuccess: false);
     }
   }
 }

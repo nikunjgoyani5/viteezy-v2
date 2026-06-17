@@ -162,7 +162,7 @@ class SubscriptionController extends GetxController {
           final message = data.message;
           CustomToast.show(
             context: context,
-            message: message != null && message.isNotEmpty ? message : 'Subscription paused successfully',
+            message: message != null && message.isNotEmpty ? message : 'subscription_paused_success'.tr,
           );
         }
         // Refresh subscriptions list
@@ -174,7 +174,7 @@ class SubscriptionController extends GetxController {
         if (context != null) {
           CustomToast.show(
             context: context,
-            message: error.message.isNotEmpty ? error.message : 'Failed to pause subscription. Please try again.',
+            message: error.message.isNotEmpty ? error.message : 'subscription_pause_failed'.tr,
           );
         }
       },
@@ -195,7 +195,7 @@ class SubscriptionController extends GetxController {
         isCancellingSubscription.value = false;
         Get.close(2);
         AppFunctions().showToast(
-          data.message?.isNotEmpty == true ? data.message! : 'Subscription cancelled successfully',
+          data.message?.isNotEmpty == true ? data.message! : 'subscription_cancelled_success'.tr,
           bgColor: AppColors.green,
         );
         getSubscriptions();
@@ -204,7 +204,7 @@ class SubscriptionController extends GetxController {
         isCancellingSubscription.value = false;
         Get.close(2);
         AppFunctions().showToast(
-          error.message.isNotEmpty ? error.message : 'Failed to cancel subscription. Please try again.',
+          error.message.isNotEmpty ? error.message : 'subscription_cancel_failed'.tr,
           bgColor: AppColors.red,
         );
       },
@@ -232,7 +232,7 @@ class SubscriptionController extends GetxController {
         isSubmittingPostponement.value = false;
         onSuccess?.call();
         AppFunctions().showToast(
-          data.message?.isNotEmpty == true ? data.message! : 'Postponement request submitted successfully',
+          data.message?.isNotEmpty == true ? data.message! : 'subscription_postponement_success'.tr,
           bgColor: AppColors.green,
         );
         loadPostponements(subscriptionId);
@@ -349,7 +349,7 @@ class SubscriptionController extends GetxController {
   }) {
     final ids = subscriptionSelectedProductIds.toList();
     if (ids.isEmpty) {
-      onError?.call('Please add at least one product');
+      onError?.call('subscription_add_product_required'.tr);
       return;
     }
     isUpdatingSubscriptionProducts.value = true;
@@ -359,7 +359,7 @@ class SubscriptionController extends GetxController {
       onSuccess: (ApiResponse data) {
         isUpdatingSubscriptionProducts.value = false;
         AppFunctions().showToast(
-          data.message?.isNotEmpty == true ? data.message! : 'Products updated successfully',
+          data.message?.isNotEmpty == true ? data.message! : 'subscription_products_updated'.tr,
           bgColor: AppColors.green,
         );
         onSuccess?.call();
@@ -566,7 +566,7 @@ class SubscriptionController extends GetxController {
         AppFunctions().showToast(
           response.message?.isNotEmpty == true
               ? response.message!
-              : 'Shipping address updated successfully',
+              : 'subscription_address_updated'.tr,
           bgColor: AppColors.green,
         );
       },
@@ -581,7 +581,7 @@ class SubscriptionController extends GetxController {
 
   void deleteAddress(Address address) {
     if (address.id == null || address.id!.isEmpty) {
-      AppFunctions().showToast('Address ID not available', bgColor: AppColors.red);
+      AppFunctions().showToast('subscription_address_id_missing'.tr, bgColor: AppColors.red);
       return;
     }
     _showDeleteAddressDialog(address);
@@ -608,7 +608,7 @@ class SubscriptionController extends GetxController {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Are you sure want to delete address?',
+                  'checkout_delete_address_confirm'.tr,
                   style: TextStyles.regular(16, fontColor: AppColors.black1414141),
                 ),
               ),
@@ -676,7 +676,7 @@ class SubscriptionController extends GetxController {
         isDeletingAddress.value = false;
         Get.back();
         AppFunctions().showToast(
-          response.message?.isNotEmpty == true ? response.message! : 'Address deleted successfully',
+          response.message?.isNotEmpty == true ? response.message! : 'address_deleted_success'.tr,
           bgColor: AppColors.green,
         );
         final index = addresses.indexWhere((a) => a.id == address.id);

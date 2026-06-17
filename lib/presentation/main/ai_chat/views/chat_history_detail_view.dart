@@ -376,12 +376,12 @@ class _ChatHistoryDetailViewState extends State<ChatHistoryDetailView> {
                       if (result['success'] == true) {
                         CustomToast.showItemAddedToCart(
                           context: context,
-                          message: result['message'] as String? ?? 'Item added to cart',
+                          message: result['message'] as String? ?? 'product_detail_item_added'.tr,
                         );
                       } else {
                         CustomToast.show(
                           context: context,
-                          message: result['message'] as String? ?? 'Failed to add item to cart',
+                          message: result['message'] as String? ?? 'home_failed_to_add_cart_short'.tr,
                         );
                       }
                     }

@@ -370,7 +370,7 @@ class CartController extends GetxController {
     item.quantity = newQuantity;
     cartData.refresh();
 
-    DialogService.showProgressDialog(message: 'Updating cart...');
+    DialogService.showProgressDialog(message: 'cart_updating'.tr);
     _onRefreshComplete = () => DialogService.hideProgressDialog();
 
     final variantType = item.variantType ?? 'SACHETS';
@@ -391,7 +391,7 @@ class CartController extends GetxController {
             item.quantity = oldQuantity;
             cartData.refresh();
             AppFunctions().showToast(
-              result['message'] as String? ?? 'Failed to update quantity',
+              result['message'] as String? ?? 'cart_update_quantity_failed'.tr,
               bgColor: AppColors.red,
             );
           }
@@ -549,20 +549,20 @@ class CartController extends GetxController {
               } catch (e, stackTrace) {
                 log('Error updating cart fields from coupon validation: $e');
                 log('Stack trace: $stackTrace');
-                Get.snackbar('Error', 'Failed to apply discount code');
+                Get.snackbar('common_error'.tr, 'cart_discount_apply_failed'.tr);
               }
             } else {
               // Coupon validation failed
-              final message = data.message ?? 'Invalid discount code';
-              Get.snackbar('Error', message);
+              final message = data.message ?? 'cart_discount_invalid'.tr;
+              Get.snackbar('common_error'.tr, message);
             }
           } else {
-            Get.snackbar('Error', 'Invalid discount code');
+            Get.snackbar('common_error'.tr, 'cart_discount_invalid'.tr);
           }
         } catch (e, stackTrace) {
           log('Error processing coupon validation response: $e');
           log('Stack trace: $stackTrace');
-          Get.snackbar('Error', 'Failed to apply discount code');
+          Get.snackbar('common_error'.tr, 'cart_discount_apply_failed'.tr);
         } finally {
           isLoading.value = false;
         }
@@ -621,7 +621,7 @@ class CartController extends GetxController {
         } catch (e, stackTrace) {
           log('Error removing coupon code: $e');
           log('Stack trace: $stackTrace');
-          Get.snackbar('Error', 'Failed to remove coupon code');
+          Get.snackbar('common_error'.tr, 'cart_coupon_remove_failed'.tr);
         } finally {
           isLoading.value = false;
         }

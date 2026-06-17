@@ -210,7 +210,7 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
       controller: controller.searchController,
       autofocus: true,
       decoration: InputDecoration(
-        hintText: 'Search all chats...',
+        hintText: 'chat_search_hint'.tr,
         hintStyle: TextStyles.regular(14.sp, fontColor: AppColors.black1414141),
         border: InputBorder.none,
         isDense: true,
@@ -326,7 +326,7 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         title: Text('chat_delete_session'.tr, style: TextStyles.semiBold(18.sp, fontColor: AppColors.black1414141)),
         content: Text(
-          'Are you sure you want to delete this chat session? This action cannot be undone.',
+          'chat_delete_confirm'.tr,
           style: TextStyles.regular(14.sp, fontColor: AppColors.black1414141),
         ),
         actions: [
@@ -360,7 +360,7 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
                     // Show error message
                     Get.snackbar(
                       'Error',
-                      'Failed to delete session. Please try again.',
+                      'chat_delete_failed'.tr,
                       backgroundColor: Colors.red,
                       colorText: Colors.white,
                     );
@@ -455,7 +455,7 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
             Text('chat_no_history'.tr, style: TextStyles.semiBold(18.sp, fontColor: AppColors.black1414141)),
             SizedBox(height: 8.h),
             Text(
-              'You haven\'t started any conversations yet.',
+              'chat_no_conversations'.tr,
               style: TextStyles.regular(14.sp, fontColor: AppColors.gray949391),
               textAlign: TextAlign.center,
             ),

@@ -227,7 +227,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           ).isNotEmpty;
                       if (!isLoggedIn) {
                         DialogService.showLoginRequiredDialog(
-                          message: 'Please login to access your cart.',
+                          message: 'product_detail_login_cart'.tr,
                           onLogin: () {
                             Get.toNamed(AppRoutes.login);
                           },

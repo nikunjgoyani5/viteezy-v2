@@ -269,7 +269,7 @@ class _AnimatedWishlistItemState extends State<_AnimatedWishlistItem> with Singl
 
                 return result;
               }
-              return {'success': false, 'message': 'Failed to add to cart'};
+              return {'success': false, 'message': 'home_failed_to_add_cart_short'.tr};
             } catch (e) {
               return {'success': false, 'message': 'An error occurred. Please try again.'};
             }

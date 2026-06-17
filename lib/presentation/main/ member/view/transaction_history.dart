@@ -23,7 +23,7 @@ class TransactionHistory extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: CommonAppbar(
-        title: "Transaction History",
+        title: 'member_transaction_history'.tr,
         actionWidget: IconButton(
           icon: const Icon(Icons.more_vert),
           onPressed: () {
@@ -44,7 +44,7 @@ class TransactionHistory extends StatelessWidget {
           return Center(
             child: Padding(
               padding: EdgeInsets.only(top: 50.h),
-              child: Text('No transactions found', style: TextStyles.medium(16, fontColor: AppColors.grey999999)),
+              child: Text('member_no_transactions'.tr, style: TextStyles.medium(16, fontColor: AppColors.grey999999)),
             ),
           );
         }
@@ -108,7 +108,7 @@ class TransactionHistory extends StatelessWidget {
             ),
             Gap(17.h),
             Text(
-              "Transaction ID",
+              'member_transaction_id'.tr,
               style: TextStyles.medium(14, fontWeight: FontWeight.w500, fontColor: AppColors.grey6E6E6E),
             ),
             Gap(4.h),
@@ -191,30 +191,30 @@ class TransactionHistory extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Transaction Details",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                Text(
+                  'member_transaction_details'.tr,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 20),
-                _detailRow("Transaction ID", transaction.transactionId),
+                _detailRow('member_transaction_id'.tr, transaction.transactionId),
                 const SizedBox(height: 12),
-                _detailRow("Amount", "${transaction.currency} ${transaction.amount.toStringAsFixed(2)}"),
+                _detailRow('member_label_amount'.tr, "${transaction.currency} ${transaction.amount.toStringAsFixed(2)}"),
                 const SizedBox(height: 12),
-                _detailRow("Status", transaction.status),
+                _detailRow('member_label_status'.tr, transaction.status),
                 const SizedBox(height: 12),
-                _detailRow("Payment Method", transaction.paymentMethod),
+                _detailRow('member_label_payment_method'.tr, transaction.paymentMethod),
                 const SizedBox(height: 12),
-                _detailRow("Date", transaction.processedAt?.toString().split(' ').first ?? 'N/A'),
+                _detailRow('member_label_date'.tr, transaction.processedAt?.toString().split(' ').first ?? 'orders_na'.tr),
                 if (transaction.subscription != null) ...[
                   const SizedBox(height: 20),
-                  const Text(
-                    "Subscription Details",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                  Text(
+                    'member_subscription_details'.tr,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 12),
-                  _detailRow("Subscription #", transaction.subscription.subscriptionNumber),
+                  _detailRow('member_subscription_number'.tr, transaction.subscription.subscriptionNumber),
                   const SizedBox(height: 12),
-                  _detailRow("Cycle Days", transaction.subscription.cycleDays.toString()),
+                  _detailRow('member_cycle_days'.tr, transaction.subscription.cycleDays.toString()),
                 ],
                 const SizedBox(height: 26),
                 SizedBox(
@@ -223,7 +223,7 @@ class TransactionHistory extends StatelessWidget {
                     height: 52,
                     radius: 40,
                     color: AppColors.blackColor,
-                    text: "Close",
+                    text: 'common_close'.tr,
                     textSize: 16,
                     onPressed: () => Get.back(),
                   ),
@@ -276,7 +276,7 @@ class TransactionHistory extends StatelessWidget {
             children: [
               /// Title
               Text(
-                "Cancel Membership",
+                'member_cancel_title'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
               ),
@@ -285,7 +285,9 @@ class TransactionHistory extends StatelessWidget {
 
               /// Description
               Text(
-                "You’ll keep full access until ${DateFormat('MMM dd, yyyy').format(ctrl.activeMembership.value.expiresAt ?? DateTime.now())}. After that, your membership benefits will end.",
+                'member_cancel_message'.trParams({
+                  'date': DateFormat('MMM dd, yyyy').format(ctrl.activeMembership.value.expiresAt ?? DateTime.now()),
+                }),
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14.sp, color: AppColors.grey, fontWeight: FontWeight.w400),
               ),
@@ -300,7 +302,7 @@ class TransactionHistory extends StatelessWidget {
                       height: 48.h,
                       radius: 40.r,
                       color: AppColors.errorColor,
-                      text: "Confirm Cancel",
+                      text: 'subscription_confirm_cancel'.tr,
                       textSize: 14.sp,
                       onPressed: () async {
                         Get.back(); // close dialog
@@ -316,7 +318,7 @@ class TransactionHistory extends StatelessWidget {
                       height: 48.h,
                       radius: 40.r,
                       color: AppColors.blackColor,
-                      text: "Keep Plan",
+                      text: 'subscription_keep_plan'.tr,
                       textSize: 14.sp,
                       onPressed: () => Get.back(),
                     ),

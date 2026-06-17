@@ -145,8 +145,8 @@ class HelpDetailsScreen extends GetView<HelpDetailsController> {
       if (controller.faqs.isEmpty) {
         return EmptyState(
           icon: Icons.help_outline,
-          title: 'No FAQs Found',
-          message: 'There are no FAQs available for this category.',
+          title: 'help_no_faqs'.tr,
+          message: 'help_no_faqs_message'.tr,
         );
       }
 
@@ -222,7 +222,7 @@ class HelpDetailsScreen extends GetView<HelpDetailsController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'All articles',
+                  'help_all_articles'.tr,
                   style: TextStyles.regular(15.sp, fontColor: AppColors.black1414141),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -258,7 +258,7 @@ class HelpDetailsScreen extends GetView<HelpDetailsController> {
           Gap(20.h),
           Text(faq.question ?? '', style: TextStyles.semiBold(22.sp, fontColor: AppColors.black1414141)),
           Gap(6.h),
-          Text('Updated recently', style: TextStyles.regular(14.sp, fontColor: AppColors.black1414141)),
+          Text('help_updated_recently'.tr, style: TextStyles.regular(14.sp, fontColor: AppColors.black1414141)),
           Gap(24.h),
           Text(faq.answer ?? '', style: TextStyles.regular(14.sp, fontColor: AppColors.black1414141)),
           Gap(40.h),

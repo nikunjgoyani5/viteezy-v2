@@ -81,7 +81,7 @@ class ForgotPasswordController extends GetxController {
           debugPrint('error:::${e.toString()} ');
 
           loading.value = false;
-          AppFunctions().showToast(response.message ?? 'Something went wrong!!', bgColor: AppColors.red);
+          AppFunctions().showToast(response.message ?? 'common_error'.tr, bgColor: AppColors.red);
         }
       },
       onError: (AppException error) {

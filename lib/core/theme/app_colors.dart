@@ -9,6 +9,8 @@ class AppColors {
   static const Color primaryDark = Color(0xFF104F54); // Primary Dark: #104F54
   static const Color primaryLight = Color(0xFFB7F5EC); // Primary Light: #B7F5EC
   static const Color transparent  = Colors.transparent;
+  static const Color black110E21  = Color(0xFF110E21);
+  static const Color black717171  = Color(0xFF717171);
 
   // Secondary (using primary dark as secondary)
   static const Color secondaryColor = Color(0xFF104F54); // #104F54
@@ -43,6 +45,7 @@ class AppColors {
   static const Color whiteFAF6E4 = Color(0xFFFAF6E4);
   static const Color whiteF6F7F8 = Color(0xFFF6F7F8);
   static const Color whiteF0F0F0 = Color(0xFFF0F0F0);
+  static const Color grey5F5E5B = Color(0xFF5F5E5B);
 
   // Warning: #EDDFA5 (using accent)
 
@@ -91,4 +94,15 @@ class AppColors {
   static const Color black141414 = Color(0xFF141414);
   static const Color grey999999 = Color(0xFF999999);
   static const Color grey1 = Color(0xFF141414);
+  static const background = Color(0xffF8F7F3);
+
+  static const primarys = Color(0xff0E0E0E);
+
+  static const greens = Color(0xff4CC28A);
+
+  static const lightGreen = Color(0xffDDF5EA);
+
+  static const card = Colors.white;
+
+  static const border = Color(0xffEAEAEA);
 }

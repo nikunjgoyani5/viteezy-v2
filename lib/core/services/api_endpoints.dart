@@ -18,6 +18,7 @@ class ApiEndpoints {
   static const String userTransactions = 'users/me/transactions';
   static const String familyInfo = 'users/family/info';
   static const String subMembers = 'users/family/sub-members';
+  static String removeFamilyMember(String userId) => 'users/family/remove/$userId';
 
   static const String faqCategory = 'faqs/categories/list';
   static String faqs = 'faqs';
@@ -29,6 +30,8 @@ class ApiEndpoints {
   // Product Endpoints
   static const String productCategories = 'products/categories';
   static const String products = 'products';
+  static String submitProductReview(String productId) =>
+      'reviews/products/$productId';
   static const String toggleLike = 'wishlist/toggle';
   static const String productTestimonials = 'product-testimonials';
   static const String productFilters = 'products/filters';

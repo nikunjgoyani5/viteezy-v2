@@ -29,7 +29,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                 Text('subscription_none'.tr, style: TextStyles.medium(18.sp, fontColor: AppColors.grey898989)),
                 Gap(8.h),
                 Text(
-                  'You don\'t have any active subscriptions',
+                  'subscription_empty_message'.tr,
                   style: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
                 ),
               ],
@@ -92,7 +92,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
         : (cycleDays == 30 ? '30 Days Plan' : cycleDays == 90 ? '90 Days Plan' : '$cycleDays Days Plan');
 
     // Dynamic: status for badge
-    final statusLabel = subscription.status ?? 'Unknown';
+    final statusLabel = subscription.status ?? 'common_unknown'.tr;
 
     // Dynamic: renewal date text
     String renewalDateText = '';
@@ -150,12 +150,12 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
           // Renewal / end date (dynamic)
           if (isActive && renewalDateText.isNotEmpty)
             Text(
-              'Your plan renews on $renewalDateText',
+              'subscription_renews_on'.trParams({'date': renewalDateText}),
               style: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
             )
           else if (isCancelled && subscription.subscriptionEndDate != null)
             Text(
-              'Your plan ends on ${_formatDate(subscription.subscriptionEndDate!)}',
+              'subscription_ends_on'.trParams({'date': _formatDate(subscription.subscriptionEndDate!)}),
               style: TextStyles.regular(14.sp, fontColor: AppColors.grey898989),
             ),
           if (isActive && isOneMonth)
@@ -173,7 +173,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                     Gap(8.w),
                     Expanded(
                       child: Text(
-                        'Cancellation not available for $planName',
+                        'subscription_cancel_not_available'.trParams({'plan': planName}),
                         style: TextStyles.regular(13.sp, fontColor: AppColors.grey545454),
                       ),
                     ),
@@ -195,7 +195,7 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
               ),
               child: Center(
                 child: Text(
-                  'View Details',
+                  'subscription_view_details'.tr,
                   style: TextStyles.medium(16.sp, fontColor: AppColors.white),
                 ),
               ),
@@ -286,8 +286,8 @@ class SubscriptionScreen extends GetView<SubscriptionController> {
                 alignment: AlignmentGeometry.center,
                 child: Text(
                   accessUntilDate.isNotEmpty
-                      ? 'You will keep access until $accessUntilDate.'
-                      : 'Are you sure you want to cancel this subscription?',
+                      ? 'subscription_cancel_access_until'.trParams({'date': accessUntilDate})
+                      : 'subscription_cancel_confirm'.tr,
                   style: TextStyles.regular(16.sp),
                 ),
               ),

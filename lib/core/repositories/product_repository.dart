@@ -123,4 +123,19 @@ class ProductRepository extends BaseRepository {
       onError: onError,
     );
   }
+
+  Future<void> submitProductReview({
+    required String productId,
+    required Map<String, dynamic> body,
+    Function(ApiResponse data)? onSuccess,
+    Function(AppException data)? onError,
+  }) async {
+    await apiClient.request(
+      url: getFullUrl(ApiEndpoints.submitProductReview(productId)),
+      type: RequestType.post,
+      body: body,
+      onSuccess: onSuccess,
+      onError: onError,
+    );
+  }
 }

@@ -23,7 +23,7 @@ class ReminderView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: CommonAppbar(
-        title: 'Reminder',
+        title: 'reminder'.tr,
         centerTitle: true,
         showBackButton: false,
         actionWidget: IconButton(
@@ -58,7 +58,7 @@ class ReminderView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Set your reminder",
+                            'reminder_set_title'.tr,
                             style: TextStyles.medium(
                               20.sp,
                               fontWeight: FontWeight.w800,
@@ -67,7 +67,7 @@ class ReminderView extends StatelessWidget {
                           ),
                           SizedBox(height: 5.h),
                           Text(
-                            "Turn on reminders to stay on track with your medication.",
+                            'reminder_set_subtitle'.tr,
                             style: TextStyles.regular(16.sp, fontWeight: FontWeight.w400, fontColor: AppColors.grey),
                           ),
 
@@ -86,7 +86,7 @@ class ReminderView extends StatelessWidget {
                                 height: MediaQuery.of(context).size.height * 0.4, // adjust as needed
                                 child: Center(
                                   child: Text(
-                                    "No reminders yet\nPull down to refresh or add a new reminder",
+                                    'reminder_empty_state'.tr,
                                     style: TextStyles.regular(14.sp, fontColor: AppColors.grey),
                                     textAlign: TextAlign.center,
                                   ),
@@ -121,7 +121,7 @@ class ReminderView extends StatelessWidget {
             child: Column(
               children: [
                 CommonButton(
-                  text: "+ ADD ANOTHER REMINDER",
+                  text: 'reminder_add_another'.tr,
                   width: double.infinity,
                   height: 52.h,
                   textSize: 15.h,
@@ -136,7 +136,7 @@ class ReminderView extends StatelessWidget {
 
                 Center(
                   child: Text(
-                    "Reminders will be sent at your selected time every day to help maintain your vitamin routine",
+                    'reminder_footer_note'.tr,
                     style: TextStyles.regular(12.sp, fontWeight: FontWeight.w400, fontColor: AppColors.grey),
                     textAlign: TextAlign.center,
                   ),
@@ -220,7 +220,7 @@ class ReminderView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Remind me to",
+                  'reminder_remind_me_to'.tr,
                   style: TextStyles.medium(15.sp, fontColor: AppColors.textPrimary.withValues(alpha: 0.4)),
                 ),
                 SizedBox(height: 1.h),

@@ -59,7 +59,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               _loadingProgress = 0;
               _errorMessage = error.description.isNotEmpty
                   ? error.description
-                  : 'Failed to load page. Please try again.';
+                  : 'webview_load_failed'.tr;
             });
           },
         ),

@@ -113,7 +113,7 @@ class HomeView extends GetView<HomeController> {
             children: [
               Flexible(
                 child: Text(
-                  'Unlock 50% off with Premium Membership!',
+                  'profile_unlock_membership'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyles.medium(
                     14.sp,
@@ -169,6 +169,17 @@ class HomeView extends GetView<HomeController> {
             Get.toNamed(AppRoutes.notification);
           },
         ),
+        IconButton(
+          icon: Assets.icons.icAdd.svg(width: 20.w),
+          onPressed: () {
+            Get.toNamed(AppRoutes.quizFlow);
+          },
+        ),      IconButton(
+          icon: Assets.icons.icAdd.svg(width: 20.w),
+          onPressed: () {
+            Get.toNamed(AppRoutes.recommendation);
+          },
+        ),
       ],
     );
   }
@@ -216,7 +227,7 @@ class HomeView extends GetView<HomeController> {
         children: [
           Flexible(
             child: Text(
-              'Unlock 50% off with Premium Membership!',
+              'profile_unlock_membership'.tr,
               textAlign: TextAlign.center,
               style: TextStyles.medium(14.sp, fontColor: AppColors.textPrimary),
               maxLines: 1,
@@ -389,7 +400,7 @@ class HomeView extends GetView<HomeController> {
                   Expanded(
                     child: Text(
                       heroSection?.title ??
-                          'Start your health journey\nwith a Quiz',
+                          'home_start_quiz'.tr,
                       style: TextStyles.medium(18.sp, fontColor: Colors.white),
                     ),
                   ),
@@ -407,7 +418,7 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                     child: Text(
-                      heroSection?.primaryCta?.first.label ?? 'Take the Quiz',
+                      heroSection?.primaryCta?.first.label ?? 'home_take_quiz'.tr,
                       style: TextStyles.medium(
                         14.sp,
                         fontColor: AppColors.black1414141,
@@ -452,7 +463,7 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             child: _buildSectionCard(
               context: context,
-              title: 'Shop Products',
+              title: 'home_shop_products'.tr,
               child: _AnimatedImageContainer(
                 imagePath: Assets.images.productOne.path,
                 height: 180.h,
@@ -469,7 +480,7 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             child: _buildSectionCard(
               context: context,
-              title: 'Talk to an Expert',
+              title: 'home_talk_to_expert'.tr,
               child: _AnimatedImageContainer(
                 imagePath: Assets.images.imgDoctor.path,
                 height: 180.h,
@@ -493,7 +504,7 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             child: _buildSectionCard(
               context: context,
-              title: primaryCta[1].label ?? 'Shop Products',
+              title: primaryCta[1].label ?? 'home_shop_products'.tr,
               child: _AnimatedImageContainer(
                 imagePath: primaryCta[1].image?.isNotEmpty == true
                     ? primaryCta[1].image!
@@ -514,7 +525,7 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             child: _buildSectionCard(
               context: context,
-              title: primaryCta[2].label ?? 'Talk to an Expert',
+              title: primaryCta[2].label ?? 'home_talk_to_expert'.tr,
               child: _AnimatedImageContainer(
                 imagePath: primaryCta[2].image?.isNotEmpty == true
                     ? primaryCta[2].image!
@@ -534,7 +545,7 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             child: _buildSectionCard(
               context: context,
-              title: 'Talk to an Expert',
+              title: 'home_talk_to_expert'.tr,
               child: _AnimatedImageContainer(
                 imagePath: Assets.images.imgDoctor.path,
                 height: 180.h,
@@ -863,7 +874,7 @@ class _DiscoverSectionWidgetState extends State<_DiscoverSectionWidget> {
                 // Title
                 Expanded(
                   child: Text(
-                    'Discover What Fits Your Health',
+                    'home_discover_health'.tr,
                     textAlign: TextAlign.center,
                     style: TextStyles.bold(18.sp),
                   ),
@@ -995,7 +1006,7 @@ class _DiscoverSectionWidgetState extends State<_DiscoverSectionWidget> {
                   elevation: 0,
                 ),
                 child: Text(
-                  'Show all Products',
+                  'home_show_all_products'.tr,
                   style: TextStyles.semiBold(
                     13.sp,
                     fontColor: AppColors.black1414141,
@@ -1120,7 +1131,7 @@ class _DiscoverSectionWidgetState extends State<_DiscoverSectionWidget> {
                 Gap(8.h),
                 Text(
                   category?.description ??
-                      'Natural spices adding flavor and powerful health benefits together.',
+                      'home_natural_spices'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyles.regular(
                     12.sp,
@@ -1142,7 +1153,7 @@ class _DiscoverSectionWidgetState extends State<_DiscoverSectionWidget> {
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Text(
-                      "Shop Specialties",
+                      'home_shop_specialties'.tr,
                       style: TextStyles.medium(
                         14.sp,
                         fontColor: AppColors.surfaceColor,
@@ -1203,7 +1214,7 @@ class _WhyChooseSectionWidgetState extends State<_WhyChooseSectionWidget> {
             child: Text(
               widget.controller.homeData?.landingPage?.featuresSection?.title ??
                   ""
-                      'Why choose Viteezy?',
+                      'home_why_choose'.tr,
               textAlign: TextAlign.center,
               style: TextStyles.bold(18.sp, fontColor: AppColors.textPrimary),
             ),
@@ -1430,7 +1441,7 @@ class _RealCustomersSectionWidgetState
                 // Title
                 Expanded(
                   child: Text(
-                    'Real Customers, Real Results',
+                    'home_real_customers'.tr,
                     textAlign: TextAlign.center,
                     style: TextStyles.bold(
                       18.sp,
@@ -1615,6 +1626,7 @@ class _RealCustomersSectionWidgetState
       },
       child: Container(
         width: 200.w,
+        height: 375.h,
         margin: EdgeInsets.only(right: 16.w),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
@@ -1663,30 +1675,33 @@ class _RealCustomersSectionWidgetState
                       ),
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Description
-                        Gap(40.h),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            product.shortDescription ?? '',
-                            textAlign: TextAlign.center,
-                            style: TextStyles.regular(
-                              12.sp,
-                              fontColor: AppColors.black1414141,
+                        SizedBox(height: 40.h),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                product.shortDescription ?? '',
+                                textAlign: TextAlign.center,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyles.regular(
+                                  12.sp,
+                                  fontColor: AppColors.black1414141,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                        Gap(15.h),
-
-                        // Pricing
+                        Gap(8.h),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: .center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 '${product.sachetPrices?.thirtyDays?.currency} '
@@ -1708,15 +1723,9 @@ class _RealCustomersSectionWidgetState
                             ],
                           ),
                         ),
-                        SizedBox(width: 8.w),
-                        Spacer(),
-                        // ADD+ Button with Animation
-                        SizedBox(
-                          width: double.infinity,
-                          child: AnimatedReviewAddButton(
-                            key: ValueKey('${review?.id}_${product.isInCart}'),
-                            product: product,
-                          ),
+                        AnimatedReviewAddButton(
+                          key: ValueKey('${review?.id}_${product.isInCart}'),
+                          product: product,
                         ),
                       ],
                     ),
@@ -1772,7 +1781,7 @@ class _FAQSectionWidgetState extends State<_FAQSectionWidget>
   late List<Animation<double>> _fadeAnimations;
   final List<bool> _isExpanded = List.generate(3, (_) => false);
 
-  final List<String> _menuItems = ['FAQ', 'About Us', 'Login'];
+  List<String> get _menuItems => ['home_faq'.tr, 'home_about_us'.tr, 'home_login'.tr];
 
   @override
   void initState() {
@@ -1982,7 +1991,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
     if (widget.product?.isInCart == true) return;
     if (_buttonState != _ReviewButtonState.initial) return;
     if (widget.product?.id == null || widget.product!.id!.isEmpty) {
-      CustomToast.show(context: context, message: 'Product ID is missing');
+      CustomToast.show(context: context, message: 'home_product_id_missing'.tr);
       return;
     }
 
@@ -2058,7 +2067,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
           // Show snackbar with API message
           CustomToast.showItemAddedToCart(
             context: context,
-            message: message.isNotEmpty ? message : 'Item added to cart',
+            message: message.isNotEmpty ? message : 'home_item_added_to_cart'.tr,
             onGoToCart: () {
               Get.find<DashboardController>().changeBottomNav(2);
             },
@@ -2091,7 +2100,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
             context: context,
             message: message.isNotEmpty
                 ? message
-                : 'Failed to add item to cart. Please try again.',
+                : 'home_failed_to_add_cart'.tr,
           );
         }
       } else {
@@ -2105,7 +2114,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
           _buttonState = _ReviewButtonState.initial;
         });
 
-        CustomToast.show(context: context, message: 'Failed to add to cart');
+        CustomToast.show(context: context, message: 'home_failed_to_add_cart_short'.tr);
       }
     } catch (e) {
       // Handle any errors
@@ -2123,7 +2132,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
       // Show error message
       CustomToast.show(
         context: context,
-        message: 'An error occurred. Please try again.',
+        message: 'home_error_occurred'.tr,
       );
     }
   }
@@ -2229,7 +2238,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
                             // "Adding" text on top of gray fill
                             Center(
                               child: Text(
-                                'Adding',
+                                'home_adding'.tr,
                                 style: TextStyles.semiBold(
                                   15.sp,
                                   fontColor: AppColors.surfaceColor,
@@ -2324,7 +2333,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
           Icon(Icons.check, size: 16.sp, color: AppColors.whiteFAF6E4),
           Gap(6.w),
           Text(
-            'Added',
+            'home_added'.tr,
             style: TextStyles.bold(15.sp, fontColor: AppColors.whiteFAF6E4),
           ),
         ],
@@ -2339,7 +2348,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
         );
       case _ReviewButtonState.adding:
         return Text(
-          'Adding',
+          'home_adding'.tr,
           style: TextStyles.bold(15.sp, fontColor: AppColors.secondaryColor),
         );
       case _ReviewButtonState.grayWithCheck:
@@ -2353,7 +2362,7 @@ class _AnimatedReviewAddButtonState extends State<AnimatedReviewAddButton>
             Icon(Icons.check, size: 16.sp, color: AppColors.whiteFAF6E4),
             Gap(6.w),
             Text(
-              'Added',
+              'home_added'.tr,
               style: TextStyles.bold(15.sp, fontColor: AppColors.whiteFAF6E4),
             ),
           ],

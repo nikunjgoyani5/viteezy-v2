@@ -120,7 +120,7 @@ class DashboardView extends GetView<DashboardController> {
               ),
               _buildNavItem(
                 icon: Assets.icons.icReminder,
-                label: 'Reminder'.tr,
+                label: 'reminder'.tr,
                 index: 3,
 
                 isActive: controller.selectedBottomNav.value == 3,

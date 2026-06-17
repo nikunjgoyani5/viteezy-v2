@@ -48,7 +48,7 @@ class OtpVerificationScreen extends GetView<OtpVerificationController> {
                       Gap(10.h),
                       RichText(
                         text: TextSpan(
-                          text: 'Please enter the 6-digit codes sent to ',
+                          text: 'auth_otp_instructions'.tr,
                           style: TextStyles.regular(16.sp, fontColor: AppColors.grey545454),
                           children: [TextSpan(text: controller.email, style: TextStyles.regular(16.sp))],
                         ),
@@ -121,7 +121,7 @@ class OtpVerificationScreen extends GetView<OtpVerificationController> {
                                       return controller.resendLoading.value
                                           ? CommonLoader(color: AppColors.primaryColor, size: 16)
                                           : Text(
-                                              'Resend',
+                                              'auth_resend'.tr,
                                               style: TextStyles.medium(16.sp, fontColor: AppColors.primaryColor),
                                             );
                                     }),
@@ -170,7 +170,7 @@ class OtpVerificationScreen extends GetView<OtpVerificationController> {
                                 await controller.verifyOtp(fromSignUp: isFromSignUp);
                               }
                             } else {
-                              AppFunctions().showToast('Please enter OTP', bgColor: AppColors.red);
+                              AppFunctions().showToast('auth_otp_required'.tr, bgColor: AppColors.red);
                               return;
                             }
                           },

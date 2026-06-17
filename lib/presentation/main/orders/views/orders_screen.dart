@@ -204,7 +204,7 @@ class OrdersScreen extends GetView<OrdersController> {
                             height: 100.h,
                             child: Center(
                               child: Text(
-                                'No products found',
+                                'browse_no_products_found'.tr,
                                 style: TextStyles.regular(
                                   16.sp,
                                   fontColor: AppColors.textSecondary,
@@ -273,7 +273,7 @@ class OrdersScreen extends GetView<OrdersController> {
                                     }
                                     return {
                                       'success': false,
-                                      'message': 'Failed to add to cart',
+                                      'message': 'home_failed_to_add_cart_short'.tr,
                                     };
                                   },
                                   onGoToCart: () {
@@ -293,7 +293,7 @@ class OrdersScreen extends GetView<OrdersController> {
                           textSize: 16.sp,
                           width: 190.w,
                           height: 44.h,
-                          text: 'Continue Shopping',
+                          text: 'orders_continue_shopping'.tr,
                           color: AppColors.primaryColor,
                           onPressed: () {
                             controller.continueShopping();
@@ -321,10 +321,10 @@ class OrdersScreen extends GetView<OrdersController> {
     if (order.status?.toLowerCase() == 'shipped' || order.shippedAt != null) {
       final dateToFormat = order.shippedAt ?? order.createdAt;
       statusText = dateToFormat != null
-          ? 'Arriving ${_formatDate(dateToFormat)}'
+          ? 'orders_arriving'.trParams({'date': _formatDate(dateToFormat)})
           : null;
     } else if (order.createdAt != null) {
-      statusText = 'Order placed: ${_formatDate(order.createdAt!)}';
+      statusText = '${'orders_order_placed'.tr} ${_formatDate(order.createdAt!)}';
     }
 
     return GestureDetector(

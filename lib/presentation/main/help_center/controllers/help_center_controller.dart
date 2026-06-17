@@ -106,7 +106,7 @@ class HelpCenterController extends GetxController {
         } catch (e) {
           isLoading.value = false;
           hasError.value = true;
-          errorMessage = 'Failed to load categories';
+          errorMessage = 'help_load_categories_failed'.tr;
           debugPrint('error:::${e.toString()} ');
           update();
         }

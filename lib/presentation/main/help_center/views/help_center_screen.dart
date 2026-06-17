@@ -33,7 +33,7 @@ class HelpCenterScreen extends GetView<HelpCenterController> {
                       Text('help_center_title'.tr, style: TextStyles.medium(26)),
                       Gap(15.h),
                       CommonSearchTextField(
-                        hintText: 'Search for articles...',
+                        hintText: 'help_search_articles'.tr,
                         controller: controller.searchController,
                         prefixIcon: Assets.icons.icSearch.svg(),
                         onChanged: (val) async {
@@ -56,7 +56,7 @@ class HelpCenterScreen extends GetView<HelpCenterController> {
                           return EmptyState(
                             icon: Icons.help_outline,
                             title: 'help_center_no_categories'.tr,
-                            message: 'There are no FAQ categories available at the moment.',
+                            message: 'help_center_no_categories_message'.tr,
                           );
                         }
 
@@ -110,7 +110,7 @@ class HelpCenterScreen extends GetView<HelpCenterController> {
             Text(category.title, style: TextStyles.medium(16.sp), maxLines: 2, overflow: TextOverflow.ellipsis),
             Gap(5),
             Text(
-              "${category.articleCount} articles",
+              'help_articles_count'.trParams({'count': '${category.articleCount}'}),
               style: TextStyles.regular(14.sp, fontColor: AppColors.grey787878),
             ),
           ],

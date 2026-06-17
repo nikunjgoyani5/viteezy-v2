@@ -24,12 +24,14 @@ import '../../../../core/utils/app_constant.dart';
 class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   bool isSecure = true;
   bool isAgree = false;
   String selectedLanguage = PrefService.getString(PrefKeys.locale);
   String passwordError = '';
   String emailError = '';
+  String nameError = '';
 
   RxBool isLoading = false.obs;
   RxBool isGoogleLoading = false.obs;
@@ -73,19 +75,72 @@ class LoginController extends GetxController {
     update();
   }
 
-  validateEmail() {
-    emailError = ValidationUtils.validateEmail(emailController.text) ?? '';
+  validateName() {
+    if (nameController.text.trim().isEmpty) {
+      nameError = 'validator_name_required'.tr;
+    } else {
+      nameError = '';
+    }
     update();
+  }
+
+  bool get isMemberIdLogin =>
+      ValidationUtils.isMemberIdInput(emailController.text);
+
+  void validateLoginIdentifier() {
+    emailError =
+        ValidationUtils.validateLoginIdentifier(emailController.text) ?? '';
+    update();
+  }
+
+  void onLoginIdentifierChanged(String value) {
+    if (ValidationUtils.isMemberIdInput(value)) {
+      final upper = value.toUpperCase();
+      if (upper != value) {
+        emailController.value = emailController.value.copyWith(
+          text: upper,
+          selection: TextSelection.collapsed(offset: upper.length),
+        );
+      }
+    }
+    validateLoginIdentifier();
+  }
+
+  validateEmail() {
+    validateLoginIdentifier();
   }
 
   onTapLogin() {
     validatePass();
-    validateEmail();
-    if (passwordError.isEmpty && emailError.isEmpty) {
+    validateLoginIdentifier();
+    if (isMemberIdLogin) {
+      validateName();
+    }
+    if (passwordError.isEmpty && emailError.isEmpty && (!isMemberIdLogin || nameError.isEmpty)) {
       return true;
     } else {
       return false;
     }
+  }
+
+  Map<String, dynamic> _buildLoginBody() {
+    final password = passController.text;
+    final identifier = emailController.text.trim();
+
+    if (isMemberIdLogin) {
+      return {
+        'mainMemberId': identifier.toUpperCase(),
+        'firstName': nameController.text.trim(),
+        'password': password,
+        'deviceInfo': 'App',
+      };
+    }
+
+    return {
+      'email': identifier,
+      'password': password,
+      'deviceInfo': 'App',
+    };
   }
 
   void updateLanguage(String language) {
@@ -99,7 +154,7 @@ class LoginController extends GetxController {
   Future<void> login(BuildContext context, {bool isFromAIChat = false, String? sessionID}) async {
     isLoading.value = true;
     await authRepository.login(
-      body: {"email": emailController.text, "password": passController.text, "deviceInfo": "App"},
+      body: _buildLoginBody(),
       onSuccess: (ApiResponse response) async {
         try {
           debugPrint('${response.toString()} ');
@@ -131,7 +186,7 @@ class LoginController extends GetxController {
           isLoading.value = false;
           AppFunctions.showCustomToast(
             context,
-            message: response.message ?? 'Something went wrong!!',
+            message: response.message ?? 'common_error'.tr,
             isSuccess: false,
           );
         }
@@ -147,7 +202,7 @@ class LoginController extends GetxController {
 
   void sessionLinkFromAIChat({required String sessionId, required String userID}) {
     // Show progress dialog
-    DialogService.showProgressDialog(message: 'Redirecting back to chat...');
+    DialogService.showProgressDialog(message: 'auth_redirecting_to_chat'.tr);
 
     authRepository.sessionLink(
       body: {"user_id": userID, "session_id": sessionId},
@@ -176,8 +231,10 @@ class LoginController extends GetxController {
     AppFunctions().closeKeyboard();
     emailController.clear();
     passController.clear();
+    nameController.clear();
     emailError = '';
     passwordError = '';
+    nameError = '';
     update();
   }
 
@@ -197,7 +254,7 @@ class LoginController extends GetxController {
 
       if (googleUser == null) {
         isGoogleLoading.value = false;
-        AppFunctions.showCustomToast(context, message: 'Google login cancelled!', isSuccess: false);
+        AppFunctions.showCustomToast(context, message: 'auth_google_login_cancelled'.tr, isSuccess: false);
         return;
       }
 
@@ -245,7 +302,7 @@ class LoginController extends GetxController {
             isGoogleLoading.value = false;
             AppFunctions.showCustomToast(
               context,
-              message: response.message ?? 'Something went wrong!!',
+              message: response.message ?? 'common_error'.tr,
               isSuccess: false,
             );
           }
@@ -260,7 +317,7 @@ class LoginController extends GetxController {
       );
     } catch (e) {
       isGoogleLoading.value = false;
-      AppFunctions.showCustomToast(context, message: 'Something went wrong!!', isSuccess: false);
+      AppFunctions.showCustomToast(context, message: 'common_error'.tr, isSuccess: false);
       debugPrint("Google Sign-In Error: $e");
     }
   }
@@ -311,7 +368,7 @@ class LoginController extends GetxController {
             isAppleLoading.value = false;
             AppFunctions.showCustomToast(
               context,
-              message: response.message ?? 'Something went wrong!!',
+              message: response.message ?? 'common_error'.tr,
               isSuccess: false,
             );
           }
@@ -325,7 +382,7 @@ class LoginController extends GetxController {
         },
       );
     } catch (e) {
-      AppFunctions.showCustomToast(context, message: 'Something went wrong!!', isSuccess: false);
+      AppFunctions.showCustomToast(context, message: 'common_error'.tr, isSuccess: false);
       log('Apple Login Error :===== $e');
       isAppleLoading.value = false;
     }

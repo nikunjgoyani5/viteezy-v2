@@ -108,10 +108,10 @@ class CustomToast {
   }) {
     show(
       context: context,
-      message: message ?? 'Item added to cart',
+      message: message ?? 'home_item_added_to_cart'.tr,
       icon: Icons.check_circle,
       iconColor: AppColors.successColor,
-      actionText: 'Go To Cart',
+      actionText: 'toast_go_to_cart'.tr,
       onActionPressed:
           onGoToCart ??
           () {

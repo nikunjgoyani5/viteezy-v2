@@ -81,7 +81,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                         child: Column(
                           children: [
                             Text(
-                              'Trusted by 400,000+ people',
+                              'discount_trusted_by'.tr,
                               style: TextStyles.medium(16.sp, fontColor: AppColors.white),
                               textAlign: TextAlign.center,
                             ),
@@ -120,7 +120,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                         SizedBox(height: 12.h),
                         // Description
                         Text(
-                          'Sign up for our newsletter and receive a 30% discount on your first three months.',
+                          'discount_newsletter_full_desc'.tr,
                           textAlign: TextAlign.center,
                           style: TextStyles.regular(
                             14.sp,
@@ -134,10 +134,10 @@ class _DiscountDialogState extends State<DiscountDialog> {
                             // controller.validateEmail();
                           },
                           errorText: _emailError,
-                          hintText: 'Email',
+                          hintText: 'auth_email'.tr,
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          labelText: 'Email',
+                          labelText: 'auth_email'.tr,
                         ),
                         SizedBox(height: 20.h),
                         // Claim Discount Button
@@ -148,9 +148,9 @@ class _DiscountDialogState extends State<DiscountDialog> {
                               final email = _emailController.text.trim();
                               String? error;
                               if (email.isEmpty) {
-                                error = 'Please enter your email';
+                                error = 'discount_enter_email'.tr;
                               } else if (!GetUtils.isEmail(email)) {
-                                error = 'Please enter a valid email';
+                                error = 'validator_email_invalid'.tr;
                               }
                               setState(() {
                                 _emailError = error;
@@ -168,7 +168,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                               elevation: 0,
                             ),
                             child: Text(
-                              'Claim my discount',
+                              'discount_claim_btn'.tr,
                               style: TextStyles.semiBold(16.sp, fontColor: Colors.white),
                             ),
                           ),

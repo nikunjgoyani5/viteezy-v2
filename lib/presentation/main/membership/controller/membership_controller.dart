@@ -118,7 +118,7 @@ class MembershipController extends GetxController {
           onSuccess?.call(webUrl, planId);
         } catch (e) {
           log('Error parsing buy membership response: $e');
-          onError?.call('Failed to process payment URL');
+          onError?.call('membership_payment_url_failed'.tr);
         }
       },
       onError: (error) {
@@ -146,7 +146,7 @@ class MembershipController extends GetxController {
           }
         } catch (e) {
           log('Error parsing track payment response: $e');
-          onError?.call('Failed to parse payment status');
+          onError?.call('membership_payment_status_failed'.tr);
         }
       },
       onError: (error) {

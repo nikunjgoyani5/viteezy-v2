@@ -76,7 +76,7 @@ class DialogService {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text('OK', style: TextStyles.semiBold(16.sp)),
+                    child: Text('common_ok'.tr, style: TextStyles.semiBold(16.sp)),
                   ),
                 ),
               ],
@@ -135,7 +135,7 @@ class DialogService {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: Text('OK', style: TextStyles.semiBold(16.sp)),
+                  child: Text('common_ok'.tr, style: TextStyles.semiBold(16.sp)),
                 ),
               ),
             ],
@@ -149,7 +149,7 @@ class DialogService {
   /// Show error snackbar
   static void showErrorSnackbar(String message) {
     Get.snackbar(
-      'Error',
+      'common_error'.tr,
       message,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.errorColor,
@@ -164,7 +164,7 @@ class DialogService {
   /// Show success snackbar
   static void showSuccessSnackbar(String message) {
     Get.snackbar(
-      'Success',
+      'common_success'.tr,
       message,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.successColor,
@@ -179,7 +179,7 @@ class DialogService {
   /// Show info snackbar
   static void showInfoSnackbar(String message) {
     Get.snackbar(
-      'Info',
+      'common_info'.tr,
       message,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.primaryColor,
@@ -296,7 +296,7 @@ class DialogService {
               
               // Title
               Text(
-                'Login Required',
+                'auth_login_required'.tr,
                 style: TextStyles.semiBold(20.sp),
                 textAlign: TextAlign.center,
               ),
@@ -304,7 +304,7 @@ class DialogService {
               
               // Message
               Text(
-                message ?? 'Please login to access this feature.',
+                message ?? 'auth_login_required_message'.tr,
                 style: TextStyles.regular(14.sp, fontColor: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
@@ -331,7 +331,7 @@ class DialogService {
                           side: BorderSide(color: AppColors.yellowF0EFE4),
                         ),
                       ),
-                      child: Text('Cancel', style: TextStyles.medium(16.sp)),
+                      child: Text('common_cancel'.tr, style: TextStyles.medium(16.sp)),
                     ),
                   ),
                   SizedBox(width: 12.w),
@@ -354,7 +354,7 @@ class DialogService {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text('Login', style: TextStyles.semiBold(16.sp)),
+                      child: Text('auth_login'.tr, style: TextStyles.semiBold(16.sp)),
                     ),
                   ),
                 ],

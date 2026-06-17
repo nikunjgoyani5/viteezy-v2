@@ -38,8 +38,8 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                         errorText: controller.passwordError,
 
                         obscureText: controller.isNewPasswordSecure,
-                        hintText: 'New Password',
-                        labelText: 'New Password',
+                        hintText: 'auth_new_password'.tr,
+                        labelText: 'auth_new_password'.tr,
                         controller: controller.newPasswordController,
                         suffixIcon: InkWell(
                           radius: 60,
@@ -62,8 +62,8 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                         },
                         errorText: controller.cPassError,
                         obscureText: controller.isConfirmPasswordSecure,
-                        hintText: 'Confirm password',
-                        labelText: 'Confirm password',
+                        hintText: 'auth_confirm_password'.tr,
+                        labelText: 'auth_confirm_password'.tr,
                         controller: controller.confirmPasswordController,
                         suffixIcon: InkWell(
                           radius: 60,
@@ -115,7 +115,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                             }
                             else if(controller.newPasswordController.text.isEmpty &&
                                 controller.confirmPasswordController.text.isEmpty ){
-                              AppFunctions().showToast('Please enter password', bgColor: AppColors.red);
+                              AppFunctions().showToast('auth_enter_password'.tr, bgColor: AppColors.red);
                               return;
                             }
                           },
