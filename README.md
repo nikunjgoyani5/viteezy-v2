@@ -1,19 +1,53 @@
-# viteezy
+# Viteezy Web Frontend
 
-A new Flutter project.
+Frontend repository for Viteezy on branch `new_web_frontend`.
 
-## Getting Started
+For full operational details, see `TECHNICAL_HANDOVER.md`.
 
-This project is a starting point for a Flutter application.
+## Repository
 
-A few resources to get you started if this is your first Flutter project:
+- Remote: `https://github.com/nikunjgoyani5/viteezy-v2.git`
+- Branch: `new_web_frontend`
+- Stack: Next.js 16 + React 19 + TypeScript
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Local Setup
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Install dependencies:
 
+```bash
+npm install
+```
 
-dart run build_runner build
+2. Set required environment variables:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=
+NEXT_PUBLIC_API_QUIZ_URL=
+```
+
+3. Start development server:
+
+```bash
+npm run dev
+```
+
+Default local URL: `http://localhost:8080`.
+
+## Build and Run
+
+```bash
+npm run build
+npm run start
+```
+
+## Deployment Notes
+
+- Dockerfile exists for standalone Next.js runtime (`Dockerfile`)
+- Canonical deployment runbooks are maintained in `deployment_docs/` on branch `new_backend` (backend/admin/web docs centralized there by team decision)
+- Build arguments expected by Docker build:
+  - `NEXT_PUBLIC_API_BASE_URL`
+  - `NEXT_PUBLIC_SERVER_URL`
+  - `NEXT_PUBLIC_API_QUIZ_URL`
+- No deployment script (`deploy.sh`) found in this branch
+- No CI/CD workflow files found in this branch
+
