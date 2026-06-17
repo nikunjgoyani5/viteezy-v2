@@ -1,0 +1,3 @@
+jks password : ViteezyApp@2026
+key : key0
+key password : ViteezyApp@2026
