@@ -1,0 +1,318 @@
+import Joi from "joi";
+import mongoose from "mongoose";
+import { withFieldLabels } from "./helpers";
+import { CouponType, COUPON_TYPE_VALUES } from "@/models/enums";
+import { paginationQuerySchema } from "./commonValidation";
+
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+
+const i18nStringSchema = Joi.object({
+  en: Joi.string().trim().min(2).optional(),
+  nl: Joi.string().trim().allow("", null),
+  de: Joi.string().trim().allow("", null),
+  fr: Joi.string().trim().allow("", null),
+  es: Joi.string().trim().allow("", null),
+}).optional();
+
+const objectIdSchema = Joi.string()
+  .pattern(objectIdRegex)
+  .messages({ "string.pattern.base": "Invalid ObjectId format" });
+
+export const createCouponSchema = Joi.object(
+  withFieldLabels({
+    code: Joi.string()
+      .trim()
+      .uppercase()
+      .min(1)
+      .max(50)
+      .required()
+      .label("Coupon code"),
+    name: i18nStringSchema.label("Coupon name"),
+    description: Joi.alternatives()
+      .try(i18nStringSchema, Joi.string().allow("", null))
+      .optional()
+      .label("Coupon description"),
+    type: Joi.string()
+      .valid(...COUPON_TYPE_VALUES)
+      .required()
+      .label("Discount type"),
+    value: Joi.number()
+      .min(0)
+      .required()
+      .label("Discount value")
+      .custom((value, helpers) => {
+        const type = helpers.state.ancestors[0]?.type;
+        if (type === CouponType.PERCENTAGE && (value < 0 || value > 100)) {
+          return helpers.error("number.base", {
+            message: "Percentage value must be between 0 and 100",
+          });
+        }
+        return value;
+      }),
+    minOrderAmount: Joi.number().min(0).optional().label("Minimum cart amount"),
+    maxDiscountAmount: Joi.number()
+      .min(0)
+      .optional()
+      .label("Max discount amount"),
+    usageLimit: Joi.number()
+      .integer()
+      .min(0)
+      .optional()
+      .label("Max global usage"),
+    userUsageLimit: Joi.number()
+      .integer()
+      .min(0)
+      .optional()
+      .label("Max usage per user"),
+    validFrom: Joi.date()
+      .optional()
+      .custom((value, helpers) => {
+        // If validFrom is provided, it must be today or a future date
+        if (value) {
+          const now = new Date();
+          const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const valueDate = new Date(value);
+          const valueStart = new Date(valueDate.getFullYear(), valueDate.getMonth(), valueDate.getDate());
+          if (valueStart < todayStart) {
+            return helpers.error("date.min", {
+              message: "Valid from date must be today or a future date",
+            });
+          }
+        }
+        return value;
+      })
+      .label("Valid from date"),
+    validUntil: Joi.date()
+      .optional()
+      .custom((value, helpers) => {
+        // If validUntil is provided, it must be today or a future date
+        if (value) {
+          const now = new Date();
+          const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const valueDate = new Date(value);
+          const valueStart = new Date(valueDate.getFullYear(), valueDate.getMonth(), valueDate.getDate());
+          if (valueStart < todayStart) {
+            return helpers.error("date.min", {
+              message: "Expiry date must be today or a future date",
+            });
+          }
+        }
+        return value;
+      })
+      .label("Expiry date")
+      .when("validFrom", {
+        is: Joi.exist(),
+        then: Joi.date().greater(Joi.ref("validFrom")),
+        otherwise: Joi.date(),
+      }),
+    isActive: Joi.boolean().optional().label("Is active"),
+    isRecurring: Joi.boolean().optional().label("Is recurring"),
+    oneTimeUse: Joi.boolean().optional().label("One time use"),
+    recurringMonths: Joi.array()
+      .items(Joi.number().integer().min(1).max(12))
+      .optional()
+      .allow(null)
+      .label("Recurring months"),
+    applicableProducts: Joi.array()
+      .items(objectIdSchema)
+      .optional()
+      .label("Applicable products"),
+    applicableCategories: Joi.array()
+      .items(objectIdSchema)
+      .optional()
+      .label("Applicable categories"),
+    excludedProducts: Joi.array()
+      .items(objectIdSchema)
+      .optional()
+      .label("Excluded products"),
+  })
+)
+  .custom((value, helpers) => {
+    // Validate percentage value range
+    if (
+      value.type === CouponType.PERCENTAGE &&
+      (value.value < 0 || value.value > 100)
+    ) {
+      return helpers.error("any.invalid", {
+        message: "Percentage discount value must be between 0 and 100",
+      });
+    }
+    return value;
+  })
+  .label("CreateCouponPayload");
+
+export const updateCouponSchema = Joi.object(
+  withFieldLabels({
+    code: Joi.string()
+      .trim()
+      .uppercase()
+      .min(1)
+      .max(50)
+      .optional()
+      .label("Coupon code"),
+    name: i18nStringSchema.label("Coupon name"),
+    description: Joi.alternatives()
+      .try(i18nStringSchema, Joi.string().allow("", null))
+      .optional()
+      .label("Coupon description"),
+    type: Joi.string()
+      .valid(...COUPON_TYPE_VALUES)
+      .optional()
+      .label("Discount type"),
+    value: Joi.number()
+      .min(0)
+      .optional()
+      .label("Discount value")
+      .custom((value, helpers) => {
+        const type = helpers.state.ancestors[0]?.type;
+        if (type === CouponType.PERCENTAGE && (value < 0 || value > 100)) {
+          return helpers.error("number.base", {
+            message: "Percentage value must be between 0 and 100",
+          });
+        }
+        return value;
+      }),
+    minOrderAmount: Joi.number()
+      .min(0)
+      .optional()
+      .allow(null)
+      .label("Minimum cart amount"),
+    maxDiscountAmount: Joi.number()
+      .min(0)
+      .optional()
+      .allow(null)
+      .label("Max discount amount"),
+    usageLimit: Joi.number()
+      .integer()
+      .min(0)
+      .optional()
+      .allow(null)
+      .label("Max global usage"),
+    userUsageLimit: Joi.number()
+      .integer()
+      .min(0)
+      .optional()
+      .allow(null)
+      .label("Max usage per user"),
+    // When editing, if validFrom or validUntil are provided, they must be future dates
+    validFrom: Joi.date()
+      .optional()
+      .allow(null)
+      .custom((value, helpers) => {
+        // If validFrom is provided during update, it must be today or a future date
+        if (value) {
+          const now = new Date();
+          const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const valueDate = new Date(value);
+          const valueStart = new Date(valueDate.getFullYear(), valueDate.getMonth(), valueDate.getDate());
+          if (valueStart < todayStart) {
+            return helpers.error("date.min", {
+              message: "Valid from date must be today or a future date",
+            });
+          }
+        }
+        return value;
+      })
+      .label("Valid from date"),
+    validUntil: Joi.date()
+      .optional()
+      .allow(null)
+      .custom((value, helpers) => {
+        // If validUntil is provided during update, it must be today or a future date
+        if (value) {
+          const now = new Date();
+          const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const valueDate = new Date(value);
+          const valueStart = new Date(valueDate.getFullYear(), valueDate.getMonth(), valueDate.getDate());
+          if (valueStart < todayStart) {
+            return helpers.error("date.min", {
+              message: "Expiry date must be today or a future date",
+            });
+          }
+        }
+        return value;
+      })
+      .label("Expiry date")
+      .when("validFrom", {
+        is: Joi.exist(),
+        then: Joi.date().greater(Joi.ref("validFrom")),
+        otherwise: Joi.date(),
+      }),
+    isActive: Joi.boolean().optional().label("Is active"),
+    isRecurring: Joi.boolean().optional().label("Is recurring"),
+    oneTimeUse: Joi.boolean().optional().label("One time use"),
+    recurringMonths: Joi.array()
+      .items(Joi.number().integer().min(1).max(12))
+      .optional()
+      .allow(null)
+      .label("Recurring months"),
+    applicableProducts: Joi.array()
+      .items(objectIdSchema)
+      .optional()
+      .label("Applicable products"),
+    applicableCategories: Joi.array()
+      .items(objectIdSchema)
+      .optional()
+      .label("Applicable categories"),
+    excludedProducts: Joi.array()
+      .items(objectIdSchema)
+      .optional()
+      .label("Excluded products"),
+  })
+)
+  .min(1)
+  .label("UpdateCouponPayload");
+
+export const couponIdParamsSchema = Joi.object(
+  withFieldLabels({
+    id: Joi.string().pattern(objectIdRegex).required().messages({
+      "string.pattern.base": "Invalid coupon ID",
+      "any.required": "Coupon ID is required",
+    }),
+  })
+);
+
+export const updateCouponStatusSchema = Joi.object(
+  withFieldLabels({
+    isActive: Joi.boolean().required().label("Is active"),
+  })
+).label("UpdateCouponStatusPayload");
+
+// Query schemas for coupon listing and usage logs
+export const getCouponsQuerySchema = paginationQuerySchema.keys(
+  withFieldLabels({
+    status: Joi.string()
+      .valid("active", "inactive", "all", "expired")
+      .optional()
+      .label("Coupon status"),
+    type: Joi.string()
+      .valid(...COUPON_TYPE_VALUES)
+      .optional()
+      .label("Coupon type"),
+    search: Joi.string().trim().optional().label("Search query"),
+    expiryDateFrom: Joi.date().iso().optional().label("Expiry date from"),
+    expiryDateTo: Joi.date().iso().optional().label("Expiry date to"),
+  })
+).label("GetCouponsQuery");
+
+export const getCouponUsageLogsQuerySchema = paginationQuerySchema.keys(
+  withFieldLabels({
+    status: Joi.string()
+      .valid("active", "inactive", "all", "expired")
+      .optional()
+      .label("Coupon status"),
+    search: Joi.string().trim().optional().label("Search query"),
+    couponId: Joi.string()
+      .custom((value, helpers) => {
+        if (!mongoose.Types.ObjectId.isValid(value)) {
+          return helpers.error("any.invalid");
+        }
+        return value;
+      })
+      .optional()
+      .messages({ "any.invalid": "Invalid coupon ID format" })
+      .label("Coupon ID"),
+    expiryDateFrom: Joi.date().iso().optional().label("Expiry date from"),
+    expiryDateTo: Joi.date().iso().optional().label("Expiry date to"),
+  })
+).label("GetCouponUsageLogsQuery");

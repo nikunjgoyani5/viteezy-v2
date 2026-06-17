@@ -1,0 +1,440 @@
+import { Request, Response } from "express";
+import mongoose from "mongoose";
+import { asyncHandler } from "@/utils";
+import { AppError } from "@/utils/AppError";
+import { Coupons, Orders, Carts, Products } from "@/models/commerce";
+import { CouponType, ProductVariant, PaymentStatus } from "@/models/enums";
+import { cartService } from "@/services/cartService";
+import { DEFAULT_LANGUAGE, SupportedLanguage } from "@/models/common.model";
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    _id: string;
+    id?: string;
+  };
+  userId?: string;
+}
+
+class CouponController {
+  /**
+   * Validate and apply/remove coupon from cart
+   * @route POST /api/coupons/validate
+   * @access Private
+   */
+  validateCoupon = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.user?.id || req.user?._id || req.userId;
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const {
+        cartId,
+        couponCode,
+        language = DEFAULT_LANGUAGE,
+        planDurationDays,
+        isSubscription,
+        variantType: overrideVariantType,
+      } = req.body;
+
+      // Get and validate cart
+      const cart = await Carts.findOne({
+        _id: new mongoose.Types.ObjectId(cartId),
+        userId: new mongoose.Types.ObjectId(userId),
+        isDeleted: false,
+      }).lean();
+
+      if (!cart) {
+        throw new AppError("Cart not found", 404);
+      }
+
+      // If couponCode is null or empty, remove coupon from cart
+      if (!couponCode || couponCode.trim() === "") {
+        // Remove coupon directly from the specified cart
+        const result = await cartService.removeCouponByCartId(
+          userId,
+          cartId
+        );
+        res.apiSuccess(
+          {
+            cart: result.cart,
+            couponCode: null,
+          },
+          result.message
+        );
+        return;
+      }
+
+      // Normalize coupon code
+      const normalizedCouponCode = couponCode.toUpperCase().trim();
+
+      try {
+        // Find coupon by code
+        const coupon = await Coupons.findOne({
+          code: normalizedCouponCode,
+          isDeleted: false,
+        }).lean();
+
+        if (!coupon) {
+          // Remove coupon from cart if invalid
+          await Carts.findByIdAndUpdate(
+            cart._id,
+            {
+              couponCode: null,
+              couponDiscountAmount: 0,
+              updatedAt: new Date(),
+            },
+            { new: true }
+          );
+          throw new AppError("Invalid coupon code", 404);
+        }
+
+        // Check if coupon is active
+        if (!coupon.isActive) {
+          // Remove coupon from cart if not active
+          await Carts.findByIdAndUpdate(
+            cart._id,
+            {
+              couponCode: null,
+              couponDiscountAmount: 0,
+              updatedAt: new Date(),
+            },
+            { new: true }
+          );
+          throw new AppError("This coupon is not active", 400);
+        }
+
+        // Check date validity
+        const now = new Date();
+        if (coupon.validFrom && now < coupon.validFrom) {
+          // Remove coupon from cart if not yet valid
+          await Carts.findByIdAndUpdate(
+            cart._id,
+            {
+              couponCode: null,
+              couponDiscountAmount: 0,
+              updatedAt: new Date(),
+            },
+            { new: true }
+          );
+          throw new AppError("This coupon is not yet valid", 400);
+        }
+
+        if (coupon.validUntil && now > coupon.validUntil) {
+          // Remove coupon from cart if expired
+          await Carts.findByIdAndUpdate(
+            cart._id,
+            {
+              couponCode: null,
+              couponDiscountAmount: 0,
+              updatedAt: new Date(),
+            },
+            { new: true }
+          );
+          throw new AppError("This coupon has expired", 400);
+        }
+
+        // Check global usage limit (0 means infinite, so skip check if 0 or undefined)
+        if (coupon.usageLimit !== null && coupon.usageLimit !== undefined && coupon.usageLimit > 0 && coupon.usageCount >= coupon.usageLimit) {
+          // Remove coupon from cart if usage limit reached
+          await Carts.findByIdAndUpdate(
+            cart._id,
+            {
+              couponCode: null,
+              couponDiscountAmount: 0,
+              updatedAt: new Date(),
+            },
+            { new: true }
+          );
+          throw new AppError("This coupon has reached its usage limit", 400);
+        }
+
+        // Check user usage limit (0 means infinite, so skip check if 0 or undefined)
+        if (coupon.userUsageLimit !== null && coupon.userUsageLimit !== undefined && coupon.userUsageLimit > 0) {
+          const userCouponUsageCount = await Orders.countDocuments({
+            userId: new mongoose.Types.ObjectId(userId),
+            couponCode: coupon.code,
+            paymentStatus: PaymentStatus.COMPLETED,
+            isDeleted: false,
+          });
+
+          if (userCouponUsageCount >= coupon.userUsageLimit) {
+            // Remove coupon from cart if user limit reached
+            await Carts.findByIdAndUpdate(
+              cart._id,
+              {
+                couponCode: null,
+                couponDiscountAmount: 0,
+                updatedAt: new Date(),
+              },
+              { new: true }
+            );
+            throw new AppError(
+              "You have reached the maximum usage limit for this coupon",
+              400
+            );
+          }
+        }
+
+        // Calculate order amount (discounted price total before coupon) - same logic as cartService.applyCoupon
+        // We need to calculate totals without coupon to get the base amount for validation
+        // Use first item's variantType for backward compatibility (method uses item-level variantType anyway)
+        const firstItemVariantType = cart.items && cart.items.length > 0 && cart.items[0].variantType 
+          ? cart.items[0].variantType 
+          : ProductVariant.SACHETS;
+        const totalsWithoutCoupon = await (cartService as any).calculateCartTotalsWithVariantType(
+          cart.items,
+          firstItemVariantType,
+          0 // No coupon discount
+        );
+
+        // Order amount is the discounted price total (subtotal - discount + tax)
+        // This represents the amount before coupon is applied
+        const orderAmount =
+          totalsWithoutCoupon.subtotal -
+          totalsWithoutCoupon.discount +
+          totalsWithoutCoupon.tax;
+
+        // Validate cart order amount with coupon minimum order amount
+        if (coupon.minOrderAmount && orderAmount < coupon.minOrderAmount - 0.001) {
+          // Remove coupon from cart if minimum order amount not met
+          await Carts.findByIdAndUpdate(
+            cart._id,
+            {
+              couponCode: null,
+              couponDiscountAmount: 0,
+              updatedAt: new Date(),
+            },
+            { new: true }
+          );
+          throw new AppError(
+            `Minimum order amount of ${coupon.minOrderAmount} ${
+              totalsWithoutCoupon.currency || cart.currency || "USD"
+            } is required for this coupon`,
+            400
+          );
+        }
+
+        // Additional validation: recurringMonths for subscription sachet plans
+        // This ensures coupon only applies to specific subscription plan durations
+        // Use overrideVariantType or first item's variantType
+        const effectiveVariantType = overrideVariantType || firstItemVariantType;
+        if (
+          isSubscription &&
+          effectiveVariantType === ProductVariant.SACHETS &&
+          Array.isArray((coupon as any).recurringMonths) &&
+          (coupon as any).recurringMonths.length > 0
+        ) {
+          if (!planDurationDays) {
+            // Remove coupon from cart if planDurationDays is not provided
+            await Carts.findByIdAndUpdate(
+              cart._id,
+              {
+                couponCode: null,
+                couponDiscountAmount: 0,
+                updatedAt: new Date(),
+              },
+              { new: true }
+            );
+            throw new AppError(
+              "This coupon is only valid for specific subscription plans",
+              400
+            );
+          }
+
+          const recurringMonths: number[] = (coupon as any).recurringMonths;
+
+          // Map recurring month values to allowed duration days
+          // 1 -> 30 days, 2 -> 60 days, 3 -> 90 days, 6 -> 180 days
+          const monthToDuration: Record<number, number> = {
+            1: 30,
+            2: 60,
+            3: 90,
+            6: 180,
+          };
+
+          const allowedDurations = new Set<number>();
+          for (const month of recurringMonths) {
+            const mappedDuration = monthToDuration[month];
+            if (mappedDuration) {
+              allowedDurations.add(mappedDuration);
+            }
+          }
+
+          if (!allowedDurations.has(planDurationDays)) {
+            // Remove coupon from cart if plan duration is not allowed
+            await Carts.findByIdAndUpdate(
+              cart._id,
+              {
+                couponCode: null,
+                couponDiscountAmount: 0,
+                updatedAt: new Date(),
+              },
+              { new: true }
+            );
+            throw new AppError(
+              "This coupon is not applicable to the selected subscription plan",
+              400
+            );
+          }
+        }
+
+        // Get product IDs and category IDs from cart
+        const productIds = cart.items.map((item: any) =>
+          item.productId.toString()
+        );
+        const products = await Products.find({
+          _id: { $in: cart.items.map((item: any) => item.productId) },
+          isDeleted: false,
+        })
+          .select("categories")
+          .lean();
+
+        const categoryIds = new Set<string>();
+        products.forEach((product: any) => {
+          if (product.categories && Array.isArray(product.categories)) {
+            product.categories.forEach(
+              (catId: mongoose.Types.ObjectId | string) => {
+                categoryIds.add(catId.toString());
+              }
+            );
+          }
+        });
+
+        // Check product applicability
+        if (coupon.applicableProducts && coupon.applicableProducts.length > 0) {
+          const applicableProductIds = coupon.applicableProducts.map(
+            (id: mongoose.Types.ObjectId) => id.toString()
+          );
+          if (
+            !productIds.some((id: string) => applicableProductIds.includes(id))
+          ) {
+            // Remove coupon from cart if not applicable to products
+            await Carts.findByIdAndUpdate(
+              cart._id,
+              {
+                couponCode: null,
+                couponDiscountAmount: 0,
+                updatedAt: new Date(),
+              },
+              { new: true }
+            );
+            throw new AppError(
+              "This coupon is not applicable to the selected products",
+              400
+            );
+          }
+        }
+
+        // Check category applicability
+        if (
+          coupon.applicableCategories &&
+          coupon.applicableCategories.length > 0
+        ) {
+          const applicableCategoryIds = coupon.applicableCategories.map(
+            (id: mongoose.Types.ObjectId) => id.toString()
+          );
+          if (
+            !Array.from(categoryIds).some((id: string) =>
+              applicableCategoryIds.includes(id)
+            )
+          ) {
+            // Remove coupon from cart if not applicable to categories
+            await Carts.findByIdAndUpdate(
+              cart._id,
+              {
+                couponCode: null,
+                couponDiscountAmount: 0,
+                updatedAt: new Date(),
+              },
+              { new: true }
+            );
+            throw new AppError(
+              "This coupon is not applicable to the selected categories",
+              400
+            );
+          }
+        }
+
+        // Check excluded products
+        if (coupon.excludedProducts && coupon.excludedProducts.length > 0) {
+          const excludedProductIds = coupon.excludedProducts.map(
+            (id: mongoose.Types.ObjectId) => id.toString()
+          );
+          if (
+            productIds.some((id: string) => excludedProductIds.includes(id))
+          ) {
+            // Remove coupon from cart if excluded products found
+            await Carts.findByIdAndUpdate(
+              cart._id,
+              {
+                couponCode: null,
+                couponDiscountAmount: 0,
+                updatedAt: new Date(),
+              },
+              { new: true }
+            );
+            throw new AppError(
+              "This coupon cannot be applied to one or more selected products",
+              400
+            );
+          }
+        }
+
+        // Apply coupon to this specific cart using cartId
+        const result = await cartService.applyCouponByCartId(
+          userId,
+          cartId,
+          normalizedCouponCode
+        );
+
+        // Get localized coupon name and description based on language
+        const couponName =
+          (coupon.name as any)?.[language as SupportedLanguage] ||
+          (coupon.name as any)?.en ||
+          coupon.code;
+        const couponDescription =
+          (coupon.description as any)?.[language as SupportedLanguage] ||
+          (coupon.description as any)?.en ||
+          "";
+
+        // Return cart and couponCode
+        res.apiSuccess(
+          {
+            cart: result.cart,
+            couponCode: normalizedCouponCode,
+            coupon: {
+              code: coupon.code,
+              name: couponName,
+              description: couponDescription,
+              type: coupon.type,
+              value: coupon.value,
+              discountAmount: result.couponDiscountAmount,
+            },
+          },
+          result.message
+        );
+      } catch (error: any) {
+        // If any validation fails, ensure cart is updated
+        // Re-fetch cart to get latest state
+        const updatedCart = await Carts.findOne({
+          _id: cart._id,
+          userId: new mongoose.Types.ObjectId(userId),
+          isDeleted: false,
+        }).lean();
+
+        // Return error response with updated cart
+        res.status(error.statusCode || 400).json({
+          success: false,
+          message: error.message || "Coupon validation failed",
+          data: {
+            cart: updatedCart,
+            couponCode: null,
+          },
+        });
+      }
+    }
+  );
+}
+
+export const couponController = new CouponController();

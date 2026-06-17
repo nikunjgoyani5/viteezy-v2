@@ -1,0 +1,783 @@
+/**
+ * @fileoverview Address Controller
+ * @description Controller for address-related operations
+ * @module controllers/addressController
+ */
+
+import { Request, Response } from "express";
+import { asyncHandler } from "@/utils";
+import { AppError } from "@/utils/AppError";
+import { Addresses, IAddress } from "@/models/core/addresses.model";
+import mongoose from "mongoose";
+import {
+  postNLService,
+  PostNLNormalizedAddress,
+} from "@/services/postNLService";
+import { logger } from "@/utils/logger";
+import { Orders, Subscriptions } from "@/models/commerce";
+
+interface AuthenticatedRequest extends Request {
+  user?: any;
+  userId?: string;
+}
+
+// PostNL supported countries: Netherlands, Belgium, Luxembourg
+const POSTNL_SUPPORTED_COUNTRIES = new Set([
+  // Netherlands
+  "nl",
+  "netherlands",
+  "the netherlands",
+  "nederland",
+  // Belgium
+  "be",
+  "belgium",
+  "belgië",
+  "belgique",
+  // Luxembourg
+  "lu",
+  "luxembourg",
+  "lëtzebuerg",
+]);
+
+const shouldValidateWithPostNL = (country?: string): boolean => {
+  if (!country) {
+    return false;
+  }
+
+  return POSTNL_SUPPORTED_COUNTRIES.has(country.trim().toLowerCase());
+};
+
+const buildAddressLineFromNormalized = (
+  normalized?: PostNLNormalizedAddress
+): string | undefined => {
+  if (!normalized?.street || !normalized?.houseNumber) {
+    return undefined;
+  }
+
+  const addition = normalized.houseNumberAddition
+    ? ` ${normalized.houseNumberAddition}`
+    : "";
+
+  return `${normalized.street} ${normalized.houseNumber}${addition}`;
+};
+
+const extractHouseNumberFromLine = (
+  line?: string | number | null
+): string | undefined => {
+  if (line === undefined || line === null || line === "") {
+    return undefined;
+  }
+
+  const match = String(line).match(/(\d{1,5})/);
+  return match?.[1];
+};
+
+const extractAdditionFromLine = (
+  line?: string | number | null
+): string | undefined => {
+  if (line === undefined || line === null || line === "") {
+    return undefined;
+  }
+
+  const match = String(line).match(/\d{1,5}\s*([a-zA-Z]{1,2})$/);
+  return match?.[1];
+};
+
+class AddressController {
+  /**
+   * Add new address for authenticated user
+   * @route POST /api/addresses
+   * @access Private
+   */
+  addAddress = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.userId || req.user?.id;
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const {
+        firstName,
+        lastName,
+        email,
+        streetName,
+        houseNumber,
+        houseNumberAddition,
+        postalCode,
+        address,
+        phone,
+        country,
+        city,
+        isDefault,
+        note,
+      } = req.body;
+
+      // Extract house number and addition if mixed (e.g., "12A")
+      const houseNumberStr =
+        houseNumber !== undefined && houseNumber !== null
+          ? String(houseNumber)
+          : undefined;
+      const extractedHouseNumber =
+        extractHouseNumberFromLine(houseNumberStr) || houseNumberStr;
+      const extractedAddition =
+        extractAdditionFromLine(houseNumberStr) || houseNumberAddition;
+
+      logger.debug("[addAddress] parsed for validation", {
+        country,
+        postalCode,
+        extractedHouseNumber,
+        extractedAddition,
+        usePostNL: shouldValidateWithPostNL(country),
+      });
+
+      // Country-specific validation
+      await this.validateAddressByCountry({
+        country,
+        postalCode,
+        houseNumber: extractedHouseNumber,
+        streetName,
+        city,
+      });
+
+      // Validate with PostNL for NL, BE, and LU addresses (validation only, don't use normalized data)
+      await this.validateDutchAddressOrRespond({
+        country,
+        postcode: postalCode,
+        houseNumber: extractedHouseNumber,
+        houseNumberAddition: extractedAddition,
+        streetName,
+        cityName: city,
+      });
+
+      // Store exactly what's in the request body, not normalized data
+      const houseNumberToSave =
+        houseNumber !== undefined && houseNumber !== null
+          ? String(houseNumber)
+          : undefined;
+
+      // Build full address string from body data
+      const addressParts = [
+        streetName,
+        houseNumberToSave,
+        houseNumberAddition,
+      ].filter(Boolean);
+      const fullAddress = addressParts.join(" ") || address;
+
+      // If setting as default, unset other default addresses for this user
+      if (isDefault === true) {
+        await Addresses.updateMany(
+          {
+            userId: new mongoose.Types.ObjectId(userId),
+            isDeleted: false,
+          },
+          { $set: { isDefault: false } }
+        );
+      }
+
+      // Create new address with exact body data
+      const createdAddress = await Addresses.create({
+        userId: new mongoose.Types.ObjectId(userId),
+        firstName,
+        lastName,
+        streetName,
+        ...(houseNumberToSave && { houseNumber: houseNumberToSave }),
+        ...(houseNumberAddition && { houseNumberAddition }),
+        postalCode,
+        address: address || fullAddress, // Use address from body if provided, otherwise build from parts
+        ...(phone && { phone }),
+        ...(email?.trim() && { email: email.trim() }),
+        country,
+        ...(city && { city }),
+        isDefault: isDefault || false,
+        ...(note && { note }),
+        createdBy: new mongoose.Types.ObjectId(userId),
+        updatedBy: new mongoose.Types.ObjectId(userId),
+      });
+
+      res.apiCreated({ address: createdAddress }, "Address added successfully");
+    }
+  );
+
+  /**
+   * Get all addresses for authenticated user
+   * @route GET /api/addresses
+   * @access Private
+   */
+  getAllAddresses = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.userId || req.user?.id;
+  
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+  
+      const { subscriptionId, subMemberId } = req.query;
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+  
+      let selectedShippingAddressId: string | null = null;
+      let addresses;
+      
+      // Check if subMemberId is provided and user is main member
+      if (subMemberId) {
+        // Validate subMemberId format
+        if (!mongoose.Types.ObjectId.isValid(subMemberId as string)) {
+          throw new AppError("Invalid sub-member ID format", 400);
+        }
+        
+        // Check if current user is main member of this sub-member
+        const { validateFamilyRelation } = await import("@/services/familyValidationService");
+        const validation = await validateFamilyRelation(userId, subMemberId as string);
+        
+        if (!validation.allowed || validation.relationshipType !== 'MAIN_MEMBER') {
+          throw new AppError("You can only view addresses of your sub-members", 403);
+        }
+        
+        // Try to get sub-member's addresses first
+        const subMemberAddresses = await Addresses.find({
+          userId: new mongoose.Types.ObjectId(subMemberId as string),
+          isDeleted: false,
+        })
+          .sort({ isDefault: -1, createdAt: -1 })
+          .lean();
+        
+        if (subMemberAddresses.length > 0) {
+          // Sub-member has addresses, use them
+          addresses = subMemberAddresses;
+        } else {
+          // Sub-member has no addresses, fallback to main member's addresses
+          addresses = await Addresses.find({
+            userId: userObjectId,
+            isDeleted: false,
+          })
+            .sort({ isDefault: -1, createdAt: -1 })
+            .lean();
+        }
+      } else {
+        // No subMemberId provided, get current user's addresses
+        addresses = await Addresses.find({
+          userId: userObjectId,
+          isDeleted: false,
+        })
+          .sort({ isDefault: -1, createdAt: -1 })
+          .lean();
+      }
+  
+      // Handle subscription address selection (only for the actual user whose addresses we're showing)
+      let subscriptionUserId = subMemberId ? new mongoose.Types.ObjectId(subMemberId as string) : userObjectId;
+      
+      const [subscription] = await Promise.all([
+        subscriptionId
+          ? Subscriptions.findOne({
+              _id: subscriptionId,
+              userId: subscriptionUserId,
+            })
+              .select("orderId")
+              .lean()
+          : null,
+      ]);
+  
+      if (subscription?.orderId) {
+        const order = await Orders.findOne({
+          _id: subscription.orderId,
+          userId: subscriptionUserId,
+        })
+          .select("shippingAddressId")
+          .lean();
+  
+        if (order?.shippingAddressId) {
+          selectedShippingAddressId = order.shippingAddressId.toString();
+        }
+      }
+  
+      const addressesWithFlag = addresses.map((address) => ({
+        ...address,
+        isSelectedForSubscription:
+          selectedShippingAddressId &&
+          address._id.toString() === selectedShippingAddressId,
+      }));
+  
+      res.apiSuccess(
+        { addresses: addressesWithFlag },
+        "Addresses retrieved successfully"
+      );
+    }
+  );
+
+  /**
+   * Get address by ID
+   * @route GET /api/addresses/:id
+   * @access Private
+   */
+  getAddressById = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.userId || req.user?.id;
+      const { id } = req.params;
+
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new AppError("Invalid address ID", 400);
+      }
+
+      const address = await Addresses.findOne({
+        _id: new mongoose.Types.ObjectId(id),
+        userId: new mongoose.Types.ObjectId(userId),
+        isDeleted: false,
+      }).lean();
+
+      if (!address) {
+        throw new AppError("Address not found", 404);
+      }
+
+      res.apiSuccess({ address }, "Address retrieved successfully");
+    }
+  );
+
+  /**
+   * Update address by ID
+   * @route PUT /api/addresses/:id
+   * @access Private
+   */
+  updateAddress = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.userId || req.user?.id;
+      const { id } = req.params;
+
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new AppError("Invalid address ID", 400);
+      }
+
+      // Check if address exists and belongs to user
+      const existingAddress = await Addresses.findOne({
+        _id: new mongoose.Types.ObjectId(id),
+        userId: new mongoose.Types.ObjectId(userId),
+        isDeleted: false,
+      });
+
+      if (!existingAddress) {
+        throw new AppError("Address not found", 404);
+      }
+
+      const {
+        firstName,
+        lastName,
+        streetName,
+        houseNumber,
+        houseNumberAddition,
+        postalCode,
+        address,
+        email,
+        phone,
+        country,
+        city,
+        isDefault,
+        note,
+      } = req.body;
+
+      const finalCountry = country || existingAddress.country;
+      const finalPostalCode = postalCode || existingAddress.postalCode;
+      const finalHouseNumber =
+        houseNumber !== undefined && houseNumber !== null
+          ? String(houseNumber)
+          : existingAddress.houseNumber;
+      const finalStreetName = streetName || existingAddress.streetName;
+      const finalCity = city || existingAddress.city;
+
+      const finalHouseNumberToValidate =
+        houseNumber !== undefined && houseNumber !== null
+          ? String(houseNumber)
+          : existingAddress.houseNumber;
+      
+      // Extract house number and addition if mixed
+      const extractedHouseNumber = extractHouseNumberFromLine(finalHouseNumberToValidate) || finalHouseNumberToValidate;
+      const extractedAddition = extractAdditionFromLine(finalHouseNumberToValidate) || (houseNumberAddition ?? existingAddress.houseNumberAddition);
+
+      // Country-specific validation
+      await this.validateAddressByCountry({
+        country: finalCountry,
+        postalCode: finalPostalCode,
+        houseNumber: extractedHouseNumber,
+        streetName: finalStreetName,
+        city: finalCity,
+      });
+
+      // Validate with PostNL for NL, BE, and LU addresses
+      const validationOutcome = await this.validateDutchAddressOrRespond({
+        country: finalCountry,
+        postcode: finalPostalCode,
+        houseNumber: extractedHouseNumber,
+        houseNumberAddition: extractedAddition,
+        streetName: finalStreetName,
+        cityName: finalCity,
+      });
+
+      // Store exactly what's in the request body, not normalized data
+      const houseNumberToSave =
+        houseNumber !== undefined && houseNumber !== null
+          ? String(houseNumber)
+          : finalHouseNumber;
+
+      // Build full address string from body data
+      const addressParts = [
+        finalStreetName,
+        houseNumberToSave,
+        houseNumberAddition !== undefined
+          ? houseNumberAddition
+          : existingAddress.houseNumberAddition,
+      ].filter(Boolean);
+      const fullAddress =
+        address || addressParts.join(" ") || existingAddress.address;
+
+      // If setting as default, unset other default addresses for this user
+      if (isDefault === true && existingAddress.isDefault !== true) {
+        await Addresses.updateMany(
+          {
+            userId: new mongoose.Types.ObjectId(userId),
+            _id: { $ne: new mongoose.Types.ObjectId(id) },
+            isDeleted: false,
+          },
+          { $set: { isDefault: false } }
+        );
+      }
+
+      const updatePayload: Partial<IAddress> = {
+        ...(firstName !== undefined && { firstName }),
+        ...(lastName !== undefined && { lastName }),
+        ...(finalStreetName && { streetName: finalStreetName }),
+        ...(houseNumberToSave && { houseNumber: houseNumberToSave }),
+        ...(houseNumberAddition !== undefined && {
+          houseNumberAddition: houseNumberAddition || null,
+        }),
+        ...(finalPostalCode && { postalCode: finalPostalCode }),
+        ...(fullAddress && { address: fullAddress }),
+        ...(email !== undefined && { email: email?.trim() || null }),
+        ...(phone !== undefined && { phone: phone || null }),
+        ...(finalCountry && { country: finalCountry }),
+        ...(finalCity !== undefined && { city: finalCity || null }),
+        ...(isDefault !== undefined && { isDefault }),
+        ...(note !== undefined && { note: note || null }),
+        updatedBy: new mongoose.Types.ObjectId(userId),
+      };
+
+      // Update address
+      const updatedAddress = await Addresses.findByIdAndUpdate(
+        id,
+        updatePayload,
+        { new: true, runValidators: true }
+      ).lean();
+
+      res.apiSuccess(
+        { address: updatedAddress },
+        "Address updated successfully"
+      );
+    }
+  );
+
+  /**
+   * Delete address by ID (soft delete)
+   * @route DELETE /api/addresses/:id
+   * @access Private
+   */
+  deleteAddress = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.userId || req.user?.id;
+      const { id } = req.params;
+
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new AppError("Invalid address ID", 400);
+      }
+
+      // Check if address exists and belongs to user
+      const address = await Addresses.findOne({
+        _id: new mongoose.Types.ObjectId(id),
+        userId: new mongoose.Types.ObjectId(userId),
+        isDeleted: false,
+      });
+
+      if (!address) {
+        throw new AppError("Address not found", 404);
+      }
+
+      // Soft delete the address
+      await Addresses.findByIdAndUpdate(id, {
+        isDeleted: true,
+        deletedAt: new Date(),
+        updatedBy: new mongoose.Types.ObjectId(userId),
+      });
+
+      res.apiSuccess(null, "Address deleted successfully");
+    }
+  );
+
+  /**
+   * Set address as default
+   * @route PATCH /api/addresses/:id/set-default
+   * @access Private
+   */
+  setDefaultAddress = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.userId || req.user?.id;
+      const { id } = req.params;
+
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new AppError("Invalid address ID", 400);
+      }
+
+      // Check if address exists and belongs to user
+      const address = await Addresses.findOne({
+        _id: new mongoose.Types.ObjectId(id),
+        userId: new mongoose.Types.ObjectId(userId),
+        isDeleted: false,
+      });
+
+      if (!address) {
+        throw new AppError("Address not found", 404);
+      }
+
+      // Unset all other default addresses for this user
+      await Addresses.updateMany(
+        {
+          userId: new mongoose.Types.ObjectId(userId),
+          _id: { $ne: new mongoose.Types.ObjectId(id) },
+          isDeleted: false,
+        },
+        { $set: { isDefault: false } }
+      );
+
+      // Set this address as default
+      const updatedAddress = await Addresses.findByIdAndUpdate(
+        id,
+        {
+          isDefault: true,
+          updatedBy: new mongoose.Types.ObjectId(userId),
+        },
+        { new: true }
+      ).lean();
+
+      res.apiSuccess(
+        { address: updatedAddress },
+        "Default address set successfully"
+      );
+    }
+  );
+
+  /**
+   * Validate address based on country-specific requirements
+   */
+  private async validateAddressByCountry(options: {
+    country?: string;
+    postalCode?: string;
+    houseNumber?: string | number | null;
+    streetName?: string;
+    city?: string | null;
+  }): Promise<void> {
+    const countryCode = options.country?.toUpperCase();
+
+    // Netherlands (NL): postalCode + houseNumber are primary
+    const isNetherlands = 
+      countryCode === "NL" || 
+      countryCode === "NETHERLANDS" || 
+      countryCode === "THE NETHERLANDS" || 
+      countryCode === "NEDERLAND";
+
+    if (isNetherlands) {
+      if (!options.postalCode || !options.houseNumber) {
+        throw new AppError(
+          "For Netherlands addresses, postalCode and houseNumber are required",
+          400
+        );
+      }
+    }
+
+    // Belgium (BE): streetName + city + postalCode + houseNumber are required
+    if (countryCode === "BE" || countryCode === "BELGIUM") {
+      if (
+        !options.streetName ||
+        !options.city ||
+        !options.postalCode ||
+        !options.houseNumber
+      ) {
+        throw new AppError(
+          "For Belgium addresses, streetName, city, postalCode, and houseNumber are required",
+          400
+        );
+      }
+    }
+
+    // Luxembourg (LU): postalCode + houseNumber are required (similar to NL)
+    if (countryCode === "LU" || countryCode === "LUXEMBOURG") {
+      if (!options.postalCode || !options.houseNumber) {
+        throw new AppError(
+          "For Luxembourg addresses, postalCode and houseNumber are required",
+          400
+        );
+      }
+    }
+  }
+
+  private async validateDutchAddressOrRespond(options: {
+    country?: string;
+    postcode?: string;
+    houseNumber?: string | number | null;
+    houseNumberAddition?: string | null;
+    streetName?: string;
+    cityName?: string | null;
+  }): Promise<{ success: true; normalized?: PostNLNormalizedAddress }> {
+    // Skip validation for non-Benelux countries
+    if (!shouldValidateWithPostNL(options.country)) {
+      return { success: true };
+    }
+
+    if (!options.postcode || !options.houseNumber) {
+      return { success: true }; // Validation already done in validateAddressByCountry
+    }
+
+    // Normalize country code for PostNL API (NL, BE, LU)
+    const countryCode = options.country?.trim().toUpperCase();
+    let postNLCountryCode = "NL"; // Default to NL
+
+    if (countryCode === "BE" || countryCode === "BELGIUM") {
+      postNLCountryCode = "BE";
+    } else if (countryCode === "LU" || countryCode === "LUXEMBOURG") {
+      postNLCountryCode = "LU";
+    }
+
+    const postnlPayload = {
+      postcode: String(options.postcode),
+      houseNumber: String(options.houseNumber),
+      houseNumberAddition: options.houseNumberAddition || undefined,
+      streetName: options.streetName,
+      cityName: options.cityName || undefined,
+      countryCode: postNLCountryCode,
+    };
+
+    logger.debug("[validateDutchAddressOrRespond] PostNL request", postnlPayload);
+
+    try {
+      const validation = await postNLService.validateAddress(postnlPayload);
+
+      logger.debug("[validateDutchAddressOrRespond] PostNL validation result", {
+        isValid: validation.isValid,
+        reason: validation.reason,
+        source: validation.source,
+      });
+
+      // PostNL validation is mandatory - reject if invalid
+      if (!validation.isValid) {
+        const specificReason = validation.reason ? `: ${validation.reason}` : "";
+        throw new AppError(
+          `Address validation failed${specificReason}. Please check if postcode '${options.postcode}' and house number '${options.houseNumber}' are correct.`,
+          400
+        );
+      }
+
+      // Validation successful - return normalized address
+      return { success: true, normalized: validation.normalizedAddress };
+    } catch (error: any) {
+      // If it's already an AppError, just re-throw it to preserve the specific message
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      // Extract status code from error
+      const statusCode =
+        error?.statusCode || error?.status || error?.details?.status || error?.response?.status;
+
+      // Check if it's an authentication/configuration error (401, 403)
+      const isAuthError =
+        statusCode === 401 ||
+        statusCode === 403 ||
+        error?.message?.includes("401") ||
+        error?.message?.includes("403") ||
+        error?.message?.includes("Unauthorized") ||
+        error?.message?.includes("Forbidden");
+
+      // Check if PostNL service is not configured
+      const isNotConfigured =
+        error?.message?.includes("not configured") ||
+        error?.message?.includes("Missing POSTNL") ||
+        error?.message?.includes("POSTNL_API_KEY");
+
+      // For auth/config errors, throw error (don't allow address creation)
+      if (isAuthError || isNotConfigured) {
+        logger.error("PostNL validation failed - API not configured", {
+          error: error?.message ?? error,
+          statusCode,
+          reason: isAuthError
+            ? `PostNL API authentication failed (status: ${statusCode}). Please check POSTNL_API_KEY environment variable.`
+            : "PostNL service not configured",
+        });
+        throw new AppError(
+          "Address validation service is not available. Please contact support.",
+          503
+        );
+      }
+
+      // For timeout errors
+      if (
+        error?.message?.includes("timed out") ||
+        error?.name === "AbortError"
+      ) {
+        logger.error("PostNL validation timed out", {
+          error: error?.message ?? error,
+        });
+        throw new AppError(
+          "Address validation timed out. Please try again.",
+          504
+        );
+      }
+
+      // For invalid address (400) or other validation errors
+      if (statusCode === 400 || error?.message?.includes("Address incorrect")) {
+        const postnlBody = error?.details?.body;
+        const bodyError =
+          (typeof postnlBody === "string" && postnlBody) ||
+          postnlBody?.message ||
+          postnlBody?.ErrorMessage ||
+          postnlBody?.error ||
+          (Array.isArray(postnlBody) && postnlBody[0]?.message) ||
+          (Array.isArray(postnlBody) && postnlBody[0]?.ErrorMessage);
+
+        logger.warn("[validateDutchAddressOrRespond] PostNL rejected address (400)", {
+          statusCode,
+          postnlPayload,
+          postnlBody,
+          postnlMessage: error?.message,
+        });
+
+        const errorMessage = bodyError
+          ? `: ${bodyError}`
+          : ". Please verify the address details and try again.";
+
+        throw new AppError(`Invalid address${errorMessage}`, 400);
+      }
+
+      // For any other errors, reject the address
+      logger.error("PostNL validation failed", {
+        error: error?.message ?? error,
+        statusCode,
+      });
+      throw new AppError(
+        "Address validation failed. Please check the address and try again.",
+        400
+      );
+    }
+  }
+}
+
+const addressController = new AddressController();
+export { addressController as AddressController };

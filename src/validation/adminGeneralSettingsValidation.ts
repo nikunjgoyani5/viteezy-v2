@@ -1,0 +1,92 @@
+import Joi from "joi";
+import { withFieldLabels } from "./helpers";
+
+// I18n String Schema - accepts either a plain string (will be converted to I18n by middleware) or an I18n object
+const i18nStringSchema = Joi.alternatives()
+  .try(
+    Joi.string().trim().max(200).allow(null, ""), // Plain string (before auto-translation)
+    Joi.object({
+      // I18n object (after auto-translation middleware)
+      en: Joi.string().trim().max(200).required(),
+      nl: Joi.string().trim().max(200).allow("", null).optional(),
+      de: Joi.string().trim().max(200).allow("", null).optional(),
+      fr: Joi.string().trim().max(200).allow("", null).optional(),
+      es: Joi.string().trim().max(200).allow("", null).optional(),
+    })
+  )
+  .optional()
+  .allow(null);
+
+const socialMediaLinksSchema = Joi.object({
+  facebook: Joi.string().uri().optional().allow(null, "").label("Facebook URL"),
+  instagram: Joi.string()
+    .uri()
+    .optional()
+    .allow(null, "")
+    .label("Instagram URL"),
+  youtube: Joi.string().uri().optional().allow(null, "").label("YouTube URL"),
+  linkedin: Joi.string().uri().optional().allow(null, "").label("LinkedIn URL"),
+  tiktok: Joi.string().uri().optional().allow(null, "").label("TikTok URL"),
+}).label("SocialMediaLinks");
+
+const addressSchema = Joi.string()
+  .trim()
+  .optional()
+  .allow(null, "")
+  .max(500)
+  .label("Address");
+
+const languageSettingSchema = Joi.object({
+  code: Joi.string()
+    .valid("EN", "NL", "DE", "FR", "ES")
+    .required()
+    .label("Language Code"),
+  name: Joi.string()
+    .valid("English", "Dutch", "German", "French", "Spanish")
+    .required()
+    .label("Language Name"),
+  isEnabled: Joi.boolean().required().label("Is Enabled"),
+}).label("LanguageSetting");
+
+export const updateGeneralSettingsSchema = Joi.object(
+  withFieldLabels({
+    // Branding
+    tagline: i18nStringSchema.label("Tagline"),
+
+    // Contact Information
+    supportEmail: Joi.string()
+      .email()
+      .optional()
+      .allow(null, "")
+      .label("Support Email"),
+    supportPhone: Joi.string()
+      .trim()
+      .optional()
+      .allow(null, "")
+      .label("Support Phone"),
+    address: addressSchema.optional().allow(null),
+
+    // Social Media Links
+    socialMedia: socialMediaLinksSchema.optional().allow(null),
+
+    // Language Settings
+    languages: Joi.array()
+      .items(languageSettingSchema)
+      .min(1)
+      .max(5)
+      .optional()
+      .label("Languages"),
+  })
+)
+  .min(1)
+  .label("UpdateGeneralSettingsPayload");
+
+export const updateLanguageStatusSchema = Joi.object(
+  withFieldLabels({
+    code: Joi.string()
+      .valid("EN", "NL", "DE", "FR", "ES")
+      .required()
+      .label("Language Code"),
+    isEnabled: Joi.boolean().required().label("Is Enabled"),
+  })
+).label("UpdateLanguageStatusPayload");

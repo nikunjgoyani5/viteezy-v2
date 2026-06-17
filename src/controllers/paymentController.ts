@@ -1,0 +1,1242 @@
+import { Request, Response } from "express";
+import jwt, { SignOptions } from "jsonwebtoken";
+import { asyncHandler } from "@/utils";
+import { AppError } from "@/utils/AppError";
+import { logger } from "@/utils/logger";
+import { paymentService } from "@/services/payment";
+import { membershipService } from "@/services/membershipService";
+import { PaymentMethod, PaymentStatus } from "@/models/enums";
+import mongoose from "mongoose";
+import { Payments } from "@/models/commerce/payments.model";
+import { AuthSessions } from "@/models/core";
+import { config } from "@/config";
+
+interface AuthenticatedRequest extends Request {
+  user?: any;
+  userId?: string;
+}
+
+interface RawBodyRequest extends Request {
+  rawBody?: Buffer;
+}
+class PaymentController {
+  /** Frontend order flow failure page — error must be URL-encoded. */
+  private redirectOrderConfirmedFailed(res: Response, error: string): void {
+    const base = config.frontend.url.replace(/\/$/, "");
+    res.redirect(
+      `${base}/orderConfirmed/failed?error=${encodeURIComponent(error)}`
+    );
+  }
+
+  /** userId from query, or from access JWT in `token` (Stripe return URLs). */
+  private getUserIdFromPaymentReturnQuery(req: Request): string | undefined {
+    const raw = (req.query.userId || req.query.user_id) as string | undefined;
+    if (raw && mongoose.Types.ObjectId.isValid(raw)) {
+      return raw;
+    }
+    const token = req.query.token as string | undefined;
+    if (!token || typeof token !== "string") {
+      return undefined;
+    }
+    try {
+      const decoded = jwt.verify(token, config.jwt.secret) as {
+        userId?: string;
+        type?: string;
+      };
+      if (
+        decoded?.type === "access" &&
+        decoded.userId &&
+        mongoose.Types.ObjectId.isValid(decoded.userId)
+      ) {
+        return decoded.userId;
+      }
+    } catch {
+      return undefined;
+    }
+    return undefined;
+  }
+
+  /** Real Stripe Checkout session ids only (not the literal placeholder). */
+  private normalizeStripeSessionId(
+    raw: string | undefined
+  ): string | undefined {
+    if (!raw || typeof raw !== "string") {
+      return undefined;
+    }
+    const t = decodeURIComponent(raw).trim();
+    if (!t || t === "{CHECKOUT_SESSION_ID}") {
+      return undefined;
+    }
+    if (t.includes("{CHECKOUT_SESSION_ID}") || t.includes("CHECKOUT_SESSION_ID")) {
+      return undefined;
+    }
+    if (!t.startsWith("cs_")) {
+      return undefined;
+    }
+    return t;
+  }
+
+  /**
+   * Get available payment methods
+   */
+  getAvailableMethods = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const countryCode =
+        (req.query.country as string) ||
+        (req.query.countryCode as string) ||
+        (req.query.shippingCountry as string);
+      const methods = paymentService.getAvailablePaymentMethods(
+        countryCode?.toString()
+      );
+
+      res.apiSuccess(
+        {
+          methods,
+          country: countryCode ? countryCode.toUpperCase() : undefined,
+        },
+        "Payment methods retrieved successfully"
+      );
+    }
+  );
+
+  /**
+   * Create payment (aligned with createPaymentIntent for consistency)
+   */
+  createPayment = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.user?.id || req.userId;
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const {
+        orderId,
+        paymentMethod,
+        amount,
+        description,
+        metadata,
+        returnUrl,
+        cancelUrl,
+      } = req.body;
+
+      const result = await paymentService.createPayment({
+        orderId,
+        userId,
+        paymentMethod: paymentMethod as PaymentMethod,
+        amount,
+        description,
+        metadata,
+        returnUrl,
+        cancelUrl,
+      });
+
+      res.apiCreated(
+        {
+          payment: {
+            _id: result.payment._id,
+            orderId: result.payment.orderId,
+            status: result.payment.status,
+            amount: result.payment.amount,
+            paymentMethod: result.payment.paymentMethod,
+            gatewayTransactionId: result.payment.gatewayTransactionId,
+          },
+          order: {
+            _id: result.order._id,
+            orderNumber: result.order.orderNumber,
+            status: result.order.status,
+            paymentStatus: result.order.paymentStatus,
+            total: {
+              amount: result.order.pricing?.overall?.grandTotal || 0,
+              currency: result.order.pricing?.overall?.currency || "USD",
+            },
+          },
+          gateway: {
+            redirectUrl: result.result.redirectUrl,
+            clientSecret: result.result.clientSecret,
+            gatewayTransactionId: result.result.gatewayTransactionId,
+            sessionId: result.result.sessionId,
+          },
+        },
+        "Payment created successfully"
+      );
+    }
+  );
+
+  /**
+   * Verify payment
+   */
+  verifyPayment = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { paymentId, gatewayTransactionId } = req.body;
+
+      const payment = await paymentService.verifyPayment(
+        paymentId,
+        gatewayTransactionId
+      );
+
+      res.apiSuccess(
+        {
+          payment: {
+            _id: payment._id,
+            orderId: payment.orderId,
+            status: payment.status,
+            amount: payment.amount,
+            paymentMethod: payment.paymentMethod,
+          },
+        },
+        "Payment verified successfully"
+      );
+    }
+  );
+
+  /**
+   * Create payment intent for product checkout (order-based)
+   */
+  createPaymentIntent = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.user?.id || req.userId;
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const { orderId, paymentMethod, returnUrl, cancelUrl } = req.body;
+
+      const result = await paymentService.createPaymentIntentForOrder({
+        orderId,
+        userId,
+        paymentMethod: paymentMethod as PaymentMethod,
+        returnUrl,
+        cancelUrl,
+      });
+
+      res.apiCreated(
+        {
+          payment: {
+            _id: result.payment._id,
+            orderId: result.payment.orderId,
+            status: result.payment.status,
+            amount: result.payment.amount,
+            paymentMethod: result.payment.paymentMethod,
+            gatewayTransactionId: result.payment.gatewayTransactionId,
+          },
+          order: {
+            _id: result.order._id,
+            orderNumber: result.order.orderNumber,
+            status: result.order.status,
+            paymentStatus: result.order.paymentStatus,
+            total: {
+              amount: result.order.pricing?.overall?.grandTotal || 0,
+              currency: result.order.pricing?.overall?.currency || "USD",
+            },
+          },
+          gateway: {
+            redirectUrl: result.result.redirectUrl,
+            clientSecret: result.result.clientSecret,
+            gatewayTransactionId: result.result.gatewayTransactionId,
+            sessionId: result.result.sessionId,
+          },
+        },
+        "Payment intent created successfully"
+      );
+    }
+  );
+
+  /**
+   * Verify payment and update order status (Frontend Callback)
+   */
+  verifyPaymentCallback = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.user?.id || req.userId;
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const { paymentId, gatewayTransactionId } = req.body;
+
+      const result = await paymentService.verifyPaymentAndUpdateOrder({
+        paymentId,
+        gatewayTransactionId,
+      });
+
+      // Verify payment belongs to user
+      if (result.payment.userId.toString() !== userId) {
+        throw new AppError("Payment does not belong to user", 403);
+      }
+
+      // Verify order belongs to user (user can access orders where they are owner, placer, or recipient)
+      if (
+        result.order.userId.toString() !== userId &&
+        (!result.order.orderedBy || result.order.orderedBy.toString() !== userId) &&
+        (!result.order.orderedFor || result.order.orderedFor.toString() !== userId)
+      ) {
+        throw new AppError("Order does not belong to user", 403);
+      }
+
+      res.apiSuccess(
+        {
+          payment: {
+            _id: result.payment._id,
+            orderId: result.payment.orderId,
+            status: result.payment.status,
+            amount: result.payment.amount,
+            paymentMethod: result.payment.paymentMethod,
+            gatewayTransactionId: result.payment.gatewayTransactionId,
+          },
+          order: {
+            _id: result.order._id,
+            orderNumber: result.order.orderNumber,
+            status: result.order.status,
+            paymentStatus: result.order.paymentStatus,
+            total: {
+              amount: result.order.pricing?.overall?.grandTotal || 0,
+              currency: result.order.pricing?.overall?.currency || "USD",
+            },
+          },
+          updated: result.updated,
+        },
+        result.updated
+          ? "Payment verified and order updated successfully"
+          : "Payment verified successfully"
+      );
+    }
+  );
+
+  /**
+   * Process Stripe webhook
+   */
+  processStripeWebhook = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      console.log("🔵 [WEBHOOK] ========== Stripe Webhook Received ==========");
+      console.log("🔵 [WEBHOOK] Timestamp:", new Date().toISOString());
+
+      try {
+        const signature = req.headers["stripe-signature"] as string;
+        const payload = req.body;
+        const rawBody = (req as RawBodyRequest).rawBody;
+
+        console.log("🔵 [WEBHOOK] Step 1: Request received");
+        console.log("🔵 [WEBHOOK] - Has Signature:", !!signature);
+        console.log("🔵 [WEBHOOK] - Has Raw Body:", !!rawBody);
+        console.log("🔵 [WEBHOOK] - Has Payload:", !!payload);
+        console.log("🔵 [WEBHOOK] - Event Type:", payload?.type);
+        console.log("🔵 [WEBHOOK] - Event ID:", payload?.id);
+
+        logger.info("Stripe webhook received", {
+          hasSignature: !!signature,
+          hasRawBody: !!rawBody,
+          hasPayload: !!payload,
+          eventType: payload?.type,
+          eventId: payload?.id,
+        });
+
+        if (!rawBody) {
+          console.error("❌ [WEBHOOK] ERROR: Raw body is missing!");
+          logger.error("Stripe webhook: rawBody is missing");
+          throw new AppError(
+            "Raw body is required for webhook verification",
+            400
+          );
+        }
+
+        console.log(
+          "🔵 [WEBHOOK] Step 2: Calling paymentService.processWebhook"
+        );
+        const payment = await paymentService.processWebhook(
+          PaymentMethod.STRIPE,
+          payload,
+          signature,
+          rawBody
+        );
+
+        console.log("✅ [WEBHOOK] Step 3: Webhook processed successfully");
+        console.log("✅ [WEBHOOK] - Payment ID:", payment._id);
+        console.log("✅ [WEBHOOK] - Payment Status:", payment.status);
+        console.log("✅ [WEBHOOK] - Order ID:", payment.orderId);
+        console.log(
+          "✅ [WEBHOOK] ============================================"
+        );
+
+        logger.info("Stripe webhook processed successfully", {
+          paymentId: payment._id,
+          status: payment.status,
+          orderId: payment.orderId,
+        });
+
+        // Use standard Express response (webhook routes are before responseMiddleware)
+        res.status(200).json({
+          success: true,
+          message: "Webhook processed successfully",
+          data: {
+            payment: {
+              _id: payment._id,
+              status: payment.status,
+            },
+          },
+        });
+      } catch (error) {
+        console.error("❌ [WEBHOOK] ========== ERROR ==========");
+        console.error(
+          "❌ [WEBHOOK] Error Message:",
+          error instanceof Error ? error.message : "Unknown error"
+        );
+        console.error(
+          "❌ [WEBHOOK] Error Stack:",
+          error instanceof Error ? error.stack : undefined
+        );
+        console.error("❌ [WEBHOOK] ==========================");
+
+        logger.error("Stripe webhook processing error:", {
+          error: error instanceof Error ? error.message : "Unknown error",
+          stack: error instanceof Error ? error.stack : undefined,
+          signature: req.headers["stripe-signature"] ? "present" : "missing",
+          hasRawBody: !!(req as RawBodyRequest).rawBody,
+        });
+        // Still return 200 to prevent webhook retries
+        res.status(200).json({
+          success: false,
+          message: "Webhook processing failed",
+          errorType: "Webhook Error",
+          error: error instanceof Error ? error.message : "Unknown error",
+          data: null,
+        });
+      }
+    }
+  );
+
+  /**
+   * Process Mollie webhook
+   */
+  processMollieWebhook = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      console.log("🔵 [WEBHOOK] ========== Mollie Webhook Received ==========");
+      console.log("🔵 [WEBHOOK] Timestamp:", new Date().toISOString());
+
+      try {
+        const payload = req.body || {};
+        // Mollie sends payment ID in query parameters as 'id'
+        const queryPaymentId = (req.query.id || req.query.payment_id) as string;
+
+        // Also check URL path for payment ID (Mollie sometimes includes it in the path)
+        const urlPath = req.url || req.originalUrl || "";
+        const urlPaymentIdMatch = urlPath.match(/[\/](tr_[a-zA-Z0-9]+)/);
+        const urlPaymentId = urlPaymentIdMatch ? urlPaymentIdMatch[1] : null;
+
+        console.log("🔵 [WEBHOOK] Step 1: Request received");
+        console.log("🔵 [WEBHOOK] - Method:", req.method);
+        console.log("🔵 [WEBHOOK] - URL:", req.url);
+        console.log("🔵 [WEBHOOK] - Original URL:", req.originalUrl);
+        console.log("🔵 [WEBHOOK] - Query params:", req.query);
+        console.log(
+          "🔵 [WEBHOOK] - Has Payload:",
+          !!payload && Object.keys(payload).length > 0
+        );
+        console.log("🔵 [WEBHOOK] - Query Payment ID:", queryPaymentId);
+        console.log("🔵 [WEBHOOK] - URL Payment ID:", urlPaymentId);
+        console.log(
+          "🔵 [WEBHOOK] - Payment ID from payload:",
+          payload?.id || payload?.paymentId
+        );
+
+        // Check if this is a test webhook (Mollie sends test webhooks as arrays)
+        if (
+          Array.isArray(payload) &&
+          payload.length > 0 &&
+          typeof payload[0] === "string"
+        ) {
+          console.log("ℹ️ [WEBHOOK] - Test webhook detected, acknowledging");
+          logger.info("Mollie test webhook received and acknowledged", {
+            testMessage: payload[0],
+          });
+          res.status(200).json({
+            success: true,
+            message: "Test webhook acknowledged",
+            data: { test: true },
+          });
+          return;
+        }
+
+        // Build final payload with payment ID from any available source
+        const finalPayload = { ...payload };
+
+        // Priority: payload.id > query.id > url path > payload.paymentId
+        if (!finalPayload.id) {
+          if (queryPaymentId) {
+            finalPayload.id = queryPaymentId;
+            console.log(
+              "ℹ️ [WEBHOOK] - Using payment ID from query parameter:",
+              queryPaymentId
+            );
+          } else if (urlPaymentId) {
+            finalPayload.id = urlPaymentId;
+            console.log(
+              "ℹ️ [WEBHOOK] - Using payment ID from URL path:",
+              urlPaymentId
+            );
+          } else if (payload.paymentId) {
+            finalPayload.id = payload.paymentId;
+            console.log(
+              "ℹ️ [WEBHOOK] - Using payment ID from payload.paymentId:",
+              payload.paymentId
+            );
+          }
+        }
+
+        const extractedPaymentId =
+          finalPayload.id ||
+          finalPayload.paymentId ||
+          queryPaymentId ||
+          urlPaymentId;
+
+        if (!extractedPaymentId) {
+          console.error("❌ [WEBHOOK] - No payment ID found in webhook");
+          console.error(
+            "❌ [WEBHOOK] - Payload:",
+            JSON.stringify(payload, null, 2)
+          );
+          console.error("❌ [WEBHOOK] - Query:", req.query);
+          // Still acknowledge to prevent retries
+          res.status(200).json({
+            success: true,
+            message: "Webhook received but no payment ID found",
+            data: { acknowledged: true },
+          });
+          return;
+        }
+
+        logger.info("Mollie webhook received", {
+          hasPayload: !!payload,
+          paymentId:
+            finalPayload?.id || finalPayload?.paymentId || queryPaymentId,
+        });
+
+        console.log(
+          "🔵 [WEBHOOK] Step 2: Calling paymentService.processWebhook"
+        );
+        const payment = await paymentService.processWebhook(
+          PaymentMethod.MOLLIE,
+          finalPayload
+        );
+
+        // Check if this was a test webhook or unhandled event
+        if (payment && payment._id === "unhandled_event") {
+          console.log(
+            "ℹ️ [WEBHOOK] - Unhandled event or test webhook acknowledged"
+          );
+          res.status(200).json({
+            success: true,
+            message: "Webhook acknowledged (test or unhandled event)",
+            data: { acknowledged: true },
+          });
+          return;
+        }
+
+        console.log("✅ [WEBHOOK] Step 3: Webhook processed successfully");
+        console.log("✅ [WEBHOOK] - Payment ID:", payment._id);
+        console.log("✅ [WEBHOOK] - Payment Status:", payment.status);
+        console.log("✅ [WEBHOOK] - Order ID:", payment.orderId);
+        console.log(
+          "✅ [WEBHOOK] ============================================"
+        );
+
+        logger.info("Mollie webhook processed successfully", {
+          paymentId: payment._id,
+          status: payment.status,
+          orderId: payment.orderId,
+        });
+
+        // Use standard Express response (webhook routes are before responseMiddleware)
+        res.status(200).json({
+          success: true,
+          message: "Webhook processed successfully",
+          data: {
+            payment: {
+              _id: payment._id,
+              status: payment.status,
+            },
+          },
+        });
+      } catch (error) {
+        console.error("❌ [WEBHOOK] ========== ERROR ==========");
+        console.error(
+          "❌ [WEBHOOK] Error Message:",
+          error instanceof Error ? error.message : "Unknown error"
+        );
+        console.error(
+          "❌ [WEBHOOK] Error Stack:",
+          error instanceof Error ? error.stack : undefined
+        );
+        console.error("❌ [WEBHOOK] ==========================");
+
+        logger.error("Mollie webhook processing error:", {
+          error: error instanceof Error ? error.message : "Unknown error",
+          stack: error instanceof Error ? error.stack : undefined,
+        });
+        // Still return 200 to prevent webhook retries
+        res.status(200).json({
+          success: false,
+          message: "Webhook processing failed",
+          errorType: "Webhook Error",
+          error: error instanceof Error ? error.message : "Unknown error",
+          data: null,
+        });
+      }
+    }
+  );
+
+  /**
+   * Handle payment return/callback from payment gateway
+   * This is called when user is redirected back from payment gateway
+   */
+  handlePaymentReturn = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      try {
+        console.log(
+          "🟢 [PAYMENT RETURN] ========== Payment Return Handler =========="
+        );
+        console.log("🟢 [PAYMENT RETURN] Query params:", req.query);
+        console.log("🟢 [PAYMENT RETURN] URL:", req.url);
+
+        const gatewayParam = (
+          (req.query.gateway as string) || ""
+        ).toLowerCase();
+
+        const molliePaymentId =
+          (req.query.id as string) ||
+          (req.query.payment_id as string) ||
+          (req.query.paymentId as string);
+
+        const stripeSessionId = this.normalizeStripeSessionId(
+          req.query.session_id as string
+        );
+
+        const orderId = (req.query.orderId || req.query.order_id) as string;
+        const userIdFromQuery = (req.query.userId ||
+          req.query.user_id) as string;
+        const resolvedUserId =
+          this.getUserIdFromPaymentReturnQuery(req) || userIdFromQuery;
+        const membershipIdParam = (req.query.membershipId ||
+          req.query.membership_id) as string;
+
+        console.log(
+          "🟢 [PAYMENT RETURN] - Gateway:",
+          gatewayParam || "(unset)"
+        );
+        console.log(
+          "🟢 [PAYMENT RETURN] - Mollie / generic id param:",
+          molliePaymentId
+        );
+        console.log(
+          "🟢 [PAYMENT RETURN] - Stripe session_id (resolved):",
+          stripeSessionId || "(none or placeholder)"
+        );
+        console.log("🟢 [PAYMENT RETURN] - Order ID:", orderId);
+        console.log(
+          "🟢 [PAYMENT RETURN] - User ID (query or JWT):",
+          resolvedUserId
+        );
+        console.log("🟢 [PAYMENT RETURN] - Membership ID:", membershipIdParam);
+
+        const paymentMethodsForFallback =
+          gatewayParam === "stripe"
+            ? [PaymentMethod.STRIPE]
+            : gatewayParam === "mollie"
+              ? [PaymentMethod.MOLLIE]
+              : [PaymentMethod.STRIPE, PaymentMethod.MOLLIE];
+
+        let payment;
+
+        if (stripeSessionId) {
+          try {
+            console.log(
+              "🟢 [PAYMENT RETURN] - Looking up payment by Stripe session:",
+              stripeSessionId
+            );
+            payment = await paymentService.getPaymentByGatewayTransactionId(
+              stripeSessionId,
+              PaymentMethod.STRIPE
+            );
+            console.log("✅ [PAYMENT RETURN] - Payment found:", payment._id);
+          } catch (error) {
+            console.error(
+              "❌ [PAYMENT RETURN] - Stripe session lookup failed:",
+              error
+            );
+            logger.warn(
+              `Payment not found for Stripe session: ${stripeSessionId}`,
+              error
+            );
+          }
+        }
+
+        if (!payment && molliePaymentId) {
+          try {
+            console.log(
+              "🟢 [PAYMENT RETURN] - Looking up payment with Mollie gateway ID:",
+              molliePaymentId
+            );
+            payment = await paymentService.getPaymentByGatewayTransactionId(
+              molliePaymentId,
+              PaymentMethod.MOLLIE
+            );
+            console.log("✅ [PAYMENT RETURN] - Payment found:", payment._id);
+          } catch (error) {
+            console.error(
+              "❌ [PAYMENT RETURN] - Mollie payment lookup failed:",
+              error
+            );
+            logger.warn(
+              `Payment not found for gateway transaction: ${molliePaymentId}`,
+              error
+            );
+            this.redirectOrderConfirmedFailed(
+              res,
+              `Payment not found for ID: ${molliePaymentId}`
+            );
+            return;
+          }
+        }
+
+        const orderObjectId =
+          orderId && mongoose.Types.ObjectId.isValid(orderId)
+            ? new mongoose.Types.ObjectId(orderId)
+            : null;
+        const userObjectId =
+          resolvedUserId && mongoose.Types.ObjectId.isValid(resolvedUserId)
+            ? new mongoose.Types.ObjectId(resolvedUserId)
+            : null;
+
+        if (!payment && orderObjectId && userObjectId) {
+          console.warn(
+            "⚠️ [PAYMENT RETURN] - Finding payment by orderId + userId (Stripe/Mollie)"
+          );
+          for (const pm of paymentMethodsForFallback) {
+            try {
+              const foundPayment = await Payments.findOne({
+                orderId: orderObjectId,
+                userId: userObjectId,
+                paymentMethod: pm,
+              })
+                .sort({ createdAt: -1 })
+                .exec();
+              if (foundPayment) {
+                console.log(
+                  "✅ [PAYMENT RETURN] - Payment found by orderId/userId:",
+                  foundPayment._id,
+                  pm
+                );
+                payment = foundPayment;
+                break;
+              }
+            } catch (error) {
+              console.error(
+                "❌ [PAYMENT RETURN] - Error finding payment by orderId/userId:",
+                error
+              );
+            }
+          }
+        }
+
+        const membershipLookupId = membershipIdParam || orderId || undefined;
+        const membershipObjectId =
+          membershipLookupId &&
+          mongoose.Types.ObjectId.isValid(membershipLookupId)
+            ? new mongoose.Types.ObjectId(membershipLookupId)
+            : null;
+
+        if (!payment && membershipObjectId) {
+          for (const pm of paymentMethodsForFallback) {
+            try {
+              const membershipPayment = await Payments.findOne({
+                membershipId: membershipObjectId,
+                ...(userObjectId ? { userId: userObjectId } : {}),
+                paymentMethod: pm,
+              })
+                .sort({ createdAt: -1 })
+                .exec();
+              if (membershipPayment) {
+                console.log(
+                  "✅ [PAYMENT RETURN] - Payment found by membershipId:",
+                  membershipPayment._id,
+                  pm
+                );
+                payment = membershipPayment;
+                break;
+              }
+            } catch (error) {
+              console.error(
+                "❌ [PAYMENT RETURN] - Error finding payment by membershipId:",
+                error
+              );
+            }
+          }
+        }
+
+        if (!payment) {
+          console.error(
+            "❌ [PAYMENT RETURN] - Payment not found (check Stripe session_id after real checkout, JWT token, and FRONTEND_URL)"
+          );
+          console.error(
+            "❌ [PAYMENT RETURN] - Available query params:",
+            Object.keys(req.query)
+          );
+          this.redirectOrderConfirmedFailed(res, "Payment ID not found");
+          return;
+        }
+
+        console.log(
+          "🟢 [PAYMENT RETURN] - Verifying payment status with gateway"
+        );
+        const gatewayIdToVerify =
+          stripeSessionId ||
+          molliePaymentId ||
+          payment.gatewayTransactionId;
+        if (!gatewayIdToVerify) {
+          console.error(
+            "❌ [PAYMENT RETURN] - No gateway ID available for verification"
+          );
+          this.redirectOrderConfirmedFailed(
+            res,
+            "Payment gateway ID not found"
+          );
+          return;
+        }
+
+        // Use appropriate verification flow based on payment type (order vs membership)
+        console.log(
+          "🟢 [PAYMENT RETURN] - Verifying payment and updating entity"
+        );
+        let verifiedPayment;
+        const isMembershipPayment = !!payment.membershipId;
+
+        try {
+          if (isMembershipPayment) {
+            verifiedPayment = await paymentService.verifyPayment(
+              payment._id.toString(),
+              gatewayIdToVerify
+            );
+            console.log("✅ [PAYMENT RETURN] - Membership payment verified");
+            console.log(
+              "✅ [PAYMENT RETURN] - Status:",
+              verifiedPayment.status
+            );
+
+            if (verifiedPayment.status === PaymentStatus.COMPLETED) {
+              try {
+                await membershipService.activateMembership(
+                  verifiedPayment.membershipId?.toString() ||
+                    payment.membershipId?.toString(),
+                  payment._id.toString()
+                );
+                console.log(
+                  "✅ [PAYMENT RETURN] - Membership activated successfully"
+                );
+              } catch (membershipError) {
+                console.error(
+                  "❌ [PAYMENT RETURN] - Failed to activate membership:",
+                  membershipError
+                );
+              }
+            }
+          } else {
+            const verifyResult =
+              await paymentService.verifyPaymentAndUpdateOrder({
+                paymentId: payment._id.toString(),
+                gatewayTransactionId: gatewayIdToVerify,
+              });
+            verifiedPayment = verifyResult.payment;
+            console.log("✅ [PAYMENT RETURN] - Payment verified");
+            console.log(
+              "✅ [PAYMENT RETURN] - Status:",
+              verifiedPayment.status
+            );
+            console.log(
+              "✅ [PAYMENT RETURN] - Order updated:",
+              verifyResult.updated
+            );
+            if (verifyResult.updated) {
+              console.log(
+                "✅ [PAYMENT RETURN] - Order paymentStatus:",
+                verifyResult.order.paymentStatus
+              );
+              console.log(
+                "✅ [PAYMENT RETURN] - Order status:",
+                verifyResult.order.status
+              );
+            }
+          }
+        } catch (verifyError) {
+          console.error(
+            "❌ [PAYMENT RETURN] - Verification failed:",
+            verifyError
+          );
+          // Fallback to just verify payment if downstream update fails
+          verifiedPayment = await paymentService.verifyPayment(
+            payment._id.toString(),
+            gatewayIdToVerify
+          );
+          console.warn(
+            "⚠️ [PAYMENT RETURN] - Used fallback verification (entity may not be updated)"
+          );
+        }
+
+        // Determine redirect URL based on payment type
+        const frontendUrl = config.frontend.url;
+        let redirectUrl = `${frontendUrl}/orderConfirmed/return`;
+
+        // Do not use orderId here — product checkout always has orderId in the return URL.
+        const resolvedMembershipId =
+          membershipIdParam || payment.membershipId?.toString() || null;
+
+        if (verifiedPayment.status === PaymentStatus.COMPLETED) {
+          if (resolvedMembershipId) {
+            // Redirect membership payments to clean /products URL (no query params)
+            redirectUrl = `${frontendUrl}/products`;
+          } else { // This is an order payment
+            try {
+              // Get user's most recent active session
+              const paymentUserId = payment.userId?.toString();
+              let userToken: string | null = null;
+
+              if (paymentUserId) {
+                const activeSession = await AuthSessions.findOne({
+                  userId: new mongoose.Types.ObjectId(paymentUserId),
+                  isRevoked: false,
+                  expiresAt: { $gt: new Date() },
+                })
+                  .sort({ lastUsedAt: -1 }) // Get the most recent active session
+                  .lean();
+
+                if (activeSession) {
+                  // Generate a new JWT token for the user
+                  const payload = {
+                    userId: paymentUserId,
+                    sessionId: activeSession.sessionId,
+                    type: "access",
+                  };
+                  const options: SignOptions = {
+                    expiresIn: config.jwt.expiresIn as any,
+                  };
+                  userToken = jwt.sign(
+                    payload,
+                    config.jwt.secret,
+                    options
+                  );
+                  logger.info(
+                    `Generated new token for user ${paymentUserId} on payment success.`
+                  );
+                } else {
+                  logger.warn(
+                    `No active session found for user ${paymentUserId} to generate token for redirect.`
+                  );
+                }
+              }
+
+              if (orderId || payment.orderId) {
+                redirectUrl = `${frontendUrl}/order/success?paymentId=${
+                  payment._id
+                }&orderId=${orderId || payment.orderId}`;
+              } else {
+                redirectUrl = `${frontendUrl}/orderConfirmed/success?paymentId=${payment._id}`;
+              }
+
+              if (userToken) {
+                redirectUrl = this.addTokenToUrl(redirectUrl, userToken);
+              }
+            } catch (tokenError) {
+              logger.error(
+                `Failed to generate token for redirect: ${tokenError}`
+              );
+              // Continue without token if generation fails
+              if (orderId || payment.orderId) {
+                redirectUrl = `${frontendUrl}/order/success?paymentId=${
+                  payment._id
+                }&orderId=${orderId || payment.orderId}`;
+              } else {
+                redirectUrl = `${frontendUrl}/orderConfirmed/success?paymentId=${payment._id}`;
+              }
+            }
+          }
+        } else if (verifiedPayment.status === PaymentStatus.FAILED) {
+          if (resolvedMembershipId) {
+            // Redirect membership payments to clean /products URL (no query params)
+            redirectUrl = `${frontendUrl}/products`;
+          } else {
+            redirectUrl = `${frontendUrl}/orderConfirmed/failed?paymentId=${
+              payment._id
+            }&error=${encodeURIComponent(
+              verifiedPayment.failureReason || "Payment failed"
+            )}`;
+          }
+        } else {
+          if (resolvedMembershipId) {
+            // Redirect membership payments to clean /products URL (no query params)
+            redirectUrl = `${frontendUrl}/products`;
+          } else {
+            redirectUrl = `${frontendUrl}/orderConfirmed/pending?paymentId=${payment._id}`;
+          }
+        }
+
+        logger.info(
+          `Payment return handled: ${payment._id}, status: ${verifiedPayment.status}, redirecting to: ${redirectUrl}`
+        );
+
+        res.redirect(redirectUrl);
+      } catch (error) {
+        logger.error("Payment return handling error:", error);
+        this.redirectOrderConfirmedFailed(
+          res,
+          error instanceof Error ? error.message : "Unknown error"
+        );
+      }
+    }
+  );
+
+  /**
+   * Helper method to add token to URL
+   */
+  private addTokenToUrl(url: string, token: string): string {
+    const urlObj = new URL(url);
+    urlObj.searchParams.append("token", token);
+    return urlObj.toString();
+  }
+
+  /**
+   * Refund payment
+   */
+  refundPayment = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const { paymentId, amount, reason, metadata } = req.body;
+
+      const payment = await paymentService.refundPayment({
+        paymentId,
+        amount,
+        reason,
+        metadata,
+      });
+
+      res.apiSuccess(
+        {
+          payment: {
+            _id: payment._id,
+            status: payment.status,
+            refundAmount: payment.refundAmount,
+            refundReason: payment.refundReason,
+          },
+        },
+        "Refund processed successfully"
+      );
+    }
+  );
+
+  /**
+   * Cancel payment
+   */
+  cancelPayment = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const { paymentId } = req.body;
+
+      const payment = await paymentService.cancelPayment(paymentId);
+
+      res.apiSuccess(
+        {
+          payment: {
+            _id: payment._id,
+            status: payment.status,
+          },
+        },
+        "Payment cancelled successfully"
+      );
+    }
+  );
+
+  /**
+   * Get payment by ID
+   */
+  getPayment = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { paymentId } = req.params;
+
+      const payment = await paymentService.getPayment(paymentId);
+
+      res.apiSuccess(
+        {
+          payment,
+        },
+        "Payment retrieved successfully"
+      );
+    }
+  );
+
+  /**
+   * Get payments by order
+   */
+  getPaymentsByOrder = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { orderId } = req.params;
+
+      const payments = await paymentService.getPaymentsByOrder(orderId);
+
+      res.apiSuccess(
+        {
+          payments,
+        },
+        "Payments retrieved successfully"
+      );
+    }
+  );
+
+  /**
+   * Get payments by user
+   */
+  getPaymentsByUser = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const userId = req.user?.id || req.userId;
+      if (!userId) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const payments = await paymentService.getPaymentsByUser(userId);
+
+      res.apiSuccess(
+        {
+          payments,
+        },
+        "Payments retrieved successfully"
+      );
+    }
+  );
+
+  /**
+   * Track payment status (Public API for Mobile App)
+   * @route GET /api/v1/payments/track
+   * @access Public
+   * @query orderId or membershipId (one is required)
+   */
+  trackPaymentStatus = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { orderId, membershipId } = req.query;
+
+      // Validate that at least one ID is provided
+      if (!orderId && !membershipId) {
+        throw new AppError(
+          "Either orderId or membershipId is required in query parameters",
+          400
+        );
+      }
+
+      console.log("🔍 [PAYMENT TRACKING] Tracking payment");
+      console.log("  - orderId:", orderId || "not provided");
+      console.log("  - membershipId:", membershipId || "not provided");
+
+      let payment = null;
+      let referenceType = null;
+      let referenceDetails: any = null;
+
+      // 1. Try to find by order ID
+      if (orderId) {
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(orderId as string)) {
+          throw new AppError("Invalid orderId format", 400);
+        }
+
+        const orderObjectId = new mongoose.Types.ObjectId(orderId as string);
+
+        payment = await Payments.findOne({ orderId: orderObjectId })
+          .populate("orderId")
+          .populate("membershipId")
+          .lean();
+
+        if (payment) {
+          referenceType = "order";
+          console.log("✅ [PAYMENT TRACKING] Found by order ID");
+        }
+      }
+
+      // 2. Try to find by membership ID
+      if (!payment && membershipId) {
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(membershipId as string)) {
+          throw new AppError("Invalid membershipId format", 400);
+        }
+
+        const membershipObjectId = new mongoose.Types.ObjectId(
+          membershipId as string
+        );
+
+        payment = await Payments.findOne({ membershipId: membershipObjectId })
+          .populate("orderId")
+          .populate("membershipId")
+          .lean();
+
+        if (payment) {
+          referenceType = "membership";
+          console.log("✅ [PAYMENT TRACKING] Found by membership ID");
+        }
+      }
+
+      if (!payment) {
+        throw new AppError(
+          "Payment not found for the provided orderId or membershipId",
+          404
+        );
+      }
+
+      // Extract reference details
+      if (payment.orderId) {
+        const order = payment.orderId as any;
+        referenceDetails = {
+          type: "order",
+          orderNumber: order.orderNumber,
+          orderId: order._id,
+          orderStatus: order.status,
+          paymentStatus: order.paymentStatus,
+          grandTotal: order.pricing?.overall?.grandTotal || 0,
+          currency: order.pricing?.overall?.currency || "USD",
+          items: order.items?.length || 0,
+          planType: order.planType,
+        };
+      } else if (payment.membershipId) {
+        const membership = payment.membershipId as any;
+        referenceDetails = {
+          type: "membership",
+          membershipId: membership._id,
+          membershipStatus: membership.status,
+          planName: membership.planName,
+          planPrice: membership.planPrice,
+          startDate: membership.startDate,
+          endDate: membership.endDate,
+        };
+      } else {
+        referenceDetails = {
+          type: "payment",
+          paymentId: payment._id,
+        };
+      }
+
+      // Build response
+      const response = {
+        paymentId: payment._id,
+        paymentStatus: payment.status,
+        paymentMethod: payment.paymentMethod,
+        amount: payment.amount?.amount || 0,
+        currency: payment.currency || payment.amount?.currency || "USD",
+        gatewayTransactionId: payment.gatewayTransactionId,
+        processedAt: payment.processedAt,
+        createdAt: payment.createdAt,
+        reference: referenceDetails,
+        // Status flags for easy mobile app handling
+        isPending: payment.status === PaymentStatus.PENDING,
+        isCompleted: payment.status === PaymentStatus.COMPLETED,
+        isFailed: payment.status === PaymentStatus.FAILED,
+        isCancelled: payment.status === PaymentStatus.CANCELLED,
+        isRefunded: payment.status === PaymentStatus.REFUNDED,
+      };
+
+      console.log("✅ [PAYMENT TRACKING] Payment status:", payment.status);
+
+      res.apiSuccess(response, "Payment status retrieved successfully");
+    }
+  );
+}
+
+export const paymentController = new PaymentController();

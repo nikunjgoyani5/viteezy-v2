@@ -1,0 +1,951 @@
+import { Request, Response } from "express";
+import mongoose from "mongoose";
+import { asyncHandler, getPaginationMeta, getPaginationOptions } from "@/utils";
+import { AppError } from "@/utils/AppError";
+import { Coupons, CouponUsageHistory } from "@/models/commerce";
+import { CouponType } from "@/models/enums";
+
+interface AuthenticatedRequest extends Request {
+  user?: {
+    _id: string;
+    name?: string;
+    email?: string;
+  };
+}
+
+const ensureObjectId = (id: string, label: string): mongoose.Types.ObjectId => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new AppError(`Invalid ${label}`, 400);
+  }
+  return new mongoose.Types.ObjectId(id);
+};
+
+/**
+ * Parse date string to Date object in UTC to avoid timezone conversion issues
+ * Extracts date components directly from ISO string and creates UTC date
+ * This ensures the date stored in DB matches the date sent in the request
+ */
+const parseDateWithoutTimezone = (dateValue: any): Date | undefined => {
+  if (!dateValue) return undefined;
+  
+  if (typeof dateValue === 'string') {
+    // Extract date components from ISO format: "2026-02-20T00:00:00.000Z" or "2026-02-20"
+    const dateMatch = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (dateMatch) {
+      const [, year, month, day] = dateMatch;
+      // Create date in UTC to avoid timezone conversion when storing in DB
+      // Date.UTC creates timestamp, then new Date converts to Date object
+      return new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
+    }
+  }
+  
+  // Fallback for Date objects - extract UTC components
+  if (dateValue instanceof Date) {
+    return new Date(Date.UTC(dateValue.getUTCFullYear(), dateValue.getUTCMonth(), dateValue.getUTCDate()));
+  }
+  
+  // Fallback: parse and use UTC components
+  const date = new Date(dateValue);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+};
+
+const sanitizeObjectIdArray = (
+  arr?: string[]
+): mongoose.Types.ObjectId[] | undefined => {
+  if (!Array.isArray(arr)) return undefined;
+  return arr.map((id) => ensureObjectId(id, "ObjectId"));
+};
+
+class AdminCouponController {
+  /**
+   * Create a new coupon
+   */
+  createCoupon = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const requesterId = req.user?._id
+        ? new mongoose.Types.ObjectId(req.user._id)
+        : undefined;
+
+      const {
+        code,
+        name,
+        description,
+        type,
+        value,
+        minOrderAmount,
+        maxDiscountAmount,
+        usageLimit,
+        userUsageLimit,
+        validFrom,
+        validUntil,
+        isActive,
+        isRecurring = false,
+        oneTimeUse = false,
+        recurringMonths,
+        applicableProducts,
+        applicableCategories,
+        excludedProducts,
+      } = req.body;
+
+      // Check if coupon code already exists
+      const existingCoupon = await Coupons.findOne({
+        code: code.toUpperCase().trim(),
+        isDeleted: false,
+      });
+
+      if (existingCoupon) {
+        throw new AppError("Coupon code already exists", 400);
+      }
+
+      // Validate percentage value
+      if (type === CouponType.PERCENTAGE && (value < 0 || value > 100)) {
+        throw new AppError(
+          "Percentage discount value must be between 0 and 100",
+          400
+        );
+      }
+
+      const now = new Date();
+      // Normalize now to start of day for comparison (to allow today's date)
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      // Parse dates without timezone conversion
+      const parsedValidFrom = parseDateWithoutTimezone(validFrom);
+      const parsedValidUntil = parseDateWithoutTimezone(validUntil);
+
+      // Ensure validFrom and validUntil are not in the past (must be today or future date)
+      // Use <= to allow today's date
+      if (parsedValidFrom && parsedValidFrom < todayStart) {
+        throw new AppError(
+          "Valid from date must be today or a future date",
+          400
+        );
+      }
+
+      if (parsedValidUntil && parsedValidUntil < todayStart) {
+        throw new AppError(
+          "Expiry date must be today or a future date",
+          400
+        );
+      }
+
+      // Validate date range (validUntil after validFrom)
+      if (parsedValidFrom && parsedValidUntil && parsedValidUntil <= parsedValidFrom) {
+        throw new AppError("Expiry date must be after valid from date", 400);
+      }
+
+      // Set defaults - use todayStart for consistency
+      const finalValidFrom = parsedValidFrom || todayStart;
+      const finalMinOrderAmount =
+        minOrderAmount !== undefined && minOrderAmount !== null
+          ? minOrderAmount
+          : 0;
+      
+      // Auto-activate if validFrom is in the future and isActive is not explicitly set
+      // If isActive is not provided, default to true (coupon will be auto-active)
+      // The pre-save hook will handle the logic for future dates
+      const finalIsActive = isActive !== undefined && isActive !== null ? isActive : true;
+
+      const coupon = await Coupons.create({
+        code: code.toUpperCase().trim(),
+        name,
+        description,
+        type,
+        value,
+        minOrderAmount: finalMinOrderAmount,
+        maxDiscountAmount,
+        usageLimit,
+        userUsageLimit,
+        usageCount: 0,
+        validFrom: finalValidFrom,
+        validUntil: parsedValidUntil,
+        isActive: finalIsActive,
+        isRecurring,
+        oneTimeUse,
+        recurringMonths: recurringMonths && Array.isArray(recurringMonths) ? recurringMonths : undefined,
+        applicableProducts: sanitizeObjectIdArray(applicableProducts) || [],
+        applicableCategories: sanitizeObjectIdArray(applicableCategories) || [],
+        excludedProducts: sanitizeObjectIdArray(excludedProducts) || [],
+        createdBy: requesterId,
+      });
+
+      res.apiCreated({ coupon }, "Coupon created successfully");
+    }
+  );
+
+  /**
+   * Get coupon statistics with percentage changes (vs last month)
+   */
+  getCouponStats = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const now = new Date();
+      
+      // Current month date range
+      const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      
+      // Last month date range
+      const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+      
+      
+      // Calculate 7 days from now for expiring soon
+      const sevenDaysFromNow = new Date(now);
+      sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+
+      // Active coupons filter
+      const activeCouponsFilter: Record<string, any> = {
+        isDeleted: false,
+        isActive: true,
+        $or: [
+        { validUntil: { $exists: false } },
+        { validUntil: null },
+        { validUntil: { $gt: now } },
+        ],
+      };
+
+      // Coupons expiring soon (within 7 days, active, not deleted)
+      const expiringSoonFilter: Record<string, any> = {
+        isDeleted: false,
+        isActive: true,
+        validUntil: {
+          $gte: now,
+          $lte: sevenDaysFromNow,
+        },
+      };
+
+      // Percentage change calculation function (capped at 100)
+      const percentChange = (current: number, previous: number) => {
+        if (previous === 0 && current > 0) {
+          return { percentage: 100, isPositive: true };
+        }
+        if (previous === 0 && current === 0) {
+          return { percentage: 0, isPositive: false };
+        }
+
+        const diff = ((current - previous) / previous) * 100;
+        const isPositive = diff >= 0;
+        const percentage = Math.abs(Number(diff.toFixed(2)));
+        const cappedPercentage = Math.min(percentage, 100);
+
+        return {
+          percentage: cappedPercentage,
+          isPositive: isPositive,
+        };
+      };
+
+      // Get all stats in parallel
+      const [
+        // Active coupons
+        activeCouponsCurrent,
+        activeCouponsLastMonth,
+        
+        // Redemptions - Current month
+        totalRedemptionsCurrentMonth,
+        totalRedemptionsLastMonth,
+        
+        // Discounted amount - Current month
+        totalDiscountAmountCurrentMonth,
+        totalDiscountAmountLastMonth,
+        
+        // Expiring soon coupons with details
+        expiringSoonCoupons,
+      ] = await Promise.all([
+        // Active coupons - current
+        Coupons.countDocuments(activeCouponsFilter),
+        // Active coupons - last month (at end of last month)
+        Coupons.countDocuments({
+          isDeleted: false,
+          isActive: true,
+          $or: [
+            { validUntil: { $exists: false } },
+            { validUntil: null },
+            { validUntil: { $gt: endOfLastMonth } },
+          ],
+        }),
+        
+        // Total redemptions - Current month
+        CouponUsageHistory.aggregate([
+          {
+            $match: {
+              createdAt: {
+                $gte: startOfCurrentMonth,
+                $lte: endOfCurrentMonth,
+              },
+            },
+          },
+          { $group: { _id: null, total: { $sum: 1 } } },
+        ]),
+        // Total redemptions - Last month
+        CouponUsageHistory.aggregate([
+          {
+            $match: {
+              createdAt: {
+                $gte: startOfLastMonth,
+                $lte: endOfLastMonth,
+            },
+          },
+          },
+          { $group: { _id: null, total: { $sum: 1 } } },
+        ]),
+        
+        // Total discounted amount - Current month
+        CouponUsageHistory.aggregate([
+          {
+            $match: {
+              createdAt: {
+                $gte: startOfCurrentMonth,
+                $lte: endOfCurrentMonth,
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$discountAmount.amount" },
+              currency: { $first: "$discountAmount.currency" },
+            },
+          },
+        ]),
+        // Total discounted amount - Last month
+        CouponUsageHistory.aggregate([
+          {
+            $match: {
+              createdAt: {
+                $gte: startOfLastMonth,
+                $lte: endOfLastMonth,
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$discountAmount.amount" },
+              currency: { $first: "$discountAmount.currency" },
+            },
+          },
+        ]),
+        
+        // Expiring soon coupons with details
+        Coupons.find(expiringSoonFilter)
+          .select("code name validUntil")
+          .sort({ validUntil: 1 })
+          .lean(),
+      ]);
+
+      // Extract values
+      const totalRedemptionsCurrent = totalRedemptionsCurrentMonth[0]?.total || 0;
+      const totalRedemptionsLast = totalRedemptionsLastMonth[0]?.total || 0;
+
+      const totalDiscountCurrent = totalDiscountAmountCurrentMonth[0]?.total || 0;
+      const totalDiscountLast = totalDiscountAmountLastMonth[0]?.total || 0;
+      const currency = totalDiscountAmountCurrentMonth[0]?.currency || "USD";
+
+      res.apiSuccess(
+        {
+          stats: {
+            activeCoupons: {
+              value: activeCouponsCurrent,
+              change: {
+                vsLastMonth: percentChange(activeCouponsCurrent, activeCouponsLastMonth),
+              },
+            },
+            totalRedemptions: {
+              value: totalRedemptionsCurrent,
+              change: {
+                vsLastMonth: percentChange(totalRedemptionsCurrent, totalRedemptionsLast),
+              },
+            },
+            totalDiscountedAmount: {
+              amount: totalDiscountCurrent,
+              currency,
+              change: {
+                vsLastMonth: percentChange(totalDiscountCurrent, totalDiscountLast),
+              },
+            },
+            expiringSoon: {
+              count: expiringSoonCoupons.length,
+            },
+          },
+        },
+        "Coupon statistics retrieved successfully"
+      );
+    }
+  );
+
+  /**
+   * Get paginated list of all coupons (Admin view)
+   */
+  getCoupons = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { page, limit, skip, sort } = getPaginationOptions(req);
+      const { status, search, type, expiryDateFrom, expiryDateTo } = req.query as {
+        status?: "active" | "inactive" | "all" | "expired";
+        search?: string;
+        type?: CouponType;
+        expiryDateFrom?: string;
+        expiryDateTo?: string;
+      };
+
+      console.log('🔍 [COUPON FILTER] Request received:', {
+        status,
+        search,
+        type,
+        expiryDateFrom,
+        expiryDateTo,
+        page,
+        limit
+      });
+
+      const filter: Record<string, any> = {
+        isDeleted: false,
+      };
+
+      const now = new Date();
+      console.log('📅 [COUPON FILTER] Current time for comparison:', now.toISOString());
+
+      // Status filter with proper validUntil-based expired logic
+      if (status === "active") {
+        filter.isActive = true;
+        filter.validUntil = { $gt: now }; // Not expired
+        console.log('✅ [COUPON FILTER] Active filter applied:', { isActive: true, validUntil: { $gt: now } });
+      } else if (status === "inactive") {
+        filter.isActive = false;
+        console.log('🟡 [COUPON FILTER] Inactive filter applied:', { isActive: false });
+      } else if (status === "expired") {
+        // Expired: ALL coupons (active or inactive) where validUntil is in the past
+        filter.validUntil = { $lte: now }; // Expired based on validUntil, regardless of isActive
+        console.log('🔴 [COUPON FILTER] Expired filter applied:', { validUntil: { $lte: now }, note: "Includes both active and inactive expired coupons" });
+      }
+
+      if (type) {
+        filter.type = type;
+        console.log('🏷️ [COUPON FILTER] Type filter applied:', { type });
+      }
+
+      if (search) {
+        filter.$or = [
+          { code: { $regex: search, $options: "i" } },
+          { "name.en": { $regex: search, $options: "i" } },
+          { "name.nl": { $regex: search, $options: "i" } },
+        ];
+        console.log('🔎 [COUPON FILTER] Search filter applied:', { search });
+      }
+
+      // Filter by expiry date range
+      if (expiryDateFrom || expiryDateTo) {
+        if (expiryDateFrom) {
+          const fromDate = new Date(expiryDateFrom);
+          fromDate.setHours(0, 0, 0, 0);
+          filter.validUntil = { ...filter.validUntil, $gte: fromDate };
+          console.log('📅 [COUPON FILTER] Expiry date FROM filter:', { $gte: fromDate });
+        }
+        if (expiryDateTo) {
+          const toDate = new Date(expiryDateTo);
+          toDate.setHours(23, 59, 59, 999);
+          filter.validUntil = { ...filter.validUntil, $lte: toDate };
+          console.log('📅 [COUPON FILTER] Expiry date TO filter:', { $lte: toDate });
+        }
+      }
+
+      console.log('🔍 [COUPON FILTER] Final filter object:', JSON.stringify(filter, null, 2));
+
+      const sortOptions: Record<string, 1 | -1> = {
+        createdAt: -1,
+        ...((sort as Record<string, 1 | -1>) || {}),
+      };
+
+      console.log('📊 [COUPON FILTER] Executing database query...');
+
+      const [coupons, total] = await Promise.all([
+        Coupons.find(filter)
+          .populate("applicableProducts", "name slug")
+          .populate("applicableCategories", "name slug")
+          .populate("excludedProducts", "name slug")
+          .sort(sortOptions)
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Coupons.countDocuments(filter),
+      ]);
+
+      console.log('📈 [COUPON FILTER] Query results:', {
+        totalFound: total,
+        returnedCount: coupons.length,
+        status: status || 'all'
+      });
+
+      // Log details of found coupons for debugging
+      if (coupons.length > 0) {
+        console.log('📋 [COUPON FILTER] Found coupons details:');
+        coupons.forEach((coupon, index) => {
+          console.log(`  ${index + 1}. ${coupon.code} - Active: ${coupon.isActive}, ValidUntil: ${coupon.validUntil || 'Not set'}, Type: ${coupon.type}`);
+        });
+      } else {
+        console.log('⚠️ [COUPON FILTER] No coupons found with current filter');
+      }
+
+      const pagination = getPaginationMeta(page, limit, total);
+
+      console.log('✅ [COUPON FILTER] Response sent successfully');
+      res.apiPaginated(coupons, pagination, "Coupons retrieved");
+    }
+  );
+
+  /**
+   * Get coupon by ID
+   */
+  getCouponById = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { id } = req.params;
+
+      const coupon = await Coupons.findOne({
+        _id: id,
+        isDeleted: false,
+      })
+        .populate("applicableProducts", "name slug")
+        .populate("applicableCategories", "name slug")
+        .populate("excludedProducts", "name slug")
+        .lean();
+
+      if (!coupon) {
+        throw new AppError("Coupon not found", 404);
+      }
+
+      res.apiSuccess({ coupon }, "Coupon retrieved successfully");
+    }
+  );
+
+  /**
+   * Update coupon
+   */
+  updateCoupon = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const { id } = req.params;
+      const {
+        code,
+        name,
+        description,
+        type,
+        value,
+        minOrderAmount,
+        maxDiscountAmount,
+        usageLimit,
+        userUsageLimit,
+        validFrom,
+        validUntil,
+        isActive,
+        isRecurring,
+        oneTimeUse,
+        recurringMonths,
+        applicableProducts,
+        applicableCategories,
+        excludedProducts,
+      } = req.body;
+
+      const requesterId = req.user?._id
+        ? new mongoose.Types.ObjectId(req.user._id)
+        : undefined;
+
+      const coupon = await Coupons.findOne({
+        _id: id,
+        isDeleted: false,
+      });
+
+      if (!coupon) {
+        throw new AppError("Coupon not found", 404);
+      }
+
+      // Check if code is being changed and if new code already exists
+      if (code && code.toUpperCase().trim() !== coupon.code) {
+        const existingCoupon = await Coupons.findOne({
+          code: code.toUpperCase().trim(),
+          _id: { $ne: coupon._id },
+          isDeleted: false,
+        });
+
+        if (existingCoupon) {
+          throw new AppError("Coupon code already exists", 400);
+        }
+        coupon.code = code.toUpperCase().trim();
+      }
+
+      // Update fields
+      if (name !== undefined) coupon.name = name;
+      if (description !== undefined) coupon.description = description;
+      if (type !== undefined) coupon.type = type;
+      if (value !== undefined) {
+        // Validate percentage value
+        if (
+          (type || coupon.type) === CouponType.PERCENTAGE &&
+          (value < 0 || value > 100)
+        ) {
+          throw new AppError(
+            "Percentage discount value must be between 0 and 100",
+            400
+          );
+        }
+        coupon.value = value;
+      }
+      if (minOrderAmount !== undefined) coupon.minOrderAmount = minOrderAmount;
+      if (maxDiscountAmount !== undefined)
+        coupon.maxDiscountAmount = maxDiscountAmount;
+      if (usageLimit !== undefined) coupon.usageLimit = usageLimit;
+      if (userUsageLimit !== undefined) coupon.userUsageLimit = userUsageLimit;
+      // Handle and validate dates
+      const nowUpdate = new Date();
+      // Normalize now to start of day for comparison (to allow today's date)
+      const todayStartUpdate = new Date(nowUpdate.getFullYear(), nowUpdate.getMonth(), nowUpdate.getDate());
+
+      if (validFrom !== undefined) {
+        const parsedValidFromUpdate = parseDateWithoutTimezone(validFrom);
+        // Use <= to allow today's date
+        if (parsedValidFromUpdate && parsedValidFromUpdate < todayStartUpdate) {
+          throw new AppError(
+            "Valid from date must be today or a future date",
+            400
+          );
+        }
+        coupon.validFrom = parsedValidFromUpdate;
+      }
+
+      if (validUntil !== undefined) {
+        const parsedValidUntilUpdate = parseDateWithoutTimezone(validUntil);
+        // Use <= to allow today's date
+        if (parsedValidUntilUpdate && parsedValidUntilUpdate < todayStartUpdate) {
+          throw new AppError(
+            "Expiry date must be today or a future date",
+            400
+          );
+        }
+        coupon.validUntil = parsedValidUntilUpdate;
+      }
+      if (isActive !== undefined) coupon.isActive = isActive;
+      if (isRecurring !== undefined) coupon.isRecurring = isRecurring;
+      if (oneTimeUse !== undefined) coupon.oneTimeUse = oneTimeUse;
+      if (recurringMonths !== undefined) {
+        coupon.recurringMonths = Array.isArray(recurringMonths) ? recurringMonths : undefined;
+      }
+      if (applicableProducts !== undefined)
+        coupon.applicableProducts =
+          sanitizeObjectIdArray(applicableProducts) || [];
+      if (applicableCategories !== undefined)
+        coupon.applicableCategories =
+          sanitizeObjectIdArray(applicableCategories) || [];
+      if (excludedProducts !== undefined)
+        coupon.excludedProducts = sanitizeObjectIdArray(excludedProducts) || [];
+      
+      // Ensure minOrderAmount defaults to 0 if set to null/undefined
+      if (minOrderAmount !== undefined) {
+        coupon.minOrderAmount = minOrderAmount !== null ? minOrderAmount : 0;
+      } else if (coupon.minOrderAmount === null || coupon.minOrderAmount === undefined) {
+        coupon.minOrderAmount = 0;
+      }
+
+      // Validate date range after updates
+      const finalValidFrom = coupon.validFrom;
+      const finalValidUntil = coupon.validUntil;
+      if (finalValidFrom && finalValidUntil && finalValidUntil <= finalValidFrom) {
+        throw new AppError("Expiry date must be after valid from date", 400);
+      }
+
+      if (requesterId) coupon.updatedBy = requesterId;
+
+      await coupon.save();
+
+      res.apiSuccess({ coupon }, "Coupon updated successfully");
+    }
+  );
+
+  /**
+   * Update coupon status (toggle active/inactive)
+   */
+  updateCouponStatus = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const { id } = req.params;
+      const { isActive } = req.body;
+
+      const requesterId = req.user?._id
+        ? new mongoose.Types.ObjectId(req.user._id)
+        : undefined;
+
+      const coupon = await Coupons.findOne({
+        _id: id,
+        isDeleted: false,
+      });
+
+      if (!coupon) {
+        throw new AppError("Coupon not found", 404);
+      }
+
+      coupon.isActive = isActive;
+      if (requesterId) coupon.updatedBy = requesterId;
+
+      await coupon.save();
+
+      res.apiSuccess(
+        { coupon },
+        `Coupon ${isActive ? "activated" : "deactivated"} successfully`
+      );
+    }
+  );
+
+  /**
+   * Delete coupon (soft delete)
+   */
+  deleteCoupon = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { id } = req.params;
+
+      const coupon = await Coupons.findOne({
+        _id: id,
+        isDeleted: false,
+      });
+
+      if (!coupon) {
+        throw new AppError("Coupon not found", 404);
+      }
+
+      coupon.isDeleted = true;
+      coupon.deletedAt = new Date();
+      await coupon.save();
+
+      res.apiSuccess(null, "Coupon deleted successfully");
+    }
+  );
+
+  /**
+   * Get coupon usage logs (Admin view) with filters
+   */
+  getCouponUsageLogs = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { page, limit, skip } = getPaginationOptions(req);
+      const { status, search, expiryDateFrom, expiryDateTo, couponId } = req.query as {
+        status?: "active" | "inactive" | "all" | "expired";
+        search?: string;
+        expiryDateFrom?: string;
+        expiryDateTo?: string;
+        couponId?: string;
+      };
+
+      // Build match filter for usage history
+      const matchFilter: Record<string, any> = {};
+
+      // Filter by coupon ID if provided
+      if (couponId) {
+        matchFilter.couponId = new mongoose.Types.ObjectId(couponId);
+      }
+
+      // Build aggregation pipeline
+      const pipeline: any[] = [
+        // Match usage history records
+        { $match: matchFilter },
+        // Lookup coupon details
+        {
+          $lookup: {
+            from: "coupons",
+            localField: "couponId",
+            foreignField: "_id",
+            as: "coupon",
+          },
+        },
+        { $unwind: { path: "$coupon", preserveNullAndEmptyArrays: true } },
+      ];
+
+      // Build coupon filter - only apply if filters are provided
+      const couponFilters: any[] = [];
+
+      // Filter by status if provided (based on validUntil)
+      if (status === "active") {
+        couponFilters.push({
+          $or: [
+            { 
+              "coupon.isActive": true, 
+              "coupon.validUntil": { $gt: new Date() } 
+            },
+            { coupon: { $exists: false } },
+            { coupon: null },
+          ],
+        });
+      } else if (status === "inactive") {
+        couponFilters.push({
+          $or: [
+            { "coupon.isActive": false },
+            { coupon: { $exists: false } },
+            { coupon: null },
+          ],
+        });
+      } else if (status === "expired") {
+        // Expired: ALL coupons (active or inactive) where validUntil is in the past
+        couponFilters.push({
+          $or: [
+            { 
+              "coupon.validUntil": { $lte: new Date() } 
+            },
+            { coupon: { $exists: false } },
+            { coupon: null },
+          ],
+        });
+        console.log('🔴 [USAGE LOGS] Expired filter applied: All coupons with validUntil in past');
+      }
+
+      // Filter by expiry date if provided
+      if (expiryDateFrom || expiryDateTo) {
+        const expiryFilter: Record<string, any> = {};
+        if (expiryDateFrom) {
+          const fromDate = new Date(expiryDateFrom);
+          fromDate.setHours(0, 0, 0, 0);
+          expiryFilter.$gte = fromDate;
+        }
+        if (expiryDateTo) {
+          const toDate = new Date(expiryDateTo);
+          toDate.setHours(23, 59, 59, 999);
+          expiryFilter.$lte = toDate;
+        }
+        couponFilters.push({
+          $or: [
+            { "coupon.validUntil": expiryFilter },
+            { coupon: { $exists: false } },
+            { coupon: null },
+          ],
+        });
+      }
+
+      // Apply coupon filters if any
+      if (couponFilters.length > 0) {
+        pipeline.push({ $match: { $and: couponFilters } });
+      }
+
+      // Add search filter if provided
+      if (search) {
+        pipeline.push({
+          $match: {
+            $or: [
+              { couponCode: { $regex: search, $options: "i" } },
+              { "coupon.code": { $regex: search, $options: "i" } },
+              { "coupon.name.en": { $regex: search, $options: "i" } },
+              { "coupon.name.nl": { $regex: search, $options: "i" } },
+            ],
+          },
+        });
+      }
+
+      // Count total before pagination
+      const countPipeline = [...pipeline, { $count: "total" }];
+      const countResult = await CouponUsageHistory.aggregate(countPipeline);
+      const total = countResult[0]?.total || 0;
+
+      // Add pagination and sorting
+      pipeline.push(
+        { $sort: { createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit }
+      );
+
+      // Lookup user and order details
+      pipeline.push(
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $lookup: {
+            from: "orders",
+            localField: "orderId",
+            foreignField: "_id",
+            as: "order",
+          },
+        },
+        {
+          $unwind: { path: "$user", preserveNullAndEmptyArrays: true },
+        },
+        {
+          $unwind: { path: "$order", preserveNullAndEmptyArrays: true },
+        },
+        {
+          $project: {
+            _id: { $toString: "$_id" },
+            couponId: {
+              $cond: {
+                if: { $ne: ["$couponId", null] },
+                then: { $toString: "$couponId" },
+                else: null,
+              },
+            },
+            userId: {
+              $cond: {
+                if: { $ne: ["$userId", null] },
+                then: { $toString: "$userId" },
+                else: null,
+              },
+            },
+            orderId: {
+              $cond: {
+                if: { $ne: ["$orderId", null] },
+                then: { $toString: "$orderId" },
+                else: null,
+              },
+            },
+            couponCode: 1,
+            orderNumber: 1,
+            discountAmount: 1,
+            usageCount: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            coupon: {
+              _id: {
+                $cond: {
+                  if: { $ne: ["$coupon._id", null] },
+                  then: { $toString: "$coupon._id" },
+                  else: null,
+                },
+              },
+              code: "$coupon.code",
+              name: "$coupon.name",
+              type: "$coupon.type",
+              value: "$coupon.value",
+              isActive: "$coupon.isActive",
+              validUntil: "$coupon.validUntil",
+            },
+            user: {
+              _id: {
+                $cond: {
+                  if: { $ne: ["$user._id", null] },
+                  then: { $toString: "$user._id" },
+                  else: null,
+                },
+              },
+              firstName: "$user.firstName",
+              lastName: "$user.lastName",
+              email: "$user.email",
+            },
+            order: {
+              _id: {
+                $cond: {
+                  if: { $ne: ["$order._id", null] },
+                  then: { $toString: "$order._id" },
+                  else: null,
+                },
+              },
+              orderNumber: "$order.orderNumber",
+              total: "$order.total",
+              status: "$order.status",
+            },
+          },
+        }
+      );
+
+      const usageLogs = await CouponUsageHistory.aggregate(pipeline);
+
+      const pagination = getPaginationMeta(page, limit, total);
+
+      res.apiPaginated(usageLogs, pagination, "Coupon usage logs retrieved");
+    }
+  );
+}
+
+export const adminCouponController = new AdminCouponController();

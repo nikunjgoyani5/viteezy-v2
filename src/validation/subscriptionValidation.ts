@@ -1,0 +1,230 @@
+import Joi from "joi";
+import mongoose from "mongoose";
+import { withFieldLabels } from "./helpers";
+import {
+  PAYMENT_METHOD_VALUES,
+  PAYMENT_STATUS_VALUES,
+  SUBSCRIPTION_CYCLE_VALUES,
+  SUBSCRIPTION_STATUS_VALUES,
+} from "@/models/enums";
+
+// Joi Schemas
+const objectIdSchema = Joi.string()
+  .custom((value, helpers) => {
+    if (!mongoose.Types.ObjectId.isValid(value)) {
+      return helpers.error("any.invalid");
+    }
+    return value;
+  })
+  .messages({
+    "any.invalid": "Invalid ID format",
+  })
+  .label("ID");
+
+const priceSchema = Joi.object(
+  withFieldLabels({
+    currency: Joi.string().trim().uppercase().min(3).max(5).default("USD"),
+    amount: Joi.number().precision(2).min(0).required(),
+    taxRate: Joi.number().precision(4).min(0).max(1).default(0),
+  }),
+);
+
+const subscriptionItemSchema = Joi.object(
+  withFieldLabels({
+    productId: objectIdSchema.required(),
+    variantId: objectIdSchema.optional(),
+    quantity: Joi.number().integer().min(1).required(),
+    price: priceSchema.required(),
+    name: Joi.string().trim().optional(),
+    sku: Joi.string().trim().optional(),
+  }),
+);
+
+/**
+ * Joi schema for creating a subscription after checkout
+ */
+export const createSubscriptionSchema = Joi.object(
+  withFieldLabels({
+    orderId: objectIdSchema.required(),
+    cycleDays: Joi.number()
+      .integer()
+      .valid(...SUBSCRIPTION_CYCLE_VALUES)
+      .required(),
+    items: Joi.array().items(subscriptionItemSchema).min(1).required(),
+    amount: priceSchema.required(),
+    paymentMethod: Joi.string()
+      .valid(...PAYMENT_METHOD_VALUES)
+      .required(),
+    gatewaySubscriptionId: Joi.string().trim().optional(),
+    gatewayCustomerId: Joi.string().trim().optional(),
+    gatewayPaymentMethodId: Joi.string().trim().optional(),
+    initialDeliveryDate: Joi.date().iso().required(),
+    nextDeliveryDate: Joi.date().iso().required(),
+    nextBillingDate: Joi.date().iso().required(),
+    metadata: Joi.object().unknown(true).default({}).optional(),
+  }),
+).label("CreateSubscriptionPayload");
+
+/**
+ * Joi schema for updating subscription
+ */
+export const updateSubscriptionSchema = Joi.object(
+  withFieldLabels({
+    status: Joi.string()
+      .valid(...SUBSCRIPTION_STATUS_VALUES)
+      .optional(),
+    nextDeliveryDate: Joi.date().iso().optional(),
+    nextBillingDate: Joi.date().iso().optional(),
+    pausedUntil: Joi.date().iso().optional(),
+    cancellationReason: Joi.string().trim().max(500).optional(),
+    metadata: Joi.object().unknown(true).optional(),
+  }),
+).label("UpdateSubscriptionPayload");
+
+/**
+ * Joi schema for getting subscription details
+ */
+export const getSubscriptionDetailsParamsSchema = Joi.object(
+  withFieldLabels({
+    subscriptionId: objectIdSchema.required(),
+  }),
+).label("SubscriptionDetailsParams");
+
+/**
+ * Joi schema for getting subscription details query parameters
+ */
+export const getSubscriptionDetailsQuerySchema = Joi.object(
+  withFieldLabels({
+    lang: Joi.string()
+      .valid("en", "es", "fr", "nl", "de")
+      .optional()
+      .messages({
+        "any.only": "Language must be one of: en, es, fr, nl, de",
+      }),
+  }),
+)
+  .default({})
+  .label("SubscriptionDetailsQuery");
+
+/**
+ * Joi schema for getting user's subscriptions
+ */
+export const getSubscriptionsQuerySchema = Joi.object(
+  withFieldLabels({
+    status: Joi.string()
+      .valid(...SUBSCRIPTION_STATUS_VALUES)
+      .optional(),
+    page: Joi.number().integer().min(1).optional(),
+    limit: Joi.number().integer().min(1).max(100).optional(),
+    lang: Joi.string()
+      .valid("en", "es", "fr", "nl", "de")
+      .optional()
+      .messages({
+        "any.only": "Language must be one of: en, es, fr, nl, de",
+      }),
+  }),
+)
+  .default({})
+  .label("SubscriptionsQuery");
+
+/**
+ * Joi schema for pausing subscription
+ */
+export const pauseSubscriptionSchema = Joi.object(withFieldLabels({})).label(
+  "PauseSubscriptionPayload",
+);
+
+export const cancelSubscriptionSchema = Joi.object(
+  withFieldLabels({
+    cancellationReason: Joi.string().trim().max(500).optional(),
+  }),
+).label("CancelSubscriptionPayload");
+
+export const getSubscriptionActivityQuerySchema = Joi.object(
+  withFieldLabels({
+    page: Joi.number().integer().min(1).optional(),
+    limit: Joi.number().integer().min(1).max(100).optional(),
+  }),
+)
+  .default({})
+  .label("SubscriptionActivityQuery");
+
+/**
+ * Joi schema for adding products to subscription
+ */
+export const addProductsToSubscriptionSchema = Joi.object(
+  withFieldLabels({
+    productIds: Joi.array()
+      .items(objectIdSchema)
+      .min(1)
+      .required()
+      .label("Product IDs"),
+    paymentMethod: Joi.string()
+      .valid(...PAYMENT_METHOD_VALUES)
+      .required()
+      .label("Payment Method"),
+    shippingAddressId: objectIdSchema.required().label("Shipping Address ID"),
+    billingAddressId: objectIdSchema.optional().label("Billing Address ID"),
+  }),
+).label("AddProductsToSubscriptionPayload");
+
+/**
+ * Joi schema for removing products from subscription
+ */
+export const removeProductsFromSubscriptionSchema = Joi.object(
+  withFieldLabels({
+    productIds: Joi.array()
+      .items(objectIdSchema)
+      .min(1)
+      .required()
+      .label("Product IDs"),
+  }),
+).label("RemoveProductsFromSubscriptionPayload");
+
+/**
+ * Joi schema for changing subscription shipping address
+ */
+export const changeSubscriptionShippingAddressSchema = Joi.object(
+  withFieldLabels({
+    shippingAddressId: objectIdSchema.required().label("Shipping Address ID"),
+  }),
+).label("ChangeSubscriptionShippingAddressPayload");
+
+/**
+ * Joi schema for subscription transaction history query
+ */
+export const getSubscriptionTransactionHistoryQuerySchema = Joi.object(
+  withFieldLabels({
+    status: Joi.string()
+      .valid(...PAYMENT_STATUS_VALUES)
+      .optional(),
+    page: Joi.number().integer().min(1).optional(),
+    limit: Joi.number().integer().min(1).max(100).optional(),
+  }),
+)
+  .default({})
+  .label("SubscriptionTransactionHistoryQuery");
+
+export const getSubscriptionProductsStatusQuerySchema = Joi.object(
+  withFieldLabels({
+    inSubscription: Joi.boolean().optional(),
+    inCart: Joi.boolean().optional(),
+    page: Joi.number().integer().min(1).optional(),
+    limit: Joi.number().integer().min(1).max(100).optional(),
+  }),
+)
+  .default({})
+  .label("SubscriptionProductsStatusQuery");
+
+/**
+ * Joi schema for testing fast subscription renewal
+ */
+export const testSubscriptionRenewalSchema = Joi.object(
+  withFieldLabels({
+    delayMinutes: Joi.number()
+      .integer()
+      .min(0)
+      .default(0)
+      .label("Delay Minutes (for setting nextBillingDate)"),
+  }),
+).label("TestSubscriptionRenewalPayload");

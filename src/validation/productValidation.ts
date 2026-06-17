@@ -1,0 +1,863 @@
+import Joi from "joi";
+import mongoose from "mongoose";
+import {
+  ProductStatus,
+  ProductVariant,
+  PRODUCT_STATUS_VALUES,
+  PRODUCT_VARIANT_VALUES,
+  CURRENCY_VALUES,
+} from "../models/enums";
+import { AppError } from "../utils/AppError";
+import { I18nStringType } from "@/models/index.model";
+
+// I18n object schema - accepts both string and I18n object
+const i18nStringSchema = Joi.alternatives()
+  .try(
+    Joi.string().trim().min(2).max(200),
+    Joi.object({
+      en: Joi.string().trim().min(2).max(200).required(),
+      nl: Joi.string().trim().optional(),
+      de: Joi.string().trim().optional(),
+      fr: Joi.string().trim().optional(),
+      es: Joi.string().trim().optional(),
+    })
+  )
+  .required()
+  .messages({
+    "alternatives.match": "Title must be a string or I18n object with 'en' field",
+    "any.required": "Title is required",
+  });
+
+// Common validation patterns
+const titleSchema = i18nStringSchema;
+
+const slugSchema = Joi.string()
+  .trim()
+  .lowercase()
+  .pattern(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  .optional()
+  .messages({
+    "string.pattern.base":
+      "Slug must be a valid URL-friendly string (lowercase letters, numbers, and hyphens only)",
+  });
+
+const i18nTextSchema = Joi.alternatives()
+  .try(
+    Joi.string().trim(),
+    Joi.object({
+      en: Joi.string().trim().required(),
+      nl: Joi.string().trim().optional(),
+      de: Joi.string().trim().optional(),
+      fr: Joi.string().trim().optional(),
+      es: Joi.string().trim().optional(),
+    })
+  )
+  .required()
+  .messages({
+    "alternatives.match": "Description must be a string or I18n object with 'en' field",
+    "any.required": "Description is required",
+  });
+
+const descriptionSchema = i18nTextSchema;
+
+const shortDescriptionSchema = Joi.alternatives()
+  .try(
+    Joi.string().trim().allow(""),
+    Joi.object({
+      en: Joi.string().trim().required(),
+      nl: Joi.string().trim().optional(),
+      de: Joi.string().trim().optional(),
+      fr: Joi.string().trim().optional(),
+      es: Joi.string().trim().optional(),
+    })
+  )
+  .optional()
+  .messages({
+    "alternatives.match": "Short description must be a string or I18n object with 'en' field",
+  });
+
+const productImageSchema = Joi.string().trim().uri().required().messages({
+  "string.uri": "Product image must be a valid URL",
+  "any.required": "Product image is required",
+});
+
+const galleryImagesSchema = Joi.array()
+  .items(Joi.string().trim().uri())
+  .optional()
+  .messages({
+    "array.base": "Gallery images must be an array of image URLs",
+  });
+
+const benefitsSchema = Joi.array()
+  .items(
+    Joi.alternatives().try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().required(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+  )
+  .optional()
+  .messages({
+    "array.base": "Benefits must be an array of strings or I18n objects",
+  });
+
+// ObjectId validation helper
+const objectIdSchema = Joi.string()
+  .custom((value, helpers) => {
+    if (!mongoose.Types.ObjectId.isValid(value)) {
+      return helpers.error("any.invalid");
+    }
+    return value;
+  })
+  .messages({
+    "any.invalid": "Invalid ingredient ID format",
+  });
+
+const ingredientsSchema = Joi.array()
+  .items(objectIdSchema)
+  .optional()
+  .messages({
+    "array.base": "Ingredients must be an array of ingredient IDs",
+  });
+
+// productIngredientIdsSchema removed - relationship is reversed (productIngredients have products array)
+
+const categoriesSchema = Joi.array()
+  .items(Joi.string().trim())
+  .optional()
+  .messages({
+    "array.base": "Categories must be an array of strings",
+  });
+
+const healthGoalsSchema = Joi.array()
+  .items(
+    Joi.alternatives().try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().required(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+  )
+  .optional()
+  .messages({
+    "array.base": "Health goals must be an array of strings or I18n objects",
+  });
+
+const nutritionInfoSchema = Joi.alternatives()
+  .try(
+    Joi.string().trim().allow(""),
+    Joi.object({
+      en: Joi.string().trim().required(),
+      nl: Joi.string().trim().optional(),
+      de: Joi.string().trim().optional(),
+      fr: Joi.string().trim().optional(),
+      es: Joi.string().trim().optional(),
+    })
+  )
+  .optional()
+  .messages({
+    "alternatives.match": "Nutrition info must be a string or I18n object with 'en' field",
+  });
+
+const metaSchema = Joi.object({
+  title: Joi.string().trim().optional(),
+  description: Joi.string().trim().optional(),
+  keywords: Joi.string().trim().optional(),
+  ogImage: Joi.string().trim().uri().optional(),
+  hreflang: Joi.array()
+    .items(
+      Joi.object({
+        lang: Joi.string().trim().required(),
+        url: Joi.string().trim().uri().required(),
+      })
+    )
+    .optional(),
+}).optional();
+
+const howToUseSchema = Joi.alternatives()
+  .try(
+    Joi.string().trim().allow(""),
+    Joi.object({
+      en: Joi.string().trim().required(),
+      nl: Joi.string().trim().optional(),
+      de: Joi.string().trim().optional(),
+      fr: Joi.string().trim().optional(),
+      es: Joi.string().trim().optional(),
+    })
+  )
+  .optional()
+  .messages({
+    "alternatives.match": "How to use must be a string or I18n object with 'en' field",
+  });
+
+const statusSchema = Joi.boolean().optional().messages({
+  "boolean.base": "Status must be true or false",
+});
+
+const priceSchema = Joi.object({
+  currency: Joi.string()
+    .valid(...CURRENCY_VALUES)
+    .required()
+    .messages({
+      "any.only": `Currency must be one of: ${CURRENCY_VALUES.join(", ")}`,
+      "any.required": "Currency is required",
+    }),
+  amount: Joi.number().min(0).required().messages({
+    "number.min": "Amount must be greater than or equal to 0",
+    "any.required": "Amount is required",
+  }),
+  taxRate: Joi.number().min(0).optional().messages({
+    "number.min": "Tax rate must be greater than or equal to 0",
+  }),
+})
+  .required()
+  .messages({
+    "any.required": "Price is required",
+  });
+
+// Extended price schema for subscription periods with additional metadata
+const subscriptionPriceSchema = priceSchema.keys({
+  amount: Joi.number().min(0).required().messages({
+    "number.min": "Amount must be greater than or equal to 0",
+    "any.required": "Amount is required",
+  }),
+  discountedPrice: Joi.number().min(0).optional().messages({
+    "number.min": "Discounted price must be greater than or equal to 0",
+  }),
+  totalAmount: Joi.number().min(0).optional().messages({
+    "number.min": "Total amount must be greater than or equal to 0",
+  }),
+  durationDays: Joi.number().min(1).optional().messages({
+    "number.min": "Duration days must be greater than or equal to 1",
+  }),
+  capsuleCount: Joi.number().min(0).optional().messages({
+    "number.min": "Capsule count must be greater than or equal to 0",
+  }),
+  savingsPercentage: Joi.number().min(0).max(100).optional().messages({
+    "number.min": "Savings percentage must be greater than or equal to 0",
+    "number.max": "Savings percentage must be less than or equal to 100",
+  }),
+  features: Joi.array()
+    .items(
+      Joi.alternatives().try(
+        Joi.string().trim(),
+        Joi.object({
+          en: Joi.string().trim().required(),
+          nl: Joi.string().trim().optional(),
+          de: Joi.string().trim().optional(),
+          fr: Joi.string().trim().optional(),
+          es: Joi.string().trim().optional(),
+        })
+      )
+    )
+    .optional()
+    .messages({
+      "array.base": "Features must be an array of strings or I18n objects",
+    }),
+  icon: Joi.string().trim().uri().optional().messages({
+    "string.uri": "Icon must be a valid URL",
+  }),
+});
+
+const variantSchema = Joi.string()
+  .valid(...PRODUCT_VARIANT_VALUES)
+  .optional()
+  .default("SACHETS")
+  .messages({
+    "any.only": `Variant must be one of: ${PRODUCT_VARIANT_VALUES.join(", ")}`,
+  });
+
+const hasStandupPouchSchema = Joi.boolean().optional().default(false);
+
+// Stand-up pouch plan options: count_0, count_1 (replaces count30/count60)
+const standupPouchPlanOptionsSchema = Joi.object({
+  count_0: priceSchema
+    .keys({
+      discountedPrice: Joi.number().min(0).optional(),
+      capsuleCount: Joi.number().min(0).optional(),
+      features: Joi.array()
+        .items(
+          Joi.alternatives().try(
+            Joi.string().trim(),
+            Joi.object({
+              en: Joi.string().trim().required(),
+              nl: Joi.string().trim().optional(),
+              de: Joi.string().trim().optional(),
+              fr: Joi.string().trim().optional(),
+              es: Joi.string().trim().optional(),
+            })
+          )
+        )
+        .optional(),
+    })
+    .optional(),
+  count_1: priceSchema
+    .keys({
+      discountedPrice: Joi.number().min(0).optional(),
+      capsuleCount: Joi.number().min(0).optional(),
+      features: Joi.array()
+        .items(
+          Joi.alternatives().try(
+            Joi.string().trim(),
+            Joi.object({
+              en: Joi.string().trim().required(),
+              nl: Joi.string().trim().optional(),
+              de: Joi.string().trim().optional(),
+              fr: Joi.string().trim().optional(),
+              es: Joi.string().trim().optional(),
+            })
+          )
+        )
+        .optional(),
+    })
+    .optional(),
+});
+
+// Sachet prices (subscription plans only; oneTime removed)
+const sachetPricesSchema = Joi.object({
+  thirtyDays: subscriptionPriceSchema.required(),
+  sixtyDays: subscriptionPriceSchema.required(),
+  ninetyDays: subscriptionPriceSchema.required(),
+  oneEightyDays: subscriptionPriceSchema.required(),
+}).optional();
+
+// Stand-up pouch: simple price or count_0 / count_1 structure
+const standupPouchPriceSchema = Joi.alternatives()
+  .try(priceSchema, standupPouchPlanOptionsSchema)
+  .when("hasStandupPouch", {
+    is: true,
+    then: Joi.required().messages({
+      "any.required":
+        "standupPouchPrice is required when hasStandupPouch is true",
+    }),
+    otherwise: Joi.optional(),
+  });
+
+// Stand-up pouch images
+const standupPouchImagesSchema = Joi.array()
+  .items(Joi.string().trim().uri())
+  .optional()
+  .messages({
+    "array.base": "Stand-up pouch images must be an array of URLs",
+  });
+
+// Legacy subscription price schema (kept for backward compatibility)
+const legacySubscriptionPriceSchema = Joi.object({
+  oneTime: priceSchema,
+  thirtyDays: priceSchema,
+  sixtyDays: priceSchema,
+  ninetyDays: priceSchema,
+  oneEightyDays: priceSchema,
+});
+
+const standupPouchPricesSchema = legacySubscriptionPriceSchema.when(
+  "hasStandupPouch",
+  {
+    is: true,
+    then: Joi.optional(), // Legacy field, optional now
+    otherwise: Joi.optional(),
+  }
+);
+
+const isFeaturedSchema = Joi.boolean().optional().default(false);
+
+const comparisonRowSchema = Joi.object({
+  label: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().required(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .required(),
+  values: Joi.array().items(Joi.boolean()).min(1).required(),
+});
+
+const comparisonSectionSchema = Joi.object({
+  title: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().required(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .required(),
+  columns: Joi.array()
+    .items(
+      Joi.alternatives().try(
+        Joi.string().trim(),
+        Joi.object({
+          en: Joi.string().trim().required(),
+          nl: Joi.string().trim().optional(),
+          de: Joi.string().trim().optional(),
+          fr: Joi.string().trim().optional(),
+          es: Joi.string().trim().optional(),
+        })
+      )
+    )
+    .min(1)
+    .required(),
+  rows: Joi.array().items(comparisonRowSchema).min(1).required(),
+})
+  .optional()
+  .messages({
+    "object.base": "Comparison section must be an object",
+  });
+
+const specificationItemSchema = Joi.object({
+  title: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().required(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .required(),
+  descr: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().required(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .required(),
+  image: Joi.string().trim().uri().optional(), // Optional - will be set from uploaded file
+  imageMobile: Joi.string().trim().uri().optional(), // Optional - will be set from uploaded file
+});
+
+const specificationSchema = Joi.object({
+  main_title: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().required(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .required(),
+  bg_image: Joi.string().trim().optional(), // Optional - URL string or from uploaded file (any string accepted)
+  items: Joi.array().items(specificationItemSchema).min(1).max(4).optional(),
+  // Individual item fields (title1, descr1, etc.) - will be converted to items array
+  title1: Joi.string().trim().optional(),
+  descr1: Joi.string().trim().optional(),
+  title2: Joi.string().trim().optional(),
+  descr2: Joi.string().trim().optional(),
+  title3: Joi.string().trim().optional(),
+  descr3: Joi.string().trim().optional(),
+  title4: Joi.string().trim().optional(),
+  descr4: Joi.string().trim().optional(),
+})
+  .optional()
+  .messages({
+    "object.base": "Specification must be an object",
+  });
+
+// Update: all specification fields optional; item image strings accepted (no strict .uri()) so nothing is stripped
+const specificationItemSchemaForUpdate = Joi.object({
+  title: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().optional(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .optional(),
+  descr: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().optional(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .optional(),
+  image: Joi.string().trim().optional(),
+  imageMobile: Joi.string().trim().optional(),
+});
+
+const specificationSchemaForUpdate = Joi.object({
+  main_title: Joi.alternatives()
+    .try(
+      Joi.string().trim(),
+      Joi.object({
+        en: Joi.string().trim().optional(),
+        nl: Joi.string().trim().optional(),
+        de: Joi.string().trim().optional(),
+        fr: Joi.string().trim().optional(),
+        es: Joi.string().trim().optional(),
+      })
+    )
+    .optional(),
+  bg_image: Joi.string().trim().uri().optional(),
+  items: Joi.array().items(specificationItemSchemaForUpdate).min(0).max(4).optional(),
+  title1: Joi.string().trim().optional(),
+  descr1: Joi.string().trim().optional(),
+  title2: Joi.string().trim().optional(),
+  descr2: Joi.string().trim().optional(),
+  title3: Joi.string().trim().optional(),
+  descr3: Joi.string().trim().optional(),
+  title4: Joi.string().trim().optional(),
+  descr4: Joi.string().trim().optional(),
+})
+  .optional()
+  .messages({
+    "object.base": "Specification must be an object",
+  });
+
+const ingredientMetaI18nStringSchema = Joi.object({
+  en: Joi.string().trim().min(2).max(200).required(),
+  nl: Joi.string().trim().optional(),
+  de: Joi.string().trim().optional(),
+  fr: Joi.string().trim().optional(),
+  es: Joi.string().trim().optional(),
+}).messages({
+  "object.base": "Ingredient metadata field must be an object",
+  "any.required": "Ingredient metadata field must have 'en' field",
+});
+
+const mediaSchema = Joi.object({
+  type: Joi.string().valid("image", "video", "Image", "Video").optional(),
+  url: Joi.string().trim().uri().optional(),
+  sortOrder: Joi.number().integer().min(0).optional(),
+})
+  .unknown(false)
+  .optional();
+
+const ingredientMetaSchema = Joi.object({
+  sectionTitle: ingredientMetaI18nStringSchema.optional(),
+  sectionSubtitle: ingredientMetaI18nStringSchema.optional(),
+  backgroundImage: mediaSchema.optional(),
+  excipients: ingredientMetaI18nStringSchema.optional(),
+})
+  .optional()
+  .messages({
+    "object.base": "Ingredient metadata must be an object",
+  });
+
+// Create product schema
+export const createProductSchema = Joi.object({
+  title: titleSchema,
+  slug: slugSchema.optional(),
+  description: descriptionSchema.optional(),
+  productImage: productImageSchema.optional(),
+  shortDescription: shortDescriptionSchema.optional(),
+  galleryImages: galleryImagesSchema.optional(),
+  benefits: benefitsSchema.optional(),
+  ingredients: ingredientsSchema.optional(),
+  ingredientMeta: ingredientMetaSchema.optional(),
+  ingredientCompositions: Joi.array()
+    .items(
+      Joi.object({
+        ingredient: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/).messages({
+          "string.pattern.base": "Invalid ingredient ID format",
+          "any.required": "Ingredient ID is required",
+        }),
+        quantity: Joi.number().min(0).required().messages({
+          "number.base": "Quantity must be a number",
+          "number.min": "Quantity cannot be negative",
+          "any.required": "Quantity is required",
+        }),
+        driPercentage: Joi.alternatives()
+          .try(
+            Joi.number().min(0).messages({
+              "number.base": "DRI percentage must be a number",
+              "number.min": "DRI percentage cannot be negative",
+            }),
+            Joi.string().valid("*", "**").messages({
+              "any.only": "DRI percentage string must be '*' or '**'",
+            })
+          )
+          .required().messages({
+            "any.required": "DRI percentage is required",
+          }),
+      })
+    )
+    .optional()
+    .messages({
+      "array.base": "Ingredient compositions must be an array of composition objects",
+    }),
+  categories: categoriesSchema,
+  healthGoals: healthGoalsSchema,
+  nutritionInfo: nutritionInfoSchema,
+  howToUse: howToUseSchema,
+  status: statusSchema.default(true),
+  price: priceSchema.optional(), // Optional - can be derived from sachetPrices
+  variant: variantSchema,
+  hasStandupPouch: hasStandupPouchSchema,
+  sachetPrices: sachetPricesSchema,
+  standupPouchPrice: standupPouchPriceSchema,
+  standupPouchImages: standupPouchImagesSchema,
+  isFeatured: isFeaturedSchema,
+  comparisonSection: comparisonSectionSchema,
+  specification: specificationSchema,
+  // Optional FAQs: max 15, each { question, answer } (string or I18n)
+  faqs: Joi.array()
+    .items(
+      Joi.object({
+        question: Joi.alternatives().try(
+          Joi.string().trim().min(1),
+          Joi.object({
+            en: Joi.string().trim().required(),
+            nl: Joi.string().trim().optional(),
+            de: Joi.string().trim().optional(),
+            fr: Joi.string().trim().optional(),
+            es: Joi.string().trim().optional(),
+          })
+        ).required(),
+        answer: Joi.alternatives().try(
+          Joi.string().trim().min(1),
+          Joi.object({
+            en: Joi.string().trim().required(),
+            nl: Joi.string().trim().optional(),
+            de: Joi.string().trim().optional(),
+            fr: Joi.string().trim().optional(),
+            es: Joi.string().trim().optional(),
+          })
+        ).required(),
+      }).required()
+    )
+    .min(1)
+    .max(15)
+    .optional()
+    .messages({
+      "array.max": "Maximum 15 FAQs allowed",
+      "array.min": "Each FAQ must have question and answer",
+    }),
+}).custom((value, helpers) => {
+  // Custom validation: if hasStandupPouch is true, standupPouchPrice must be provided
+  if (value.hasStandupPouch === true && !value.standupPouchPrice) {
+    return helpers.error("any.custom", {
+      message: "standupPouchPrice is required when hasStandupPouch is true",
+    });
+  }
+  // Sachets (default variant) should have sachetPrices
+  if (value.variant === "SACHETS" && !value.sachetPrices) {
+    return helpers.error("any.custom", {
+      message: "sachetPrices is required for SACHETS variant",
+    });
+  }
+  // If price is not provided and sachetPrices exists, set price from sachetPrices.thirtyDays
+  if (!value.price && value.sachetPrices && value.sachetPrices.thirtyDays) {
+    const thirtyDays = value.sachetPrices.thirtyDays;
+    const baseAmount =
+      thirtyDays.discountedPrice !== undefined
+        ? thirtyDays.discountedPrice
+        : thirtyDays.amount || thirtyDays.totalAmount || 0;
+    value.price = {
+      currency: thirtyDays.currency || "USD",
+      amount: baseAmount,
+      taxRate: thirtyDays.taxRate || 0,
+    };
+  }
+  return value;
+});
+
+// Update product schema (all fields optional - can update single or multiple fields)
+export const updateProductSchema = Joi.object({
+  title: titleSchema.optional(),
+  slug: slugSchema.optional(),
+  description: descriptionSchema.optional(),
+  productImage: productImageSchema.optional(),
+  shortDescription: shortDescriptionSchema.optional(),
+  galleryImages: galleryImagesSchema.optional(),
+  benefits: benefitsSchema.optional(),
+  ingredients: ingredientsSchema.optional(),
+  ingredientMeta: ingredientMetaSchema.optional(),
+  categories: categoriesSchema.optional(),
+  healthGoals: healthGoalsSchema.optional(),
+  nutritionInfo: nutritionInfoSchema.optional(),
+  howToUse: howToUseSchema.optional(),
+  status: statusSchema.optional(),
+  price: priceSchema.optional(),
+  variant: variantSchema.optional(),
+  hasStandupPouch: hasStandupPouchSchema.optional(),
+  sachetPrices: sachetPricesSchema.optional(),
+  standupPouchPrice: standupPouchPriceSchema.optional(),
+  standupPouchImages: standupPouchImagesSchema.optional(),
+  isFeatured: isFeaturedSchema.optional(),
+  comparisonSection: comparisonSectionSchema.optional(),
+  specification: specificationSchemaForUpdate,
+  ingredientCompositions: Joi.array()
+    .items(
+      Joi.object({
+        ingredient: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/).messages({
+          "string.pattern.base": "Invalid ingredient ID format",
+          "any.required": "Ingredient ID is required",
+        }),
+        quantity: Joi.number().min(0).required().messages({
+          "number.base": "Quantity must be a number",
+          "number.min": "Quantity cannot be negative",
+          "any.required": "Quantity is required",
+        }),
+        driPercentage: Joi.alternatives()
+          .try(
+            Joi.number().min(0).messages({
+              "number.base": "DRI percentage must be a number",
+              "number.min": "DRI percentage cannot be negative",
+            }),
+            Joi.string().valid("*", "**").messages({
+              "any.only": "DRI percentage string must be '*' or '**'",
+            })
+          )
+          .required().messages({
+            "any.required": "DRI percentage is required",
+          }),
+      })
+    )
+    .optional()
+    .messages({
+      "array.base": "Ingredient compositions must be an array of composition objects",
+    }),  // ← the array itself is optional
+  // Optional FAQs: empty array [] = delete all FAQs; or 1–15 items to replace. Each item must have question and answer.
+  // Do not use .required() on the item object so that empty array [] is valid (Joi treats items().required() as "at least one item").
+  faqs: Joi.array()
+    .items(
+      Joi.object({
+        question: Joi.alternatives().try(
+          Joi.string().trim().min(1),
+          Joi.object({
+            en: Joi.string().trim().required(),
+            nl: Joi.string().trim().optional(),
+            de: Joi.string().trim().optional(),
+            fr: Joi.string().trim().optional(),
+            es: Joi.string().trim().optional(),
+          })
+        ).required(),
+        answer: Joi.alternatives().try(
+          Joi.string().trim().min(1),
+          Joi.object({
+            en: Joi.string().trim().required(),
+            nl: Joi.string().trim().optional(),
+            de: Joi.string().trim().optional(),
+            fr: Joi.string().trim().optional(),
+            es: Joi.string().trim().optional(),
+          })
+        ).required(),
+      })
+    )
+    .min(0)
+    .max(15)
+    .optional()
+    .messages({
+      "array.max": "Maximum 15 FAQs allowed",
+      "array.min": "Each FAQ must have question and answer",
+    }),
+}).custom((value, helpers) => {
+  // Custom validation: if hasStandupPouch is being set to true, standupPouchPrice must be provided
+  // Only validate if hasStandupPouch is explicitly being updated to true
+  if (value.hasStandupPouch === true && value.standupPouchPrice === undefined) {
+    return helpers.error("any.custom", {
+      message: "standupPouchPrice is required when hasStandupPouch is true",
+    });
+  }
+  // If price is not provided and sachetPrices is being updated, derive price from sachetPrices.thirtyDays
+  if (!value.price && value.sachetPrices && value.sachetPrices.thirtyDays) {
+    const thirtyDays = value.sachetPrices.thirtyDays;
+    const baseAmount =
+      thirtyDays.discountedPrice !== undefined
+        ? thirtyDays.discountedPrice
+        : thirtyDays.amount || thirtyDays.totalAmount || 0;
+    value.price = {
+      currency: thirtyDays.currency || "USD",
+      amount: baseAmount,
+      taxRate: thirtyDays.taxRate || 0,
+    };
+  }
+  return value;
+});
+
+// Update product status schema (for enable/disable) - Simple boolean
+export const updateProductStatusSchema = Joi.object({
+  enabled: Joi.boolean().required().messages({
+    "boolean.base": "enabled must be a boolean value",
+    "any.required": "enabled is required",
+  }),
+})
+  .required()
+  .messages({
+    "object.base": "Request body must be an object",
+  });
+
+// Get product categories query schema
+export const getProductCategoriesSchema = Joi.object({
+  lang: Joi.string().valid("en", "nl", "de", "fr", "es").optional().default("en").messages({
+    "any.only": "Language must be one of: en, nl, de, fr, es",
+  }),
+})
+  .unknown(false)
+  .label("ProductCategoriesQuery");
+
+// Get product categories list with products query schema (for navbar)
+export const listProductCategoriesSchema = Joi.object({
+  lang: Joi.string().valid("en", "nl", "de", "fr", "es").optional().messages({
+    "any.only": "Language must be one of: en, nl, de, fr, es",
+  }),
+})
+  .unknown(false)
+  .label("ListProductCategoriesQuery");
+
+// Validation middleware
+export const validateProduct = (schema: Joi.ObjectSchema) => {
+  return (req: any, res: any, next: any) => {
+    const { error, value } = schema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+      allowUnknown: false,
+    });
+
+    if (error) {
+      // Collect all validation errors
+      const allErrors = error.details.map((detail) => ({
+        field: detail.path.join("."),
+        message: detail.message,
+        value: detail.context?.value,
+      }));
+
+      const errorMessages = allErrors.map((e) => `${e.field}: ${e.message}`).join("; ");
+      
+      const appErr: any = new AppError("Validation error", 400);
+      appErr.errorType = "Validation error";
+      appErr.error = errorMessages; // Show all errors
+      appErr.errors = allErrors; // Include detailed errors array
+      throw appErr;
+    }
+
+    req.body = value;
+    next();
+  };
+};

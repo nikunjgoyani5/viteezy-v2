@@ -1,0 +1,2981 @@
+[
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000001"
+        },
+        "title": {
+            "en": "Vitamin D3 + K2 Complex",
+            "nl": "Vitamine D3 + K2 Complex",
+            "de": "Vitamin D3 + K2 Komplex",
+            "fr": "Complexe Vitamine D3 + K2",
+            "es": "Complejo Vitamina D3 + K2"
+        },
+        "slug": "vitamin-d3-k2-complex",
+        "description": {
+            "en": "Premium vitamin D3 and K2 combination for optimal bone health and immune support. Formulated with high-quality ingredients for maximum absorption.",
+            "nl": "Premium vitamine D3 en K2 combinatie voor optimale botgezondheid en immuunondersteuning. Geformuleerd met hoogwaardige ingrediënten voor maximale opname.",
+            "de": "Premium-Vitamin-D3- und K2-Kombination für optimale Knochengesundheit und Immununterstützung. Formuliert mit hochwertigen Inhaltsstoffen für maximale Absorption.",
+            "fr": "Combinaison premium de vitamine D3 et K2 pour une santé osseuse optimale et un soutien immunitaire. Formulé avec des ingrédients de haute qualité pour une absorption maximale.",
+            "es": "Combinación premium de vitamina D3 y K2 para una salud ósea óptima y apoyo inmunológico. Formulado con ingredientes de alta calidad para una absorción máxima."
+        },
+        "shortDescription": "Premium D3 + K2 for bone health and immunity",
+        "productImage": "https://cdn.example.com/products/vitamin-d3-k2.jpg",
+        "galleryImages": [
+            "https://cdn.example.com/products/vitamin-d3-k2-1.jpg",
+            "https://cdn.example.com/products/vitamin-d3-k2-2.jpg"
+        ],
+        "benefits": [
+            "Supports bone health",
+            "Boosts immune system",
+            "Enhances calcium absorption",
+            "Promotes cardiovascular health"
+        ],
+        "ingredients": [
+            "Vitamin D3 (Cholecalciferol)",
+            "Vitamin K2 (MK-7)",
+            "MCT Oil",
+            "Natural Tocopherols"
+        ],
+        "healthGoals": [
+            "Immune Support",
+            "Bone Health",
+            "Cardiovascular Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 2000 IU Vitamin D3 and 100mcg Vitamin K2 MK-7. Take with a meal containing fat for optimal absorption.",
+            "nl": "Elke capsule bevat 2000 IE Vitamine D3 en 100mcg Vitamine K2 MK-7. Neem in met een maaltijd die vet bevat voor optimale opname.",
+            "de": "Jede Kapsel enthält 2000 IE Vitamin D3 und 100mcg Vitamin K2 MK-7. Nehmen Sie mit einer fetthaltigen Mahlzeit für optimale Absorption ein.",
+            "fr": "Chaque capsule contient 2000 UI de vitamine D3 et 100mcg de vitamine K2 MK-7. Prendre avec un repas contenant des graisses pour une absorption optimale.",
+            "es": "Cada cápsula contiene 2000 UI de vitamina D3 y 100mcg de vitamina K2 MK-7. Tomar con una comida que contenga grasa para una absorción óptima."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily with a meal containing fat. Best taken in the morning.",
+            "nl": "Neem 1 capsule dagelijks in met een maaltijd die vet bevat. Het beste 's ochtends in te nemen.",
+            "de": "Nehmen Sie täglich 1 Kapsel mit einer fetthaltigen Mahlzeit ein. Am besten morgens einnehmen.",
+            "fr": "Prendre 1 capsule par jour avec un repas contenant des graisses. À prendre de préférence le matin.",
+            "es": "Tomar 1 cápsula al día con una comida que contenga grasa. Mejor tomar por la mañana."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 24.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": true,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 19.99,
+                "taxRate": 21,
+                "totalAmount": 59.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 20,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 18.99,
+                "taxRate": 21,
+                "totalAmount": 113.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 24,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 17.99,
+                "taxRate": 21,
+                "totalAmount": 161.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 28,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 305.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 32,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 24.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 44.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "standupPouchPrice": {
+            "currency": "USD",
+            "amount": 29.99,
+            "taxRate": 21
+        },
+        "isFeatured": true,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-15T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-15T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000002"
+        },
+        "title": {
+            "en": "Omega-3 Fish Oil Premium",
+            "nl": "Omega-3 Visolie Premium",
+            "de": "Omega-3 Fischöl Premium",
+            "fr": "Huile de Poisson Omega-3 Premium",
+            "es": "Aceite de Pescado Omega-3 Premium"
+        },
+        "slug": "omega-3-fish-oil-premium",
+        "description": {
+            "en": "High-concentration omega-3 fatty acids from wild-caught fish. Supports heart health, brain function, and reduces inflammation.",
+            "nl": "Hoge concentratie omega-3 vetzuren uit wild gevangen vis. Ondersteunt hartgezondheid, hersenfunctie en vermindert ontstekingen.",
+            "de": "Hochkonzentrierte Omega-3-Fettsäuren aus wild gefangenem Fisch. Unterstützt Herzgesundheit, Gehirnfunktion und reduziert Entzündungen.",
+            "fr": "Acides gras oméga-3 à haute concentration provenant de poissons sauvages. Soutient la santé cardiaque, la fonction cérébrale et réduit l'inflammation.",
+            "es": "Ácidos grasos omega-3 de alta concentración de pescado salvaje. Apoya la salud cardíaca, la función cerebral y reduce la inflamación."
+        },
+        "shortDescription": "High-concentration omega-3 for heart and brain health",
+        "productImage": "https://cdn.example.com/products/omega-3.jpg",
+        "galleryImages": [
+            "https://cdn.example.com/products/omega-3-1.jpg"
+        ],
+        "benefits": [
+            "Supports cardiovascular health",
+            "Enhances brain function",
+            "Reduces inflammation",
+            "Supports joint health"
+        ],
+        "ingredients": [
+            "EPA (Eicosapentaenoic Acid)",
+            "DHA (Docosahexaenoic Acid)",
+            "Fish Oil",
+            "Natural Tocopherols"
+        ],
+        "healthGoals": [
+            "Cardiovascular Health",
+            "Brain Health",
+            "Joint Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each softgel contains 1000mg fish oil providing 300mg EPA and 200mg DHA. Molecularly distilled for purity.",
+            "nl": "Elke softgel bevat 1000mg visolie met 300mg EPA en 200mg DHA. Moleculair gedistilleerd voor zuiverheid.",
+            "de": "Jede Softgel enthält 1000mg Fischöl mit 300mg EPA und 200mg DHA. Molekular destilliert für Reinheit.",
+            "fr": "Chaque softgel contient 1000mg d'huile de poisson fournissant 300mg d'EPA et 200mg de DHA. Distillé moléculairement pour la pureté.",
+            "es": "Cada softgel contiene 1000mg de aceite de pescado que proporciona 300mg de EPA y 200mg de DHA. Destilado molecularmente para pureza."
+        },
+        "howToUse": {
+            "en": "Take 2 softgels daily with meals. Store in a cool, dry place.",
+            "nl": "Neem 2 softgels dagelijks in met maaltijden. Bewaar op een koele, droge plaats.",
+            "de": "Nehmen Sie täglich 2 Softgels mit den Mahlzeiten ein. An einem kühlen, trockenen Ort aufbewahren.",
+            "fr": "Prendre 2 softgels par jour avec les repas. Conserver dans un endroit frais et sec.",
+            "es": "Tomar 2 softgels al día con las comidas. Almacenar en un lugar fresco y seco."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 29.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 24.99,
+                "taxRate": 21,
+                "totalAmount": 74.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 17,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 23.99,
+                "taxRate": 21,
+                "totalAmount": 143.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 20,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 22.99,
+                "taxRate": 21,
+                "totalAmount": 206.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 23,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 21.99,
+                "taxRate": 21,
+                "totalAmount": 395.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 27,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 29.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 54.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": true,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-16T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-16T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000003"
+        },
+        "title": {
+            "en": "Magnesium Glycinate Complex",
+            "nl": "Magnesium Glycinaat Complex",
+            "de": "Magnesium Glycinat Komplex",
+            "fr": "Complexe Magnésium Glycinate",
+            "es": "Complejo Magnesio Glicinato"
+        },
+        "slug": "magnesium-glycinate-complex",
+        "description": {
+            "en": "Highly bioavailable magnesium glycinate for better sleep, muscle relaxation, and stress relief. Gentle on the stomach.",
+            "nl": "Zeer goed opneembaar magnesium glycinaat voor betere slaap, spierontspanning en stressverlichting. Zacht voor de maag.",
+            "de": "Hoch bioverfügbares Magnesiumglycinat für besseren Schlaf, Muskelentspannung und Stressabbau. Magenschonend.",
+            "fr": "Glycinate de magnésium hautement biodisponible pour un meilleur sommeil, la relaxation musculaire et la réduction du stress. Doux pour l'estomac.",
+            "es": "Glicinato de magnesio altamente biodisponible para un mejor sueño, relajación muscular y alivio del estrés. Suave para el estómago."
+        },
+        "shortDescription": "Bioavailable magnesium for sleep and stress relief",
+        "productImage": "https://cdn.example.com/products/magnesium.jpg",
+        "benefits": [
+            "Promotes better sleep",
+            "Reduces muscle cramps",
+            "Supports stress management",
+            "Enhances energy production"
+        ],
+        "ingredients": [
+            "Magnesium Glycinate",
+            "Magnesium Citrate",
+            "Vegetable Cellulose",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Sleep Support",
+            "Stress Management",
+            "Muscle Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 400mg elemental magnesium. Take before bedtime for best results.",
+            "nl": "Elke capsule bevat 400mg elementair magnesium. Neem voor het slapengaan voor beste resultaten.",
+            "de": "Jede Kapsel enthält 400mg elementares Magnesium. Vor dem Schlafengehen einnehmen für beste Ergebnisse.",
+            "fr": "Chaque capsule contient 400mg de magnésium élémentaire. Prendre avant le coucher pour de meilleurs résultats.",
+            "es": "Cada cápsula contiene 400mg de magnesio elemental. Tomar antes de acostarse para mejores resultados."
+        },
+        "howToUse": {
+            "en": "Take 2 capsules before bedtime with water. Can be taken with or without food.",
+            "nl": "Neem 2 capsules voor het slapengaan met water. Kan met of zonder voedsel worden ingenomen.",
+            "de": "Nehmen Sie 2 Kapseln vor dem Schlafengehen mit Wasser ein. Kann mit oder ohne Nahrung eingenommen werden.",
+            "fr": "Prendre 2 capsules avant le coucher avec de l'eau. Peut être pris avec ou sans nourriture.",
+            "es": "Tomar 2 cápsulas antes de acostarse con agua. Se puede tomar con o sin comida."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 19.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 50.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 15,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 15.99,
+                "taxRate": 21,
+                "totalAmount": 95.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 20,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 14.99,
+                "taxRate": 21,
+                "totalAmount": 134.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 25,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 13.99,
+                "taxRate": 21,
+                "totalAmount": 251.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 30,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 19.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 34.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-17T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-17T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000004"
+        },
+        "title": {
+            "en": "Vitamin B12 Methylcobalamin",
+            "nl": "Vitamine B12 Methylcobalamine",
+            "de": "Vitamin B12 Methylcobalamin",
+            "fr": "Vitamine B12 Méthylcobalamine",
+            "es": "Vitamina B12 Metilcobalamina"
+        },
+        "slug": "vitamin-b12-methylcobalamin",
+        "description": {
+            "en": "Active form of B12 for optimal energy, nerve function, and red blood cell formation. Sublingual for better absorption.",
+            "nl": "Actieve vorm van B12 voor optimale energie, zenuwfunctie en rode bloedcelvorming. Sublinguaal voor betere opname.",
+            "de": "Aktive Form von B12 für optimale Energie, Nervenfunktion und Bildung roter Blutkörperchen. Sublingual für bessere Absorption.",
+            "fr": "Forme active de B12 pour une énergie optimale, la fonction nerveuse et la formation des globules rouges. Sublingual pour une meilleure absorption.",
+            "es": "Forma activa de B12 para energía óptima, función nerviosa y formación de glóbulos rojos. Sublingual para mejor absorción."
+        },
+        "shortDescription": "Active B12 for energy and nerve health",
+        "productImage": "https://cdn.example.com/products/b12.jpg",
+        "benefits": [
+            "Boosts energy levels",
+            "Supports nerve health",
+            "Promotes red blood cell formation",
+            "Enhances cognitive function"
+        ],
+        "ingredients": [
+            "Methylcobalamin (B12)",
+            "Mannitol",
+            "Stearic Acid",
+            "Natural Flavors"
+        ],
+        "healthGoals": [
+            "Energy Support",
+            "Brain Health",
+            "Nerve Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each lozenge contains 1000mcg methylcobalamin. Place under tongue and let dissolve for best absorption.",
+            "nl": "Elke zuigtablet bevat 1000mcg methylcobalamine. Plaats onder de tong en laat oplossen voor beste opname.",
+            "de": "Jede Lutschtablette enthält 1000mcg Methylcobalamin. Unter die Zunge legen und auflösen lassen für beste Absorption.",
+            "fr": "Chaque pastille contient 1000mcg de méthylcobalamine. Placer sous la langue et laisser dissoudre pour une meilleure absorption.",
+            "es": "Cada pastilla contiene 1000mcg de metilcobalamina. Colocar bajo la lengua y dejar disolver para mejor absorción."
+        },
+        "howToUse": {
+            "en": "Take 1 lozenge daily. Place under tongue and let dissolve completely. Can be taken with or without food.",
+            "nl": "Neem 1 zuigtablet dagelijks. Plaats onder de tong en laat volledig oplossen. Kan met of zonder voedsel worden ingenomen.",
+            "de": "Nehmen Sie täglich 1 Lutschtablette ein. Unter die Zunge legen und vollständig auflösen lassen. Kann mit oder ohne Nahrung eingenommen werden.",
+            "fr": "Prendre 1 pastille par jour. Placer sous la langue et laisser dissoudre complètement. Peut être pris avec ou sans nourriture.",
+            "es": "Tomar 1 pastilla al día. Colocar bajo la lengua y dejar disolver completamente. Se puede tomar con o sin comida."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 14.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 12.99,
+                "taxRate": 21,
+                "totalAmount": 38.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 13,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 11.99,
+                "taxRate": 21,
+                "totalAmount": 71.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 20,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 10.99,
+                "taxRate": 21,
+                "totalAmount": 98.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 27,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 9.99,
+                "taxRate": 21,
+                "totalAmount": 179.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 33,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 14.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 26.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-18T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-18T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000005"
+        },
+        "title": {
+            "en": "Zinc Picolinate + Vitamin C",
+            "nl": "Zink Picolinaat + Vitamine C",
+            "de": "Zink Picolinat + Vitamin C",
+            "fr": "Picolinate de Zinc + Vitamine C",
+            "es": "Picolinato de Zinc + Vitamina C"
+        },
+        "slug": "zinc-picolinate-vitamin-c",
+        "description": {
+            "en": "Powerful immune support combination with highly absorbable zinc picolinate and vitamin C. Supports immune function and wound healing.",
+            "nl": "Krachtige immuunondersteuning combinatie met zeer goed opneembaar zink picolinaat en vitamine C. Ondersteunt immuunfunctie en wondgenezing.",
+            "de": "Starke Immununterstützungskombination mit hoch absorbierbarem Zinkpicolinat und Vitamin C. Unterstützt Immunfunktion und Wundheilung.",
+            "fr": "Combinaison puissante de soutien immunitaire avec du picolinate de zinc hautement absorbable et de la vitamine C. Soutient la fonction immunitaire et la cicatrisation.",
+            "es": "Combinación potente de apoyo inmunológico con picolinato de zinc altamente absorbible y vitamina C. Apoya la función inmunológica y la cicatrización."
+        },
+        "shortDescription": "Immune support with zinc and vitamin C",
+        "productImage": "https://cdn.example.com/products/zinc-vitamin-c.jpg",
+        "benefits": [
+            "Boosts immune system",
+            "Supports wound healing",
+            "Enhances antioxidant protection",
+            "Promotes skin health"
+        ],
+        "ingredients": [
+            "Zinc Picolinate",
+            "Vitamin C (Ascorbic Acid)",
+            "Vegetable Cellulose",
+            "Stearic Acid"
+        ],
+        "healthGoals": [
+            "Immune Support",
+            "Skin Health",
+            "Antioxidant Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 15mg zinc picolinate and 500mg vitamin C. Take with food for best absorption.",
+            "nl": "Elke capsule bevat 15mg zink picolinaat en 500mg vitamine C. Neem in met voedsel voor beste opname.",
+            "de": "Jede Kapsel enthält 15mg Zinkpicolinat und 500mg Vitamin C. Mit Nahrung einnehmen für beste Absorption.",
+            "fr": "Chaque capsule contient 15mg de picolinate de zinc et 500mg de vitamine C. Prendre avec de la nourriture pour une meilleure absorption.",
+            "es": "Cada cápsula contiene 15mg de picolinato de zinc y 500mg de vitamina C. Tomar con comida para mejor absorción."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily with a meal. Do not exceed recommended dosage.",
+            "nl": "Neem 1 capsule dagelijks in met een maaltijd. Overschrijd de aanbevolen dosering niet.",
+            "de": "Nehmen Sie täglich 1 Kapsel mit einer Mahlzeit ein. Überschreiten Sie nicht die empfohlene Dosierung.",
+            "fr": "Prendre 1 capsule par jour avec un repas. Ne pas dépasser la dose recommandée.",
+            "es": "Tomar 1 cápsula al día con una comida. No exceder la dosis recomendada."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 16.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 14.99,
+                "taxRate": 21,
+                "totalAmount": 44.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 12,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 13.99,
+                "taxRate": 21,
+                "totalAmount": 83.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 18,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 12.99,
+                "taxRate": 21,
+                "totalAmount": 116.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 24,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 11.99,
+                "taxRate": 21,
+                "totalAmount": 215.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 29,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 16.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 29.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-19T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-19T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000006"
+        },
+        "title": {
+            "en": "Probiotics 50 Billion CFU",
+            "nl": "Probiotica 50 Miljard CFU",
+            "de": "Probiotika 50 Milliarden CFU",
+            "fr": "Probiotiques 50 Milliards CFU",
+            "es": "Probióticos 50 Mil Millones CFU"
+        },
+        "slug": "probiotics-50-billion-cfu",
+        "description": {
+            "en": "High-potency probiotic blend with 50 billion CFU per capsule. Supports digestive health, immune function, and gut microbiome balance.",
+            "nl": "Hoogwaardige probiotica mix met 50 miljard CFU per capsule. Ondersteunt spijsverteringsgezondheid, immuunfunctie en darmmicrobioom balans.",
+            "de": "Hochwirksame Probiotika-Mischung mit 50 Milliarden CFU pro Kapsel. Unterstützt Verdauungsgesundheit, Immunfunktion und Darmmikrobiom-Balance.",
+            "fr": "Mélange probiotique haute puissance avec 50 milliards d'UFC par capsule. Soutient la santé digestive, la fonction immunitaire et l'équilibre du microbiome intestinal.",
+            "es": "Mezcla probiótica de alta potencia con 50 mil millones de UFC por cápsula. Apoya la salud digestiva, la función inmunológica y el equilibrio del microbioma intestinal."
+        },
+        "shortDescription": "High-potency probiotics for gut health",
+        "productImage": "https://cdn.example.com/products/probiotics.jpg",
+        "benefits": [
+            "Supports digestive health",
+            "Boosts immune system",
+            "Promotes gut microbiome balance",
+            "Enhances nutrient absorption"
+        ],
+        "ingredients": [
+            "Lactobacillus Acidophilus",
+            "Bifidobacterium Lactis",
+            "Lactobacillus Plantarum",
+            "Bifidobacterium Bifidum"
+        ],
+        "healthGoals": [
+            "Digestive Health",
+            "Immune Support",
+            "Gut Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 50 billion CFU of live probiotic cultures. Take on an empty stomach for best results.",
+            "nl": "Elke capsule bevat 50 miljard CFU levende probiotische culturen. Neem op een lege maag voor beste resultaten.",
+            "de": "Jede Kapsel enthält 50 Milliarden CFU lebender Probiotika-Kulturen. Auf nüchternen Magen einnehmen für beste Ergebnisse.",
+            "fr": "Chaque capsule contient 50 milliards d'UFC de cultures probiotiques vivantes. Prendre à jeun pour de meilleurs résultats.",
+            "es": "Cada cápsula contiene 50 mil millones de UFC de cultivos probióticos vivos. Tomar con el estómago vacío para mejores resultados."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily on an empty stomach, preferably in the morning. Store in refrigerator for maximum potency.",
+            "nl": "Neem 1 capsule dagelijks op een lege maag, bij voorkeur 's ochtends. Bewaar in de koelkast voor maximale kracht.",
+            "de": "Nehmen Sie täglich 1 Kapsel auf nüchternen Magen ein, vorzugsweise morgens. Im Kühlschrank aufbewahren für maximale Wirksamkeit.",
+            "fr": "Prendre 1 capsule par jour à jeun, de préférence le matin. Conserver au réfrigérateur pour une puissance maximale.",
+            "es": "Tomar 1 cápsula al día con el estómago vacío, preferiblemente por la mañana. Almacenar en el refrigerador para máxima potencia."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 34.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 29.99,
+                "taxRate": 21,
+                "totalAmount": 89.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 14,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 27.99,
+                "taxRate": 21,
+                "totalAmount": 167.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 20,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 25.99,
+                "taxRate": 21,
+                "totalAmount": 233.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 26,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 23.99,
+                "taxRate": 21,
+                "totalAmount": 431.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 31,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 34.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 64.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": true,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-20T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-20T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000007"
+        },
+        "title": {
+            "en": "Iron Bisglycinate Complex",
+            "nl": "IJzer Bisglycinaat Complex",
+            "de": "Eisen Bisglycinat Komplex",
+            "fr": "Complexe Bisglycinate de Fer",
+            "es": "Complejo Bisglicinato de Hierro"
+        },
+        "slug": "iron-bisglycinate-complex",
+        "description": {
+            "en": "Gentle, non-constipating iron supplement with high bioavailability. Supports energy levels and red blood cell formation.",
+            "nl": "Zachte, niet-constiperende ijzersupplement met hoge biobeschikbaarheid. Ondersteunt energieniveaus en rode bloedcelvorming.",
+            "de": "Sanftes, nicht verstopfendes Eisenpräparat mit hoher Bioverfügbarkeit. Unterstützt Energieniveaus und Bildung roter Blutkörperchen.",
+            "fr": "Complément de fer doux, non constipant avec une haute biodisponibilité. Soutient les niveaux d'énergie et la formation des globules rouges.",
+            "es": "Suplemento de hierro suave, no estreñidor con alta biodisponibilidad. Apoya los niveles de energía y la formación de glóbulos rojos."
+        },
+        "shortDescription": "Gentle iron for energy and blood health",
+        "productImage": "https://cdn.example.com/products/iron.jpg",
+        "benefits": [
+            "Supports energy levels",
+            "Promotes red blood cell formation",
+            "Gentle on the stomach",
+            "Prevents iron deficiency"
+        ],
+        "ingredients": [
+            "Iron Bisglycinate",
+            "Vitamin C",
+            "Folic Acid",
+            "Vitamin B12"
+        ],
+        "healthGoals": [
+            "Energy Support",
+            "Blood Health",
+            "Anemia Prevention"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 18mg iron bisglycinate, 60mg vitamin C, 400mcg folic acid, and 2.5mcg vitamin B12.",
+            "nl": "Elke capsule bevat 18mg ijzer bisglycinaat, 60mg vitamine C, 400mcg foliumzuur en 2.5mcg vitamine B12.",
+            "de": "Jede Kapsel enthält 18mg Eisenbisglycinat, 60mg Vitamin C, 400mcg Folsäure und 2.5mcg Vitamin B12.",
+            "fr": "Chaque capsule contient 18mg de bisglycinate de fer, 60mg de vitamine C, 400mcg d'acide folique et 2.5mcg de vitamine B12.",
+            "es": "Cada cápsula contiene 18mg de bisglicinato de hierro, 60mg de vitamina C, 400mcg de ácido fólico y 2.5mcg de vitamina B12."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily with food. Avoid taking with coffee or tea as they can reduce absorption.",
+            "nl": "Neem 1 capsule dagelijks in met voedsel. Vermijd inname met koffie of thee omdat deze de opname kunnen verminderen.",
+            "de": "Nehmen Sie täglich 1 Kapsel mit Nahrung ein. Vermeiden Sie die Einnahme mit Kaffee oder Tee, da diese die Absorption reduzieren können.",
+            "fr": "Prendre 1 capsule par jour avec de la nourriture. Éviter de prendre avec du café ou du thé car ils peuvent réduire l'absorption.",
+            "es": "Tomar 1 cápsula al día con comida. Evitar tomar con café o té ya que pueden reducir la absorción."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 18.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 50.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 11,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 15.99,
+                "taxRate": 21,
+                "totalAmount": 95.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 16,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 14.99,
+                "taxRate": 21,
+                "totalAmount": 134.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 21,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 13.99,
+                "taxRate": 21,
+                "totalAmount": 251.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 26,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 18.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 33.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-21T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-21T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000008"
+        },
+        "title": {
+            "en": "Ashwagandha Root Extract",
+            "nl": "Ashwagandha Wortelextract",
+            "de": "Ashwagandha Wurzelextrakt",
+            "fr": "Extrait de Racine d'Ashwagandha",
+            "es": "Extracto de Raíz de Ashwagandha"
+        },
+        "slug": "ashwagandha-root-extract",
+        "description": {
+            "en": "Adaptogenic herb for stress management, improved sleep, and enhanced energy. Standardized to 5% withanolides for maximum effectiveness.",
+            "nl": "Adaptogene kruid voor stressmanagement, verbeterde slaap en verhoogde energie. Gestandaardiseerd op 5% withanoliden voor maximale effectiviteit.",
+            "de": "Adaptogenes Kraut für Stressmanagement, verbesserten Schlaf und erhöhte Energie. Standardisiert auf 5% Withanolide für maximale Wirksamkeit.",
+            "fr": "Plante adaptogène pour la gestion du stress, l'amélioration du sommeil et l'augmentation de l'énergie. Standardisé à 5% de withanolides pour une efficacité maximale.",
+            "es": "Hierba adaptogénica para el manejo del estrés, mejor sueño y mayor energía. Estandarizado al 5% de withanólidos para máxima efectividad."
+        },
+        "shortDescription": "Adaptogenic herb for stress and sleep support",
+        "productImage": "https://cdn.example.com/products/ashwagandha.jpg",
+        "benefits": [
+            "Reduces stress and anxiety",
+            "Improves sleep quality",
+            "Enhances energy levels",
+            "Supports adrenal health"
+        ],
+        "ingredients": [
+            "Ashwagandha Root Extract",
+            "Vegetable Cellulose",
+            "Rice Flour",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Stress Management",
+            "Sleep Support",
+            "Energy Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 600mg ashwagandha root extract standardized to 5% withanolides (30mg). Take with food.",
+            "nl": "Elke capsule bevat 600mg ashwagandha wortelextract gestandaardiseerd op 5% withanoliden (30mg). Neem in met voedsel.",
+            "de": "Jede Kapsel enthält 600mg Ashwagandha-Wurzelextrakt, standardisiert auf 5% Withanolide (30mg). Mit Nahrung einnehmen.",
+            "fr": "Chaque capsule contient 600mg d'extrait de racine d'ashwagandha standardisé à 5% de withanolides (30mg). Prendre avec de la nourriture.",
+            "es": "Cada cápsula contiene 600mg de extracto de raíz de ashwagandha estandarizado al 5% de withanólidos (30mg). Tomar con comida."
+        },
+        "howToUse": {
+            "en": "Take 1-2 capsules daily with food. Best taken in the evening for sleep support or morning for energy.",
+            "nl": "Neem 1-2 capsules dagelijks in met voedsel. Het beste 's avonds voor slaapondersteuning of 's ochtends voor energie.",
+            "de": "Nehmen Sie täglich 1-2 Kapseln mit Nahrung ein. Am besten abends für Schlafunterstützung oder morgens für Energie.",
+            "fr": "Prendre 1-2 capsules par jour avec de la nourriture. Mieux pris le soir pour le soutien du sommeil ou le matin pour l'énergie.",
+            "es": "Tomar 1-2 cápsulas al día con comida. Mejor tomar por la noche para apoyo del sueño o por la mañana para energía."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 22.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 19.99,
+                "taxRate": 21,
+                "totalAmount": 59.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 13,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 18.99,
+                "taxRate": 21,
+                "totalAmount": 113.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 17,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 17.99,
+                "taxRate": 21,
+                "totalAmount": 161.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 22,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 305.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 26,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 22.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 41.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": true,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-22T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-22T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000009"
+        },
+        "title": {
+            "en": "Turmeric Curcumin Complex",
+            "nl": "Kurkuma Curcumine Complex",
+            "de": "Kurkuma Curcumin Komplex",
+            "fr": "Complexe Curcumine de Curcuma",
+            "es": "Complejo Cúrcuma Curcumina"
+        },
+        "slug": "turmeric-curcumin-complex",
+        "description": {
+            "en": "High-potency turmeric extract with black pepper for enhanced absorption. Supports joint health, inflammation reduction, and antioxidant protection.",
+            "nl": "Hoogwaardige kurkuma extract met zwarte peper voor verbeterde opname. Ondersteunt gewrichtsgezondheid, ontstekingsreductie en antioxidantbescherming.",
+            "de": "Hochwirksames Kurkuma-Extrakt mit schwarzem Pfeffer für verbesserte Absorption. Unterstützt Gelenkgesundheit, Entzündungsreduktion und Antioxidansschutz.",
+            "fr": "Extrait de curcuma haute puissance avec poivre noir pour une absorption améliorée. Soutient la santé des articulations, la réduction de l'inflammation et la protection antioxydante.",
+            "es": "Extracto de cúrcuma de alta potencia con pimienta negra para mejor absorción. Apoya la salud articular, reducción de inflamación y protección antioxidante."
+        },
+        "shortDescription": "Turmeric with black pepper for joint and inflammation support",
+        "productImage": "https://cdn.example.com/products/turmeric.jpg",
+        "benefits": [
+            "Supports joint health",
+            "Reduces inflammation",
+            "Provides antioxidant protection",
+            "Enhances brain function"
+        ],
+        "ingredients": [
+            "Turmeric Root Extract",
+            "Curcumin",
+            "Black Pepper Extract",
+            "Ginger Root"
+        ],
+        "healthGoals": [
+            "Joint Health",
+            "Anti-Inflammatory",
+            "Antioxidant Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 500mg turmeric extract with 95% curcuminoids (475mg) and 5mg black pepper extract for enhanced absorption.",
+            "nl": "Elke capsule bevat 500mg kurkuma extract met 95% curcuminoïden (475mg) en 5mg zwarte peper extract voor verbeterde opname.",
+            "de": "Jede Kapsel enthält 500mg Kurkuma-Extrakt mit 95% Curcuminoiden (475mg) und 5mg schwarzem Pfefferextrakt für verbesserte Absorption.",
+            "fr": "Chaque capsule contient 500mg d'extrait de curcuma avec 95% de curcuminoïdes (475mg) et 5mg d'extrait de poivre noir pour une absorption améliorée.",
+            "es": "Cada cápsula contiene 500mg de extracto de cúrcuma con 95% de curcuminoides (475mg) y 5mg de extracto de pimienta negra para mejor absorción."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule twice daily with meals containing fat for optimal absorption.",
+            "nl": "Neem 1 capsule tweemaal daags in met maaltijden die vet bevatten voor optimale opname.",
+            "de": "Nehmen Sie 1 Kapsel zweimal täglich mit fetthaltigen Mahlzeiten für optimale Absorption ein.",
+            "fr": "Prendre 1 capsule deux fois par jour avec des repas contenant des graisses pour une absorption optimale.",
+            "es": "Tomar 1 cápsula dos veces al día con comidas que contengan grasa para una absorción óptima."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 26.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 23.99,
+                "taxRate": 21,
+                "totalAmount": 71.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 11,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 22.99,
+                "taxRate": 21,
+                "totalAmount": 137.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 15,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 21.99,
+                "taxRate": 21,
+                "totalAmount": 197.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 19,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 20.99,
+                "taxRate": 21,
+                "totalAmount": 377.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 22,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 26.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 49.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-23T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-23T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f60100000a"
+        },
+        "title": {
+            "en": "Coenzyme Q10 200mg",
+            "nl": "Co-enzym Q10 200mg",
+            "de": "Coenzym Q10 200mg",
+            "fr": "Coenzyme Q10 200mg",
+            "es": "Coenzima Q10 200mg"
+        },
+        "slug": "coenzyme-q10-200mg",
+        "description": {
+            "en": "High-potency CoQ10 for cardiovascular health, energy production, and antioxidant protection. Supports heart function and cellular energy.",
+            "nl": "Hoogwaardige CoQ10 voor cardiovasculaire gezondheid, energieproductie en antioxidantbescherming. Ondersteunt hartfunctie en cellulaire energie.",
+            "de": "Hochwirksames CoQ10 für kardiovaskuläre Gesundheit, Energieproduktion und Antioxidansschutz. Unterstützt Herzfunktion und zelluläre Energie.",
+            "fr": "CoQ10 haute puissance pour la santé cardiovasculaire, la production d'énergie et la protection antioxydante. Soutient la fonction cardiaque et l'énergie cellulaire.",
+            "es": "CoQ10 de alta potencia para la salud cardiovascular, producción de energía y protección antioxidante. Apoya la función cardíaca y la energía celular."
+        },
+        "shortDescription": "CoQ10 for heart health and energy",
+        "productImage": "https://cdn.example.com/products/coq10.jpg",
+        "benefits": [
+            "Supports cardiovascular health",
+            "Enhances energy production",
+            "Provides antioxidant protection",
+            "Supports heart function"
+        ],
+        "ingredients": [
+            "Coenzyme Q10 (Ubiquinone)",
+            "Soybean Oil",
+            "Gelatin",
+            "Glycerin"
+        ],
+        "healthGoals": [
+            "Cardiovascular Health",
+            "Energy Support",
+            "Antioxidant Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each softgel contains 200mg CoQ10. Take with a meal containing fat for optimal absorption.",
+            "nl": "Elke softgel bevat 200mg CoQ10. Neem in met een maaltijd die vet bevat voor optimale opname.",
+            "de": "Jede Softgel enthält 200mg CoQ10. Mit einer fetthaltigen Mahlzeit einnehmen für optimale Absorption.",
+            "fr": "Chaque softgel contient 200mg de CoQ10. Prendre avec un repas contenant des graisses pour une absorption optimale.",
+            "es": "Cada softgel contiene 200mg de CoQ10. Tomar con una comida que contenga grasa para una absorción óptima."
+        },
+        "howToUse": {
+            "en": "Take 1 softgel daily with a meal containing fat. Best taken in the morning.",
+            "nl": "Neem 1 softgel dagelijks in met een maaltijd die vet bevat. Het beste 's ochtends in te nemen.",
+            "de": "Nehmen Sie täglich 1 Softgel mit einer fetthaltigen Mahlzeit ein. Am besten morgens einnehmen.",
+            "fr": "Prendre 1 softgel par jour avec un repas contenant des graisses. Mieux pris le matin.",
+            "es": "Tomar 1 softgel al día con una comida que contenga grasa. Mejor tomar por la mañana."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 32.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 28.99,
+                "taxRate": 21,
+                "totalAmount": 86.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 12,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 27.99,
+                "taxRate": 21,
+                "totalAmount": 167.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 15,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 26.99,
+                "taxRate": 21,
+                "totalAmount": 242.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 18,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 25.99,
+                "taxRate": 21,
+                "totalAmount": 467.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 21,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 32.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 59.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-24T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-24T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f60100000b"
+        },
+        "title": {
+            "en": "Rhodiola Rosea Extract",
+            "nl": "Rhodiola Rosea Extract",
+            "de": "Rhodiola Rosea Extrakt",
+            "fr": "Extrait de Rhodiola Rosea",
+            "es": "Extracto de Rhodiola Rosea"
+        },
+        "slug": "rhodiola-rosea-extract",
+        "description": {
+            "en": "Adaptogenic herb for mental performance, stress resilience, and physical endurance. Standardized to 3% rosavins and 1% salidroside.",
+            "nl": "Adaptogene kruid voor mentale prestaties, stressbestendigheid en fysiek uithoudingsvermogen. Gestandaardiseerd op 3% rosavinen en 1% salidroside.",
+            "de": "Adaptogenes Kraut für mentale Leistung, Stressresistenz und körperliche Ausdauer. Standardisiert auf 3% Rosavine und 1% Salidrosid.",
+            "fr": "Plante adaptogène pour les performances mentales, la résilience au stress et l'endurance physique. Standardisé à 3% de rosavines et 1% de salidroside.",
+            "es": "Hierba adaptogénica para rendimiento mental, resistencia al estrés y resistencia física. Estandarizado al 3% de rosavinas y 1% de salidrosido."
+        },
+        "shortDescription": "Adaptogen for mental performance and stress",
+        "productImage": "https://cdn.example.com/products/rhodiola.jpg",
+        "benefits": [
+            "Enhances mental performance",
+            "Reduces fatigue",
+            "Supports stress management",
+            "Improves physical endurance"
+        ],
+        "ingredients": [
+            "Rhodiola Rosea Root Extract",
+            "Vegetable Cellulose",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Stress Management",
+            "Energy Support",
+            "Brain Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 400mg rhodiola extract standardized to 3% rosavins (12mg) and 1% salidroside (4mg).",
+            "nl": "Elke capsule bevat 400mg rhodiola extract gestandaardiseerd op 3% rosavinen (12mg) en 1% salidroside (4mg).",
+            "de": "Jede Kapsel enthält 400mg Rhodiola-Extrakt, standardisiert auf 3% Rosavine (12mg) und 1% Salidrosid (4mg).",
+            "fr": "Chaque capsule contient 400mg d'extrait de rhodiola standardisé à 3% de rosavines (12mg) et 1% de salidroside (4mg).",
+            "es": "Cada cápsula contiene 400mg de extracto de rhodiola estandarizado al 3% de rosavinas (12mg) y 1% de salidrosido (4mg)."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule in the morning on an empty stomach. Avoid taking late in the day as it may affect sleep.",
+            "nl": "Neem 1 capsule 's ochtends op een lege maag. Vermijd inname laat op de dag omdat dit de slaap kan beïnvloeden.",
+            "de": "Nehmen Sie 1 Kapsel morgens auf nüchternen Magen ein. Vermeiden Sie die Einnahme spät am Tag, da dies den Schlaf beeinträchtigen kann.",
+            "fr": "Prendre 1 capsule le matin à jeun. Éviter de prendre tard dans la journée car cela peut affecter le sommeil.",
+            "es": "Tomar 1 cápsula por la mañana con el estómago vacío. Evitar tomar tarde en el día ya que puede afectar el sueño."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 24.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 21.99,
+                "taxRate": 21,
+                "totalAmount": 65.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 12,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 20.99,
+                "taxRate": 21,
+                "totalAmount": 125.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 16,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 19.99,
+                "taxRate": 21,
+                "totalAmount": 179.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 20,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 18.99,
+                "taxRate": 21,
+                "totalAmount": 341.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 24,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 24.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 44.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-25T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-25T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f60100000c"
+        },
+        "title": {
+            "en": "Ginkgo Biloba Extract",
+            "nl": "Ginkgo Biloba Extract",
+            "de": "Ginkgo Biloba Extrakt",
+            "fr": "Extrait de Ginkgo Biloba",
+            "es": "Extracto de Ginkgo Biloba"
+        },
+        "slug": "ginkgo-biloba-extract",
+        "description": {
+            "en": "Standardized ginkgo biloba extract for cognitive function, memory support, and circulation. Contains 24% flavonoid glycosides and 6% terpene lactones.",
+            "nl": "Gestandaardiseerd ginkgo biloba extract voor cognitieve functie, geheugenondersteuning en circulatie. Bevat 24% flavonoïde glycosiden en 6% terpeen lactonen.",
+            "de": "Standardisiertes Ginkgo-Biloba-Extrakt für kognitive Funktion, Gedächtnisunterstützung und Durchblutung. Enthält 24% Flavonoidglykoside und 6% Terpenlactone.",
+            "fr": "Extrait de ginkgo biloba standardisé pour la fonction cognitive, le soutien de la mémoire et la circulation. Contient 24% de glycosides flavonoides et 6% de lactones terpéniques.",
+            "es": "Extracto de ginkgo biloba estandarizado para función cognitiva, apoyo de memoria y circulación. Contiene 24% de glicósidos flavonoides y 6% de lactonas terpénicas."
+        },
+        "shortDescription": "Ginkgo for cognitive function and memory",
+        "productImage": "https://cdn.example.com/products/ginkgo.jpg",
+        "benefits": [
+            "Supports cognitive function",
+            "Enhances memory",
+            "Improves circulation",
+            "Supports brain health"
+        ],
+        "ingredients": [
+            "Ginkgo Biloba Leaf Extract",
+            "Vegetable Cellulose",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Brain Health",
+            "Memory Support",
+            "Circulation"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 120mg ginkgo biloba extract standardized to 24% flavonoid glycosides (28.8mg) and 6% terpene lactones (7.2mg).",
+            "nl": "Elke capsule bevat 120mg ginkgo biloba extract gestandaardiseerd op 24% flavonoïde glycosiden (28.8mg) en 6% terpeen lactonen (7.2mg).",
+            "de": "Jede Kapsel enthält 120mg Ginkgo-Biloba-Extrakt, standardisiert auf 24% Flavonoidglykoside (28.8mg) und 6% Terpenlactone (7.2mg).",
+            "fr": "Chaque capsule contient 120mg d'extrait de ginkgo biloba standardisé à 24% de glycosides flavonoides (28.8mg) et 6% de lactones terpéniques (7.2mg).",
+            "es": "Cada cápsula contiene 120mg de extracto de ginkgo biloba estandarizado al 24% de glicósidos flavonoides (28.8mg) y 6% de lactonas terpénicas (7.2mg)."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule twice daily with meals. Allow 4-6 weeks for optimal results.",
+            "nl": "Neem 1 capsule tweemaal daags in met maaltijden. Wacht 4-6 weken voor optimale resultaten.",
+            "de": "Nehmen Sie 1 Kapsel zweimal täglich mit den Mahlzeiten ein. Lassen Sie 4-6 Wochen für optimale Ergebnisse.",
+            "fr": "Prendre 1 capsule deux fois par jour avec les repas. Attendre 4-6 semaines pour des résultats optimaux.",
+            "es": "Tomar 1 cápsula dos veces al día con las comidas. Permitir 4-6 semanas para resultados óptimos."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 21.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 19.99,
+                "taxRate": 21,
+                "totalAmount": 59.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 9,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 18.99,
+                "taxRate": 21,
+                "totalAmount": 113.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 14,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 17.99,
+                "taxRate": 21,
+                "totalAmount": 161.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 18,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 305.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 23,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 21.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 39.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-26T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-26T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f60100000d"
+        },
+        "title": {
+            "en": "Melatonin 3mg",
+            "nl": "Melatonine 3mg",
+            "de": "Melatonin 3mg",
+            "fr": "Mélatonine 3mg",
+            "es": "Melatonina 3mg"
+        },
+        "slug": "melatonin-3mg",
+        "description": {
+            "en": "Natural sleep support supplement. Helps regulate sleep-wake cycle and improve sleep quality.",
+            "nl": "Natuurlijk slaapondersteunend supplement. Helpt de slaap-waakcyclus te reguleren en de slaapkwaliteit te verbeteren.",
+            "de": "Natürliches Schlafunterstützungspräparat. Hilft den Schlaf-Wach-Rhythmus zu regulieren und die Schlafqualität zu verbessern.",
+            "fr": "Complément de soutien au sommeil naturel. Aide à réguler le cycle veille-sommeil et à améliorer la qualité du sommeil.",
+            "es": "Suplemento de apoyo al sueño natural. Ayuda a regular el ciclo sueño-vigilia y mejorar la calidad del sueño."
+        },
+        "shortDescription": "Natural sleep support",
+        "productImage": "https://cdn.example.com/products/melatonin.jpg",
+        "benefits": [
+            "Promotes better sleep",
+            "Regulates sleep cycle",
+            "Reduces time to fall asleep",
+            "Improves sleep quality"
+        ],
+        "ingredients": [
+            "Melatonin",
+            "Vegetable Cellulose",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Sleep Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each tablet contains 3mg melatonin. Take 30 minutes before bedtime.",
+            "nl": "Elke tablet bevat 3mg melatonine. Neem 30 minuten voor het slapengaan.",
+            "de": "Jede Tablette enthält 3mg Melatonin. 30 Minuten vor dem Schlafengehen einnehmen.",
+            "fr": "Chaque comprimé contient 3mg de mélatonine. Prendre 30 minutes avant le coucher.",
+            "es": "Cada tableta contiene 3mg de melatonina. Tomar 30 minutos antes de acostarse."
+        },
+        "howToUse": {
+            "en": "Take 1 tablet 30 minutes before bedtime. Start with lower dose if needed.",
+            "nl": "Neem 1 tablet 30 minuten voor het slapengaan. Begin met lagere dosering indien nodig.",
+            "de": "Nehmen Sie 1 Tablette 30 Minuten vor dem Schlafengehen ein. Beginnen Sie bei Bedarf mit einer niedrigeren Dosis.",
+            "fr": "Prendre 1 comprimé 30 minutes avant le coucher. Commencer avec une dose plus faible si nécessaire.",
+            "es": "Tomar 1 tableta 30 minutos antes de acostarse. Comenzar con dosis más baja si es necesario."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 12.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 11.99,
+                "taxRate": 21,
+                "totalAmount": 35.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 8,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 10.99,
+                "taxRate": 21,
+                "totalAmount": 65.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 15,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 9.99,
+                "taxRate": 21,
+                "totalAmount": 89.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 23,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 8.99,
+                "taxRate": 21,
+                "totalAmount": 161.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 31,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 12.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 22.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-27T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-27T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f60100000e"
+        },
+        "title": {
+            "en": "Collagen Peptides",
+            "nl": "Collageen Peptiden",
+            "de": "Kollagen Peptide",
+            "fr": "Peptides de Collagène",
+            "es": "Péptidos de Colágeno"
+        },
+        "slug": "collagen-peptides",
+        "description": {
+            "en": "Hydrolyzed collagen peptides for skin, hair, nails, and joint health. Unflavored powder for easy mixing.",
+            "nl": "Gehydrolyseerde collageen peptiden voor huid, haar, nagels en gewrichtsgezondheid. Ongearomatiseerd poeder voor gemakkelijk mengen.",
+            "de": "Hydrolysiertes Kollagenpeptid für Haut, Haare, Nägel und Gelenkgesundheit. Ungesüßtes Pulver zum einfachen Mischen.",
+            "fr": "Peptides de collagène hydrolysés pour la peau, les cheveux, les ongles et la santé des articulations. Poudre non aromatisée pour un mélange facile.",
+            "es": "Péptidos de colágeno hidrolizados para la piel, el cabello, las uñas y la salud articular. Polvo sin sabor para mezclar fácilmente."
+        },
+        "shortDescription": "Collagen for skin, hair, nails, and joints",
+        "productImage": "https://cdn.example.com/products/collagen.jpg",
+        "benefits": [
+            "Supports skin health",
+            "Strengthens hair and nails",
+            "Promotes joint health",
+            "Enhances skin elasticity"
+        ],
+        "ingredients": [
+            "Hydrolyzed Collagen Peptides",
+            "None"
+        ],
+        "healthGoals": [
+            "Skin Health",
+            "Joint Health",
+            "Hair & Nail Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each serving (10g) contains 10g hydrolyzed collagen peptides. Mix with water, juice, or smoothies.",
+            "nl": "Elke portie (10g) bevat 10g gehydrolyseerde collageen peptiden. Meng met water, sap of smoothies.",
+            "de": "Jede Portion (10g) enthält 10g hydrolysiertes Kollagenpeptid. Mit Wasser, Saft oder Smoothies mischen.",
+            "fr": "Chaque portion (10g) contient 10g de peptides de collagène hydrolysés. Mélanger avec de l'eau, du jus ou des smoothies.",
+            "es": "Cada porción (10g) contiene 10g de péptidos de colágeno hidrolizados. Mezclar con agua, jugo o batidos."
+        },
+        "howToUse": {
+            "en": "Mix 1 scoop (10g) daily with 8-12oz of water, juice, or smoothie. Best taken on an empty stomach.",
+            "nl": "Meng 1 schep (10g) dagelijks met 8-12oz water, sap of smoothie. Het beste op een lege maag.",
+            "de": "1 Messlöffel (10g) täglich mit 8-12oz Wasser, Saft oder Smoothie mischen. Am besten auf nüchternen Magen.",
+            "fr": "Mélanger 1 cuillère (10g) par jour avec 8-12oz d'eau, de jus ou de smoothie. Mieux pris à jeun.",
+            "es": "Mezclar 1 cucharada (10g) al día con 8-12oz de agua, jugo o batido. Mejor tomar con el estómago vacío."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 39.99,
+            "taxRate": 21
+        },
+        "variant": "STAND_UP_POUCH",
+        "hasStandupPouch": true,
+        "standupPouchPrice": {
+            "currency": "USD",
+            "amount": 39.99,
+            "taxRate": 21
+        },
+        "isFeatured": true,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-28T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-28T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f60100000f"
+        },
+        "title": {
+            "en": "Vitamin E Complex",
+            "nl": "Vitamine E Complex",
+            "de": "Vitamin E Komplex",
+            "fr": "Complexe Vitamine E",
+            "es": "Complejo Vitamina E"
+        },
+        "slug": "vitamin-e-complex",
+        "description": {
+            "en": "Mixed tocopherols vitamin E for antioxidant protection, skin health, and immune support. Natural form for better absorption.",
+            "nl": "Gemengde tocoferolen vitamine E voor antioxidantbescherming, huidgezondheid en immuunondersteuning. Natuurlijke vorm voor betere opname.",
+            "de": "Gemischte Tocopherole Vitamin E für Antioxidansschutz, Hautgesundheit und Immununterstützung. Natürliche Form für bessere Absorption.",
+            "fr": "Tocophérols mixtes vitamine E pour la protection antioxydante, la santé de la peau et le soutien immunitaire. Forme naturelle pour une meilleure absorption.",
+            "es": "Tocoferoles mixtos vitamina E para protección antioxidante, salud de la piel y apoyo inmunológico. Forma natural para mejor absorción."
+        },
+        "shortDescription": "Natural vitamin E for antioxidant protection",
+        "productImage": "https://cdn.example.com/products/vitamin-e.jpg",
+        "benefits": [
+            "Provides antioxidant protection",
+            "Supports skin health",
+            "Boosts immune system",
+            "Protects cells from damage"
+        ],
+        "ingredients": [
+            "Mixed Tocopherols (d-alpha, d-beta, d-gamma, d-delta)",
+            "Sunflower Oil",
+            "Gelatin",
+            "Glycerin"
+        ],
+        "healthGoals": [
+            "Antioxidant Support",
+            "Skin Health",
+            "Immune Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each softgel contains 400 IU natural vitamin E (d-alpha tocopherol and mixed tocopherols).",
+            "nl": "Elke softgel bevat 400 IE natuurlijke vitamine E (d-alfa tocoferol en gemengde tocoferolen).",
+            "de": "Jede Softgel enthält 400 IE natürliches Vitamin E (d-alpha Tocopherol und gemischte Tocopherole).",
+            "fr": "Chaque softgel contient 400 UI de vitamine E naturelle (d-alpha tocophérol et tocophérols mixtes).",
+            "es": "Cada softgel contiene 400 UI de vitamina E natural (d-alfa tocoferol y tocoferoles mixtos)."
+        },
+        "howToUse": {
+            "en": "Take 1 softgel daily with a meal containing fat for optimal absorption.",
+            "nl": "Neem 1 softgel dagelijks in met een maaltijd die vet bevat voor optimale opname.",
+            "de": "Nehmen Sie täglich 1 Softgel mit einer fetthaltigen Mahlzeit für optimale Absorption ein.",
+            "fr": "Prendre 1 softgel par jour avec un repas contenant des graisses pour une absorption optimale.",
+            "es": "Tomar 1 softgel al día con una comida que contenga grasa para una absorción óptima."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 19.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 17.99,
+                "taxRate": 21,
+                "totalAmount": 53.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 10,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 101.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 15,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 15.99,
+                "taxRate": 21,
+                "totalAmount": 143.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 20,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 14.99,
+                "taxRate": 21,
+                "totalAmount": 269.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 25,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 19.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 35.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-29T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-29T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000010"
+        },
+        "title": {
+            "en": "B-Complex Vitamins",
+            "nl": "B-Complex Vitaminen",
+            "de": "B-Komplex Vitamine",
+            "fr": "Vitamines du Complexe B",
+            "es": "Vitaminas del Complejo B"
+        },
+        "slug": "b-complex-vitamins",
+        "description": {
+            "en": "Complete B-vitamin complex for energy metabolism, nervous system health, and stress management. Includes all 8 essential B vitamins.",
+            "nl": "Volledig B-vitamine complex voor energiemetabolisme, zenuwstelselgezondheid en stressmanagement. Bevat alle 8 essentiële B-vitaminen.",
+            "de": "Vollständiger B-Vitamin-Komplex für Energiestoffwechsel, Nervensystemgesundheit und Stressmanagement. Enthält alle 8 essentiellen B-Vitamine.",
+            "fr": "Complexe complet de vitamines B pour le métabolisme énergétique, la santé du système nerveux et la gestion du stress. Inclut les 8 vitamines B essentielles.",
+            "es": "Complejo completo de vitaminas B para el metabolismo energético, la salud del sistema nervioso y el manejo del estrés. Incluye las 8 vitaminas B esenciales."
+        },
+        "shortDescription": "Complete B-vitamin complex for energy and nerves",
+        "productImage": "https://cdn.example.com/products/b-complex.jpg",
+        "benefits": [
+            "Supports energy metabolism",
+            "Promotes nervous system health",
+            "Helps manage stress",
+            "Enhances cognitive function"
+        ],
+        "ingredients": [
+            "Thiamine (B1)",
+            "Riboflavin (B2)",
+            "Niacin (B3)",
+            "Pantothenic Acid (B5)",
+            "Pyridoxine (B6)",
+            "Biotin (B7)",
+            "Folic Acid (B9)",
+            "Cobalamin (B12)"
+        ],
+        "healthGoals": [
+            "Energy Support",
+            "Brain Health",
+            "Stress Management"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains all 8 essential B vitamins in optimal amounts. Take with food.",
+            "nl": "Elke capsule bevat alle 8 essentiële B-vitaminen in optimale hoeveelheden. Neem in met voedsel.",
+            "de": "Jede Kapsel enthält alle 8 essentiellen B-Vitamine in optimalen Mengen. Mit Nahrung einnehmen.",
+            "fr": "Chaque capsule contient les 8 vitamines B essentielles en quantités optimales. Prendre avec de la nourriture.",
+            "es": "Cada cápsula contiene las 8 vitaminas B esenciales en cantidades óptimas. Tomar con comida."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily with a meal. Best taken in the morning for energy support.",
+            "nl": "Neem 1 capsule dagelijks in met een maaltijd. Het beste 's ochtends voor energieondersteuning.",
+            "de": "Nehmen Sie täglich 1 Kapsel mit einer Mahlzeit ein. Am besten morgens für Energieunterstützung.",
+            "fr": "Prendre 1 capsule par jour avec un repas. Mieux pris le matin pour le soutien énergétique.",
+            "es": "Tomar 1 cápsula al día con una comida. Mejor tomar por la mañana para apoyo energético."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 16.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 14.99,
+                "taxRate": 21,
+                "totalAmount": 44.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 12,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 13.99,
+                "taxRate": 21,
+                "totalAmount": 83.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 18,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 12.99,
+                "taxRate": 21,
+                "totalAmount": 116.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 24,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 11.99,
+                "taxRate": 21,
+                "totalAmount": 215.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 29,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 16.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 29.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-30T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-30T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000011"
+        },
+        "title": {
+            "en": "Calcium + Vitamin D3",
+            "nl": "Calcium + Vitamine D3",
+            "de": "Calcium + Vitamin D3",
+            "fr": "Calcium + Vitamine D3",
+            "es": "Calcio + Vitamina D3"
+        },
+        "slug": "calcium-vitamin-d3",
+        "description": {
+            "en": "Essential minerals for bone health with added vitamin D3 for optimal calcium absorption. Supports strong bones and teeth.",
+            "nl": "Essentiële mineralen voor botgezondheid met toegevoegde vitamine D3 voor optimale calciumopname. Ondersteunt sterke botten en tanden.",
+            "de": "Essentielle Mineralien für Knochengesundheit mit zugesetztem Vitamin D3 für optimale Calciumabsorption. Unterstützt starke Knochen und Zähne.",
+            "fr": "Minéraux essentiels pour la santé des os avec de la vitamine D3 ajoutée pour une absorption optimale du calcium. Soutient des os et des dents solides.",
+            "es": "Minerales esenciales para la salud ósea con vitamina D3 añadida para una absorción óptima de calcio. Apoya huesos y dientes fuertes."
+        },
+        "shortDescription": "Calcium with D3 for bone health",
+        "productImage": "https://cdn.example.com/products/calcium.jpg",
+        "benefits": [
+            "Supports bone health",
+            "Strengthens teeth",
+            "Prevents osteoporosis",
+            "Enhances calcium absorption"
+        ],
+        "ingredients": [
+            "Calcium Carbonate",
+            "Calcium Citrate",
+            "Vitamin D3",
+            "Magnesium"
+        ],
+        "healthGoals": [
+            "Bone Health",
+            "Dental Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each tablet contains 600mg calcium and 400 IU vitamin D3. Take with meals.",
+            "nl": "Elke tablet bevat 600mg calcium en 400 IE vitamine D3. Neem in met maaltijden.",
+            "de": "Jede Tablette enthält 600mg Calcium und 400 IE Vitamin D3. Mit Mahlzeiten einnehmen.",
+            "fr": "Chaque comprimé contient 600mg de calcium et 400 UI de vitamine D3. Prendre avec les repas.",
+            "es": "Cada tableta contiene 600mg de calcio y 400 UI de vitamina D3. Tomar con las comidas."
+        },
+        "howToUse": {
+            "en": "Take 2 tablets daily with meals. Can be taken with or without food.",
+            "nl": "Neem 2 tabletten dagelijks in met maaltijden. Kan met of zonder voedsel worden ingenomen.",
+            "de": "Nehmen Sie täglich 2 Tabletten mit den Mahlzeiten ein. Kann mit oder ohne Nahrung eingenommen werden.",
+            "fr": "Prendre 2 comprimés par jour avec les repas. Peut être pris avec ou sans nourriture.",
+            "es": "Tomar 2 tabletas al día con las comidas. Se puede tomar con o sin comida."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 15.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 13.99,
+                "taxRate": 21,
+                "totalAmount": 41.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 13,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 12.99,
+                "taxRate": 21,
+                "totalAmount": 77.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 19,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 11.99,
+                "taxRate": 21,
+                "totalAmount": 107.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 25,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 10.99,
+                "taxRate": 21,
+                "totalAmount": 197.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 31,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 15.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 28.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-01-31T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-01-31T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000012"
+        },
+        "title": {
+            "en": "Selenium + Vitamin E",
+            "nl": "Seleen + Vitamine E",
+            "de": "Selen + Vitamin E",
+            "fr": "Sélénium + Vitamine E",
+            "es": "Selenio + Vitamina E"
+        },
+        "slug": "selenium-vitamin-e",
+        "description": {
+            "en": "Powerful antioxidant combination for immune support and cellular protection. Selenium and vitamin E work synergistically.",
+            "nl": "Krachtige antioxidant combinatie voor immuunondersteuning en cellulaire bescherming. Seleen en vitamine E werken synergetisch.",
+            "de": "Starke Antioxidans-Kombination für Immununterstützung und Zellschutz. Selen und Vitamin E wirken synergistisch.",
+            "fr": "Combinaison antioxydante puissante pour le soutien immunitaire et la protection cellulaire. Le sélénium et la vitamine E agissent en synergie.",
+            "es": "Combinación antioxidante potente para apoyo inmunológico y protección celular. El selenio y la vitamina E actúan sinérgicamente."
+        },
+        "shortDescription": "Antioxidant combo for immune and cellular health",
+        "productImage": "https://cdn.example.com/products/selenium.jpg",
+        "benefits": [
+            "Boosts immune system",
+            "Provides antioxidant protection",
+            "Supports thyroid health",
+            "Protects cells from damage"
+        ],
+        "ingredients": [
+            "Selenium (Selenomethionine)",
+            "Vitamin E (d-alpha Tocopherol)",
+            "Sunflower Oil",
+            "Gelatin"
+        ],
+        "healthGoals": [
+            "Immune Support",
+            "Antioxidant Support",
+            "Thyroid Health"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 200mcg selenium and 200 IU vitamin E. Take with food.",
+            "nl": "Elke capsule bevat 200mcg seleen en 200 IE vitamine E. Neem in met voedsel.",
+            "de": "Jede Kapsel enthält 200mcg Selen und 200 IE Vitamin E. Mit Nahrung einnehmen.",
+            "fr": "Chaque capsule contient 200mcg de sélénium et 200 UI de vitamine E. Prendre avec de la nourriture.",
+            "es": "Cada cápsula contiene 200mcg de selenio y 200 UI de vitamina E. Tomar con comida."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily with a meal containing fat for optimal absorption.",
+            "nl": "Neem 1 capsule dagelijks in met een maaltijd die vet bevat voor optimale opname.",
+            "de": "Nehmen Sie täglich 1 Kapsel mit einer fetthaltigen Mahlzeit für optimale Absorption ein.",
+            "fr": "Prendre 1 capsule par jour avec un repas contenant des graisses pour une absorption optimale.",
+            "es": "Tomar 1 cápsula al día con una comida que contenga grasa para una absorción óptima."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 18.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 50.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 11,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 15.99,
+                "taxRate": 21,
+                "totalAmount": 95.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 16,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 14.99,
+                "taxRate": 21,
+                "totalAmount": 134.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 21,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 13.99,
+                "taxRate": 21,
+                "totalAmount": 251.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 26,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 18.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 33.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-02-01T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-02-01T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000013"
+        },
+        "title": {
+            "en": "N-Acetyl Cysteine (NAC)",
+            "nl": "N-Acetyl Cysteïne (NAC)",
+            "de": "N-Acetylcystein (NAC)",
+            "fr": "N-Acétylcystéine (NAC)",
+            "es": "N-Acetilcisteína (NAC)"
+        },
+        "slug": "n-acetyl-cysteine-nac",
+        "description": {
+            "en": "Powerful antioxidant and precursor to glutathione. Supports respiratory health, liver function, and detoxification.",
+            "nl": "Krachtige antioxidant en voorloper van glutathion. Ondersteunt ademhalingsgezondheid, leverfunctie en ontgifting.",
+            "de": "Starkes Antioxidans und Vorläufer von Glutathion. Unterstützt Atemwegsgesundheit, Leberfunktion und Entgiftung.",
+            "fr": "Antioxydant puissant et précurseur du glutathion. Soutient la santé respiratoire, la fonction hépatique et la détoxification.",
+            "es": "Antioxidante potente y precursor del glutatión. Apoya la salud respiratoria, la función hepática y la desintoxicación."
+        },
+        "shortDescription": "NAC for respiratory and liver health",
+        "productImage": "https://cdn.example.com/products/nac.jpg",
+        "benefits": [
+            "Supports respiratory health",
+            "Promotes liver function",
+            "Enhances detoxification",
+            "Boosts glutathione levels"
+        ],
+        "ingredients": [
+            "N-Acetyl Cysteine",
+            "Vegetable Cellulose",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Respiratory Health",
+            "Liver Health",
+            "Detoxification"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 600mg N-acetyl cysteine. Take on an empty stomach for best results.",
+            "nl": "Elke capsule bevat 600mg N-acetyl cysteïne. Neem op een lege maag voor beste resultaten.",
+            "de": "Jede Kapsel enthält 600mg N-Acetylcystein. Auf nüchternen Magen einnehmen für beste Ergebnisse.",
+            "fr": "Chaque capsule contient 600mg de N-acétylcystéine. Prendre à jeun pour de meilleurs résultats.",
+            "es": "Cada cápsula contiene 600mg de N-acetilcisteína. Tomar con el estómago vacío para mejores resultados."
+        },
+        "howToUse": {
+            "en": "Take 1-2 capsules daily on an empty stomach, preferably 30 minutes before meals.",
+            "nl": "Neem 1-2 capsules dagelijks op een lege maag, bij voorkeur 30 minuten voor maaltijden.",
+            "de": "Nehmen Sie täglich 1-2 Kapseln auf nüchternen Magen ein, vorzugsweise 30 Minuten vor den Mahlzeiten.",
+            "fr": "Prendre 1-2 capsules par jour à jeun, de préférence 30 minutes avant les repas.",
+            "es": "Tomar 1-2 cápsulas al día con el estómago vacío, preferiblemente 30 minutos antes de las comidas."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 23.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 20.99,
+                "taxRate": 21,
+                "totalAmount": 62.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 13,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 19.99,
+                "taxRate": 21,
+                "totalAmount": 119.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 17,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 18.99,
+                "taxRate": 21,
+                "totalAmount": 170.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 21,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 17.99,
+                "taxRate": 21,
+                "totalAmount": 323.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 25,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 23.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 42.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-02-02T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-02-02T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000014"
+        },
+        "title": {
+            "en": "Alpha Lipoic Acid",
+            "nl": "Alfa Lipoïnezuur",
+            "de": "Alpha-Liponsäure",
+            "fr": "Acide Alpha-Lipoïque",
+            "es": "Ácido Alfa Lipoico"
+        },
+        "slug": "alpha-lipoic-acid",
+        "description": {
+            "en": "Universal antioxidant for blood sugar support, nerve health, and cellular energy. Supports healthy glucose metabolism.",
+            "nl": "Universele antioxidant voor bloedsuikerondersteuning, zenuwgezondheid en cellulaire energie. Ondersteunt gezonde glucosemetabolisme.",
+            "de": "Universelles Antioxidans für Blutzuckerunterstützung, Nervengesundheit und zelluläre Energie. Unterstützt gesunden Glukosestoffwechsel.",
+            "fr": "Antioxydant universel pour le soutien de la glycémie, la santé nerveuse et l'énergie cellulaire. Soutient un métabolisme du glucose sain.",
+            "es": "Antioxidante universal para apoyo del azúcar en sangre, salud nerviosa y energía celular. Apoya un metabolismo saludable de la glucosa."
+        },
+        "shortDescription": "Universal antioxidant for blood sugar and nerves",
+        "productImage": "https://cdn.example.com/products/ala.jpg",
+        "benefits": [
+            "Supports blood sugar levels",
+            "Promotes nerve health",
+            "Enhances cellular energy",
+            "Provides antioxidant protection"
+        ],
+        "ingredients": [
+            "Alpha Lipoic Acid",
+            "Vegetable Cellulose",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Blood Sugar Support",
+            "Nerve Health",
+            "Antioxidant Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 600mg alpha lipoic acid. Take on an empty stomach or with a light meal.",
+            "nl": "Elke capsule bevat 600mg alfa lipoïnezuur. Neem op een lege maag of met een lichte maaltijd.",
+            "de": "Jede Kapsel enthält 600mg Alpha-Liponsäure. Auf nüchternen Magen oder mit einer leichten Mahlzeit einnehmen.",
+            "fr": "Chaque capsule contient 600mg d'acide alpha-lipoïque. Prendre à jeun ou avec un repas léger.",
+            "es": "Cada cápsula contiene 600mg de ácido alfa lipoico. Tomar con el estómago vacío o con una comida ligera."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily, preferably 30 minutes before meals or on an empty stomach.",
+            "nl": "Neem 1 capsule dagelijks, bij voorkeur 30 minuten voor maaltijden of op een lege maag.",
+            "de": "Nehmen Sie täglich 1 Kapsel ein, vorzugsweise 30 Minuten vor den Mahlzeiten oder auf nüchternen Magen.",
+            "fr": "Prendre 1 capsule par jour, de préférence 30 minutes avant les repas ou à jeun.",
+            "es": "Tomar 1 cápsula al día, preferiblemente 30 minutos antes de las comidas o con el estómago vacío."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 27.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 24.99,
+                "taxRate": 21,
+                "totalAmount": 74.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 11,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 23.99,
+                "taxRate": 21,
+                "totalAmount": 143.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 14,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 22.99,
+                "taxRate": 21,
+                "totalAmount": 206.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 18,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 21.99,
+                "taxRate": 21,
+                "totalAmount": 395.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 21,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 27.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 49.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-02-03T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-02-03T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000015"
+        },
+        "title": {
+            "en": "Green Tea Extract",
+            "nl": "Groene Thee Extract",
+            "de": "Grüner Tee Extrakt",
+            "fr": "Extrait de Thé Vert",
+            "es": "Extracto de Té Verde"
+        },
+        "slug": "green-tea-extract",
+        "description": {
+            "en": "High-potency green tea extract standardized to 50% EGCG. Supports metabolism, weight management, and antioxidant protection.",
+            "nl": "Hoogwaardige groene thee extract gestandaardiseerd op 50% EGCG. Ondersteunt metabolisme, gewichtsbeheer en antioxidantbescherming.",
+            "de": "Hochwirksames Grüntee-Extrakt, standardisiert auf 50% EGCG. Unterstützt Stoffwechsel, Gewichtsmanagement und Antioxidansschutz.",
+            "fr": "Extrait de thé vert haute puissance standardisé à 50% d'EGCG. Soutient le métabolisme, la gestion du poids et la protection antioxydante.",
+            "es": "Extracto de té verde de alta potencia estandarizado al 50% de EGCG. Apoya el metabolismo, el control del peso y la protección antioxidante."
+        },
+        "shortDescription": "Green tea extract for metabolism and antioxidants",
+        "productImage": "https://cdn.example.com/products/green-tea.jpg",
+        "benefits": [
+            "Supports metabolism",
+            "Aids weight management",
+            "Provides antioxidant protection",
+            "Enhances energy levels"
+        ],
+        "ingredients": [
+            "Green Tea Leaf Extract",
+            "EGCG",
+            "Caffeine",
+            "Vegetable Cellulose"
+        ],
+        "healthGoals": [
+            "Weight Management",
+            "Metabolism Support",
+            "Antioxidant Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 500mg green tea extract standardized to 50% EGCG (250mg) and natural caffeine (45mg).",
+            "nl": "Elke capsule bevat 500mg groene thee extract gestandaardiseerd op 50% EGCG (250mg) en natuurlijke cafeïne (45mg).",
+            "de": "Jede Kapsel enthält 500mg Grüntee-Extrakt, standardisiert auf 50% EGCG (250mg) und natürliches Koffein (45mg).",
+            "fr": "Chaque capsule contient 500mg d'extrait de thé vert standardisé à 50% d'EGCG (250mg) et de caféine naturelle (45mg).",
+            "es": "Cada cápsula contiene 500mg de extracto de té verde estandarizado al 50% de EGCG (250mg) y cafeína natural (45mg)."
+        },
+        "howToUse": {
+            "en": "Take 1-2 capsules daily with meals. Avoid taking late in the day due to caffeine content.",
+            "nl": "Neem 1-2 capsules dagelijks in met maaltijden. Vermijd inname laat op de dag vanwege cafeïnegehalte.",
+            "de": "Nehmen Sie täglich 1-2 Kapseln mit den Mahlzeiten ein. Vermeiden Sie die Einnahme spät am Tag aufgrund des Koffeingehalts.",
+            "fr": "Prendre 1-2 capsules par jour avec les repas. Éviter de prendre tard dans la journée en raison de la teneur en caféine.",
+            "es": "Tomar 1-2 cápsulas al día con las comidas. Evitar tomar tarde en el día debido al contenido de cafeína."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 20.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 18.99,
+                "taxRate": 21,
+                "totalAmount": 56.97,
+                "durationDays": 30,
+                "capsuleCount": 60,
+                "savingsPercentage": 10,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 17.99,
+                "taxRate": 21,
+                "totalAmount": 107.94,
+                "durationDays": 60,
+                "capsuleCount": 120,
+                "savingsPercentage": 14,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 16.99,
+                "taxRate": 21,
+                "totalAmount": 152.91,
+                "durationDays": 90,
+                "capsuleCount": 180,
+                "savingsPercentage": 19,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 15.99,
+                "taxRate": 21,
+                "totalAmount": 287.82,
+                "durationDays": 180,
+                "capsuleCount": 360,
+                "savingsPercentage": 24,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 20.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 37.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": false,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-02-04T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-02-04T08:00:00.000Z"
+        },
+        "__v": 0
+    },
+    {
+        "_id": {
+            "$oid": "75f1a1b2c3d4e5f601000016"
+        },
+        "title": {
+            "en": "Resveratrol Complex",
+            "nl": "Resveratrol Complex",
+            "de": "Resveratrol Komplex",
+            "fr": "Complexe Resvératrol",
+            "es": "Complejo Resveratrol"
+        },
+        "slug": "resveratrol-complex",
+        "description": {
+            "en": "Premium resveratrol from Japanese knotweed with quercetin. Supports cardiovascular health, longevity, and antioxidant protection.",
+            "nl": "Premium resveratrol uit Japanse duizendknoop met quercetine. Ondersteunt cardiovasculaire gezondheid, levensduur en antioxidantbescherming.",
+            "de": "Premium Resveratrol aus japanischem Knöterich mit Quercetin. Unterstützt kardiovaskuläre Gesundheit, Langlebigkeit und Antioxidansschutz.",
+            "fr": "Resvératrol premium du renouée du Japon avec quercétine. Soutient la santé cardiovasculaire, la longévité et la protection antioxydante.",
+            "es": "Resveratrol premium de la hierba japonesa con quercetina. Apoya la salud cardiovascular, la longevidad y la protección antioxidante."
+        },
+        "shortDescription": "Resveratrol for heart health and longevity",
+        "productImage": "https://cdn.example.com/products/resveratrol.jpg",
+        "benefits": [
+            "Supports cardiovascular health",
+            "Promotes longevity",
+            "Provides antioxidant protection",
+            "Supports healthy aging"
+        ],
+        "ingredients": [
+            "Resveratrol (from Japanese Knotweed)",
+            "Quercetin",
+            "Vegetable Cellulose",
+            "Silica"
+        ],
+        "healthGoals": [
+            "Cardiovascular Health",
+            "Longevity",
+            "Antioxidant Support"
+        ],
+        "nutritionInfo": {
+            "en": "Each capsule contains 250mg resveratrol and 50mg quercetin. Take with food containing fat for optimal absorption.",
+            "nl": "Elke capsule bevat 250mg resveratrol en 50mg quercetine. Neem in met voedsel dat vet bevat voor optimale opname.",
+            "de": "Jede Kapsel enthält 250mg Resveratrol und 50mg Quercetin. Mit fetthaltiger Nahrung einnehmen für optimale Absorption.",
+            "fr": "Chaque capsule contient 250mg de resvératrol et 50mg de quercétine. Prendre avec de la nourriture contenant des graisses pour une absorption optimale.",
+            "es": "Cada cápsula contiene 250mg de resveratrol y 50mg de quercetina. Tomar con comida que contenga grasa para una absorción óptima."
+        },
+        "howToUse": {
+            "en": "Take 1 capsule daily with a meal containing fat, preferably in the evening.",
+            "nl": "Neem 1 capsule dagelijks in met een maaltijd die vet bevat, bij voorkeur 's avonds.",
+            "de": "Nehmen Sie täglich 1 Kapsel mit einer fetthaltigen Mahlzeit ein, vorzugsweise abends.",
+            "fr": "Prendre 1 capsule par jour avec un repas contenant des graisses, de préférence le soir.",
+            "es": "Tomar 1 cápsula al día con una comida que contenga grasa, preferiblemente por la noche."
+        },
+        "status": true,
+        "price": {
+            "currency": "USD",
+            "amount": 35.99,
+            "taxRate": 21
+        },
+        "variant": "SACHETS",
+        "hasStandupPouch": false,
+        "sachetPrices": {
+            "thirtyDays": {
+                "currency": "USD",
+                "amount": 31.99,
+                "taxRate": 21,
+                "totalAmount": 95.97,
+                "durationDays": 30,
+                "capsuleCount": 30,
+                "savingsPercentage": 11,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "sixtyDays": {
+                "currency": "USD",
+                "amount": 30.99,
+                "taxRate": 21,
+                "totalAmount": 185.94,
+                "durationDays": 60,
+                "capsuleCount": 60,
+                "savingsPercentage": 14,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "ninetyDays": {
+                "currency": "USD",
+                "amount": 29.99,
+                "taxRate": 21,
+                "totalAmount": 269.91,
+                "durationDays": 90,
+                "capsuleCount": 90,
+                "savingsPercentage": 17,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneEightyDays": {
+                "currency": "USD",
+                "amount": 28.99,
+                "taxRate": 21,
+                "totalAmount": 521.82,
+                "durationDays": 180,
+                "capsuleCount": 180,
+                "savingsPercentage": 19,
+                "features": [
+                    "Free shipping",
+                    "Can be cancelled at any time"
+                ]
+            },
+            "oneTime": {
+                "count30": {
+                    "currency": "USD",
+                    "amount": 35.99,
+                    "taxRate": 21,
+                    "capsuleCount": 30
+                },
+                "count60": {
+                    "currency": "USD",
+                    "amount": 64.99,
+                    "taxRate": 21,
+                    "capsuleCount": 60
+                }
+            }
+        },
+        "isFeatured": true,
+        "isDeleted": false,
+        "createdAt": {
+            "$date": "2025-02-05T08:00:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2025-02-05T08:00:00.000Z"
+        },
+        "__v": 0
+    }
+]

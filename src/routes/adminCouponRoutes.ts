@@ -1,0 +1,155 @@
+import { Router } from "express";
+import { authMiddleware, authorize } from "@/middleware/auth";
+import {
+  validateJoi,
+  validateParams,
+  validateQuery,
+} from "@/middleware/joiValidation";
+import { autoTranslateMiddleware } from "@/middleware/translationMiddleware";
+import { transformResponseMiddleware } from "@/middleware/responseTransformMiddleware";
+import { adminCouponController } from "@/controllers/adminCouponController";
+import {
+  createCouponSchema,
+  updateCouponSchema,
+  couponIdParamsSchema,
+  updateCouponStatusSchema,
+  getCouponsQuerySchema,
+  getCouponUsageLogsQuerySchema,
+} from "@/validation/adminCouponValidation";
+
+const router = Router();
+
+router.use(authMiddleware);
+router.use(authorize("Admin"));
+
+/**
+ * @route POST /api/v1/admin/coupons
+ * @desc Create a new coupon
+ * @access Admin
+ * @body {String} code - Coupon code (required, unique, uppercase)
+ * @body {String} type - Discount type: "Percentage" or "Fixed" (required)
+ * @body {Number} value - Discount value (required)
+ * @body {Number} [minOrderAmount] - Minimum cart amount
+ * @body {Number} [maxDiscountAmount] - Maximum discount amount
+ * @body {Number} [usageLimit] - Max global usage
+ * @body {Number} [userUsageLimit] - Max usage per user
+ * @body {Date} [validFrom] - Valid from date
+ * @body {Date} [validUntil] - Expiry date
+ * @body {Boolean} [isActive] - Active status (default: true)
+ * @body {Boolean} [isRecurring] - Can be used again on renewals (default: false)
+ * @body {Boolean} [oneTimeUse] - Customer can use this coupon once in their lifetime (default: false)
+ */
+router.post(
+  "/",
+  autoTranslateMiddleware("coupons"), // Auto-translate English to all languages
+  validateJoi(createCouponSchema),
+  adminCouponController.createCoupon
+);
+
+/**
+ * @route GET /api/v1/admin/coupons/stats
+ * @desc Get coupon statistics with percentage changes (vs last month and last 7 days)
+ * @access Admin
+ * @returns {Object} stats - Object containing:
+ *   - activeCoupons: Count with vsLastMonth percentage change
+ *   - totalRedemptions: Count with vsLastMonth percentage change
+ *   - totalDiscountedAmount: Amount with vsLastMonth percentage change
+ *   - expiringSoon: Count and details of coupons expiring within 7 days (with days/months until expiration)
+ */
+router.get("/stats", adminCouponController.getCouponStats);
+
+/**
+ * @route GET /api/v1/admin/coupons/usage-logs
+ * @desc Get coupon usage logs with filters
+ * @access Admin
+ * @query {Number} [page] - Page number (default: 1)
+ * @query {Number} [limit] - Items per page (default: 10)
+ * @query {String} [status] - Filter by coupon status: "active", "inactive", "expired", or "all"
+ * @query {String} [search] - Search by coupon code or name
+ * @query {String} [expiryDateFrom] - Filter by coupon expiry date from (ISO date string)
+ * @query {String} [expiryDateTo] - Filter by coupon expiry date to (ISO date string)
+ * @query {String} [couponId] - Filter by specific coupon ID
+ * @note Response is automatically transformed based on admin's language preference from token.
+ *       I18n objects in coupon data are converted to single language strings.
+ */
+router.get(
+  "/usage-logs",
+  transformResponseMiddleware("coupons"), // Detects language from admin token and transforms I18n fields to single language strings
+  validateQuery(getCouponUsageLogsQuerySchema),
+  adminCouponController.getCouponUsageLogs
+);
+
+/**
+ * @route GET /api/v1/admin/coupons
+ * @desc Get paginated list of coupons
+ * @access Admin
+ * @query {Number} [page] - Page number (default: 1)
+ * @query {Number} [limit] - Items per page (default: 10)
+ * @query {String} [status] - Filter by status: "active", "inactive", "expired", or "all"
+ * @query {String} [type] - Filter by discount type
+ * @query {String} [search] - Search by code or name
+ * @query {String} [expiryDateFrom] - Filter by expiry date from (ISO date string)
+ * @query {String} [expiryDateTo] - Filter by expiry date to (ISO date string)
+ */
+router.get(
+  "/",
+  transformResponseMiddleware("coupons"), // Detects language from admin token and transforms I18n fields to single language strings
+  validateQuery(getCouponsQuerySchema),
+  adminCouponController.getCoupons
+);
+
+/**
+ * @route GET /api/v1/admin/coupons/:id
+ * @desc Get coupon by ID
+ * @access Admin
+ * @param {String} id - Coupon ID (MongoDB ObjectId)
+ */
+router.get(
+  "/:id",
+  transformResponseMiddleware("coupons"), // Detects language from admin token and transforms I18n fields to single language strings
+  validateParams(couponIdParamsSchema),
+  adminCouponController.getCouponById
+);
+
+/**
+ * @route PUT /api/v1/admin/coupons/:id
+ * @desc Update coupon
+ * @access Admin
+ * @param {String} id - Coupon ID (MongoDB ObjectId)
+ * @body {Object} - Update coupon fields (all fields optional)
+ */
+router.put(
+  "/:id",
+  autoTranslateMiddleware("coupons"), // Auto-translate English to all languages
+  validateParams(couponIdParamsSchema),
+  validateJoi(updateCouponSchema),
+  adminCouponController.updateCoupon
+);
+
+/**
+ * @route PATCH /api/v1/admin/coupons/:id/status
+ * @desc Update coupon status (toggle active/inactive)
+ * @access Admin
+ * @param {String} id - Coupon ID (MongoDB ObjectId)
+ * @body {Boolean} isActive - Active status
+ */
+router.patch(
+  "/:id/status",
+  validateParams(couponIdParamsSchema),
+  validateJoi(updateCouponStatusSchema),
+  adminCouponController.updateCouponStatus
+);
+
+/**
+ * @route DELETE /api/v1/admin/coupons/:id
+ * @desc Delete coupon (soft delete)
+ * @access Admin
+ * @param {String} id - Coupon ID (MongoDB ObjectId)
+ */
+router.delete(
+  "/:id",
+  validateParams(couponIdParamsSchema),
+  adminCouponController.deleteCoupon
+);
+
+export default router;

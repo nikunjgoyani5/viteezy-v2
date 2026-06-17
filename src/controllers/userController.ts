@@ -1,0 +1,897 @@
+import { Request, Response } from "express";
+import mongoose, { FilterQuery } from "mongoose";
+import { asyncHandler, getPaginationMeta, getPaginationOptions } from "@/utils";
+import { AppError } from "@/utils/AppError";
+import { logger } from "@/utils/logger";
+import { User } from "@/models/index.model";
+import { Payments, Subscriptions } from "@/models/commerce";
+import { PaymentMethod, PaymentStatus } from "@/models/enums";
+import { IPayment } from "@/models/commerce/payments.model";
+import { fileStorageService } from "@/services/fileStorageService";
+
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
+
+class UserController {
+  getCurrentUser = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const user = await User.findById(req.user._id).select("-password");
+
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      // Use registeredAt if set, otherwise fallback to createdAt
+      const registrationDate = user.registeredAt || user.createdAt;
+
+      res.apiSuccess(
+        {
+          user: {
+            ...user.toObject(),
+            registeredAt: registrationDate,
+          },
+        },
+        "User retrieved successfully"
+      );
+    }
+  );
+
+  updateCurrentUser = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      // Get current user to check existing profile image and avatar
+      const currentUser = await User.findById(req.user._id).select(
+        "profileImage avatar"
+      );
+      if (!currentUser) {
+        throw new AppError("User not found", 404);
+      }
+
+      const {
+        name,
+        phone,
+        countryCode,
+        profileImage,
+        avatar,
+        gender,
+        age,
+        language,
+      } = req.body;
+
+      const updateData: Record<string, unknown> = {};
+      const { firstName, lastName } = req.body;
+      if (firstName !== undefined) updateData.firstName = firstName;
+      if (lastName !== undefined) updateData.lastName = lastName;
+      if (phone !== undefined) updateData.phone = phone;
+      if (countryCode !== undefined) updateData.countryCode = countryCode;
+      if (gender !== undefined) updateData.gender = gender;
+      if (age !== undefined) updateData.age = age;
+      if (language !== undefined) updateData.language = language;
+
+      // Extract files from multer.fields() result
+      const files = req.files as
+        | { [fieldname: string]: Express.Multer.File[] }
+        | undefined;
+
+      // Handle profile image upload
+      const profileImageFile = files?.["profileImage"]?.[0];
+
+      if (profileImageFile) {
+        // Upload new image to cloud storage
+        const imageUrl = await fileStorageService.uploadFile(
+          "user-profiles",
+          profileImageFile
+        );
+        updateData.profileImage = imageUrl;
+
+        // Delete old profile image if exists
+        if (currentUser.profileImage) {
+          await fileStorageService
+            .deleteFileByUrl(currentUser.profileImage)
+            .catch((error) => {
+              // Log error but don't fail the request
+              console.error("Failed to delete old profile image:", error);
+            });
+        }
+      } else if (profileImage !== undefined) {
+        // If profileImage is explicitly set (including null to remove)
+        if (profileImage === null || profileImage === "") {
+          // Delete old image if exists
+          if (currentUser.profileImage) {
+            await fileStorageService
+              .deleteFileByUrl(currentUser.profileImage)
+              .catch((error) => {
+                console.error("Failed to delete profile image:", error);
+              });
+          }
+          updateData.profileImage = null;
+        } else {
+          // Update with provided URL (if updating from external source)
+          updateData.profileImage = profileImage;
+        }
+      }
+
+      // Handle avatar upload
+      const avatarFile = files?.["avatar"]?.[0];
+
+      if (avatarFile) {
+        // Upload new avatar to cloud storage
+        const avatarUrl = await fileStorageService.uploadFile(
+          "user-avatars",
+          avatarFile
+        );
+        updateData.avatar = avatarUrl;
+
+        // Delete old avatar if exists
+        if (currentUser.avatar) {
+          await fileStorageService
+            .deleteFileByUrl(currentUser.avatar)
+            .catch((error) => {
+              // Log error but don't fail the request
+              console.error("Failed to delete old avatar:", error);
+            });
+        }
+      } else if (avatar !== undefined) {
+        // If avatar is explicitly set (including null to remove)
+        if (avatar === null || avatar === "") {
+          // Delete old avatar if exists
+          if (currentUser.avatar) {
+            await fileStorageService
+              .deleteFileByUrl(currentUser.avatar)
+              .catch((error) => {
+                console.error("Failed to delete avatar:", error);
+              });
+          }
+          updateData.avatar = null;
+        } else {
+          // Update with provided URL (if updating from external source)
+          updateData.avatar = avatar;
+        }
+      }
+
+      console.log({ updateData });
+
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        updateData,
+        { new: true, runValidators: true }
+      ).select("-password");
+
+      if (!updatedUser) {
+        throw new AppError("User not found", 404);
+      }
+
+      // Use registeredAt if set, otherwise fallback to createdAt
+      const registrationDate =
+        updatedUser.registeredAt || updatedUser.createdAt;
+
+      res.apiSuccess(
+        {
+          user: {
+            ...updatedUser.toObject(),
+            registeredAt: registrationDate,
+          },
+        },
+        "User profile updated successfully"
+      );
+    }
+  );
+
+  /**
+   * Register device token for push notifications
+   * @route POST /api/v1/users/device-token
+   * @access Private
+   * @body {String} deviceToken - Device token (OneSignal player ID for mobile, FCM token for web)
+   * @body {String} platform - Platform: "mobile" or "web" (default: "mobile")
+   * @body {String} provider - Provider: "onesignal" or "firebase" (auto-detected if not provided)
+   */
+  registerDeviceToken = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const { deviceToken, platform, provider } = req.body;
+
+      if (!deviceToken || typeof deviceToken !== "string" || deviceToken.trim().length === 0) {
+        throw new AppError("Device token is required", 400);
+      }
+
+      // Determine platform and provider
+      const devicePlatform = (platform || "mobile").toLowerCase();
+      let deviceProvider = provider?.toLowerCase();
+
+      // Auto-detect provider based on platform if not provided
+      if (!deviceProvider) {
+        deviceProvider = devicePlatform === "web" ? "firebase" : "onesignal";
+      }
+
+      // Validate platform
+      if (devicePlatform !== "mobile" && devicePlatform !== "web") {
+        throw new AppError('Platform must be Mobile or Web', 400);
+      }
+
+      // Validate provider
+      if (deviceProvider !== "onesignal" && deviceProvider !== "firebase") {
+        throw new AppError('Provider must be OneSignal or Firebase', 400);
+      }
+
+      // Validate provider-platform combination
+      if (devicePlatform === "mobile" && deviceProvider !== "onesignal") {
+        throw new AppError('Mobile platform requires OneSignal provider', 400);
+      }
+
+      if (devicePlatform === "web" && deviceProvider !== "firebase") {
+        throw new AppError('Web platform requires Firebase provider', 400);
+      }
+
+      const tokenToAdd = deviceToken.trim();
+
+      // Validate token format based on provider
+      if (deviceProvider === "onesignal") {
+        // OneSignal player IDs must be UUIDs: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(tokenToAdd)) {
+          // Check if it looks like an FCM token
+          const isFcmToken = tokenToAdd.includes(':') && tokenToAdd.length > 50;
+          const errorMessage = isFcmToken
+            ? 'Invalid token format: You are trying to register an FCM token (Firebase token) as a OneSignal player ID. ' +
+              'For mobile apps: Use OneSignal SDK to get the player ID (UUID format). ' +
+              'For web apps: Use platform="web" and provider="firebase" instead. ' +
+              'OneSignal player IDs are UUIDs like: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+            : 'Invalid OneSignal player ID format. OneSignal requires UUID format (e.g., xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx). ' +
+              'Make sure you are using the OneSignal SDK to get the player ID, not an FCM token.';
+          
+          throw new AppError(errorMessage, 400);
+        }
+      } else if (deviceProvider === "firebase") {
+        // FCM tokens typically start with a prefix and contain colons
+        // Basic validation: should not be a UUID (to catch if OneSignal ID is sent as Firebase)
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (uuidRegex.test(tokenToAdd)) {
+          throw new AppError(
+            'Invalid Firebase token format. The provided token appears to be a OneSignal player ID (UUID) instead of an FCM token.',
+            400
+          );
+        }
+        // FCM tokens are typically longer and contain specific patterns
+        if (tokenToAdd.length < 20) {
+          throw new AppError(
+            'Invalid Firebase token format. FCM tokens are typically longer strings.',
+            400
+          );
+        }
+      }
+
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      // Initialize metadata array if not exists
+      if (!user.deviceTokenMetadata) {
+        user.deviceTokenMetadata = [];
+      }
+
+      // Check if token already exists in metadata
+      const existingTokenIndex = user.deviceTokenMetadata.findIndex(
+        (tokenMeta: any) => tokenMeta.token === tokenToAdd
+      );
+
+      if (existingTokenIndex === -1) {
+        // Add new token with metadata
+        user.deviceTokenMetadata.push({
+          token: tokenToAdd,
+          platform: devicePlatform,
+          provider: deviceProvider,
+          addedAt: new Date(),
+        });
+      } else {
+        // Update existing token metadata
+        user.deviceTokenMetadata[existingTokenIndex].platform = devicePlatform;
+        user.deviceTokenMetadata[existingTokenIndex].provider = deviceProvider;
+        user.deviceTokenMetadata[existingTokenIndex].addedAt = new Date();
+      }
+
+      // Also add to old format for backward compatibility
+      const currentTokens = (user.deviceTokens || []) as string[];
+      if (!currentTokens.includes(tokenToAdd)) {
+        currentTokens.push(tokenToAdd);
+        user.deviceTokens = currentTokens;
+      }
+
+      await user.save();
+
+      logger.info(
+        `Device token registered for user: ${req.user._id}, platform: ${devicePlatform}, provider: ${deviceProvider}`,
+        {
+          userId: req.user._id,
+          deviceToken: tokenToAdd.substring(0, 20) + "...", // Log first 20 chars for security
+          platform: devicePlatform,
+          provider: deviceProvider,
+          tokenCount: user.deviceTokenMetadata.length,
+        }
+      );
+
+      res.apiSuccess(
+        {
+          tokenCount: user.deviceTokenMetadata.length,
+          platform: devicePlatform,
+          provider: deviceProvider,
+          tokenRegistered: true,
+        },
+        "Device token registered successfully"
+      );
+    }
+  );
+
+  /**
+   * Remove device token for push notifications
+   * @route DELETE /api/v1/users/device-token
+   * @access Private
+   * @body {String} deviceToken - Device token to remove
+   */
+  removeDeviceToken = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const { deviceToken } = req.body;
+
+      if (!deviceToken || typeof deviceToken !== "string" || deviceToken.trim().length === 0) {
+        throw new AppError("Device token is required", 400);
+      }
+
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      const tokenToRemove = deviceToken.trim();
+      let removed = false;
+
+      // Remove from metadata format
+      if (user.deviceTokenMetadata && Array.isArray(user.deviceTokenMetadata)) {
+        const originalLength = user.deviceTokenMetadata.length;
+        user.deviceTokenMetadata = user.deviceTokenMetadata.filter(
+          (tokenMeta: any) => tokenMeta.token !== tokenToRemove
+        );
+        if (user.deviceTokenMetadata.length !== originalLength) {
+          removed = true;
+        }
+      }
+
+      // Also remove from old format for backward compatibility
+      const currentTokens = (user.deviceTokens || []) as string[];
+      const updatedTokens = currentTokens.filter((token) => token !== tokenToRemove);
+
+      if (updatedTokens.length !== currentTokens.length) {
+        user.deviceTokens = updatedTokens;
+        removed = true;
+      }
+
+      if (removed) {
+        await user.save();
+        logger.info(`Device token removed for user: ${req.user._id}`);
+      }
+
+      const finalTokenCount = user.deviceTokenMetadata?.length || user.deviceTokens?.length || 0;
+
+      res.apiSuccess(
+        {
+          tokenCount: finalTokenCount,
+        },
+        "Device token removed successfully"
+      );
+    }
+  );
+
+  /**
+   * Remove profile image
+   */
+  removeProfileImage = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const user = await User.findById(req.user._id).select("profileImage");
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      // Delete image from cloud storage if exists
+      if (user.profileImage) {
+        await fileStorageService
+          .deleteFileByUrl(user.profileImage)
+          .catch((error) => {
+            console.error("Failed to delete profile image:", error);
+          });
+      }
+
+      // Remove profile image from user record
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { profileImage: null },
+        { new: true, runValidators: true }
+      ).select("-password");
+
+      if (!updatedUser) {
+        throw new AppError("User not found", 404);
+      }
+
+      const registrationDate =
+        updatedUser.registeredAt || updatedUser.createdAt;
+
+      res.apiSuccess(
+        {
+          user: {
+            ...updatedUser.toObject(),
+            registeredAt: registrationDate,
+          },
+        },
+        "Profile image removed successfully"
+      );
+    }
+  );
+
+  /**
+   * Remove avatar
+   */
+  removeAvatar = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const user = await User.findById(req.user._id).select("avatar");
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      // Delete avatar from cloud storage if exists
+      if (user.avatar) {
+        await fileStorageService.deleteFileByUrl(user.avatar).catch((error) => {
+          console.error("Failed to delete avatar:", error);
+        });
+      }
+
+      // Remove avatar from user record
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { avatar: null },
+        { new: true, runValidators: true }
+      ).select("-password");
+
+      if (!updatedUser) {
+        throw new AppError("User not found", 404);
+      }
+
+      const registrationDate =
+        updatedUser.registeredAt || updatedUser.createdAt;
+
+      res.apiSuccess(
+        {
+          user: {
+            ...updatedUser.toObject(),
+            registeredAt: registrationDate,
+          },
+        },
+        "Avatar removed successfully"
+      );
+    }
+  );
+
+  /**
+   * Get authenticated user's transaction history with pagination and filters
+   */
+  getTransactionHistory = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user?._id) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const { page, limit, skip, sort } = getPaginationOptions(req);
+
+      const filters: FilterQuery<IPayment> = {
+        userId: req.user._id,
+        isDeleted: { $ne: true },
+      };
+
+      const { status, paymentMethod, search, subscriptionId } = req.query;
+
+      if (typeof status === "string" && status.trim().length) {
+        filters.status = status as PaymentStatus;
+      }
+
+      if (typeof paymentMethod === "string" && paymentMethod.trim().length) {
+        filters.paymentMethod = paymentMethod as PaymentMethod;
+      }
+
+      if (typeof subscriptionId === "string" && subscriptionId.trim().length) {
+        // Validate ObjectId format
+        if (mongoose.Types.ObjectId.isValid(subscriptionId.trim())) {
+          filters.subscriptionId = new mongoose.Types.ObjectId(subscriptionId.trim());
+        } else {
+          throw new AppError("Invalid subscriptionId format", 400);
+        }
+      }
+
+      if (typeof search === "string" && search.trim()) {
+        const regex = new RegExp(search.trim(), "i");
+        filters.$or = [
+          { transactionId: regex },
+          { gatewayTransactionId: regex },
+          { gatewaySessionId: regex },
+        ];
+      }
+
+      const [transactions, total] = await Promise.all([
+        Payments.find(filters)
+          .select(
+            "paymentMethod status amount currency transactionId gatewayTransactionId gatewaySessionId processedAt createdAt orderId membershipId subscriptionId"
+          )
+          .populate({
+            path: "subscriptionId",
+            select: "subscriptionNumber status planType cycleDays subscriptionStartDate subscriptionEndDate nextDeliveryDate nextBillingDate lastBilledDate isAutoRenew renewalCount items",
+            match: { isDeleted: { $ne: true } },
+          })
+          .sort(sort)
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Payments.countDocuments(filters),
+      ]);
+
+      const formattedTransactions = transactions.map((payment: any) => {
+        const transaction: any = {
+          id: payment._id,
+          paymentMethod: payment.paymentMethod,
+          status: payment.status,
+          transactionId:
+            payment.transactionId ||
+            payment.gatewayTransactionId ||
+            payment.gatewaySessionId ||
+            null,
+          amount: payment.amount?.amount ?? null,
+          currency: payment.amount?.currency || payment.currency || "USD",
+          taxRate: payment.amount?.taxRate ?? null,
+          processedAt: payment.processedAt || payment.createdAt,
+          orderId: payment.orderId,
+          membershipId: payment.membershipId,
+          subscriptionId: payment.subscriptionId,
+          createdAt: payment.createdAt,
+        };
+
+        // Include subscription details if populated
+        // When populated, subscriptionId will be an object with subscription data
+        // When not populated or subscription is deleted, it will be null or just an ObjectId
+        if (
+          payment.subscriptionId &&
+          typeof payment.subscriptionId === "object" &&
+          payment.subscriptionId._id
+        ) {
+          const subscription = payment.subscriptionId;
+          transaction.subscription = {
+            id: subscription._id,
+            subscriptionNumber: subscription.subscriptionNumber,
+            status: subscription.status,
+            planType: subscription.planType,
+            cycleDays: subscription.cycleDays,
+            subscriptionStartDate: subscription.subscriptionStartDate,
+            subscriptionEndDate: subscription.subscriptionEndDate,
+            nextDeliveryDate: subscription.nextDeliveryDate,
+            nextBillingDate: subscription.nextBillingDate,
+            lastBilledDate: subscription.lastBilledDate,
+            isAutoRenew: subscription.isAutoRenew,
+            renewalCount: subscription.renewalCount,
+            items: subscription.items || [],
+          };
+          // Keep subscriptionId reference as well
+          transaction.subscriptionId = subscription._id;
+        }
+
+        return transaction;
+      });
+
+      res.apiPaginated(
+        formattedTransactions,
+        getPaginationMeta(page, limit, total),
+        "Transaction history retrieved"
+      );
+    }
+  );
+
+  leaveFamily = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const session = await mongoose.startSession();
+      session.startTransaction();
+      
+      try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).session(session);
+        
+        if (!user?.parentId) {
+          await session.abortTransaction();
+          throw new AppError("User is not in a family", 400);
+        }
+        
+        // Remove inherited membership benefits
+        const { Memberships } = await import("@/models/commerce");
+        await Memberships.deleteMany({ 
+          userId, 
+          inherited: true 
+        }).session(session);
+        
+        // Reset cart context (do NOT delete)
+        const { Carts } = await import("@/models/commerce");
+        await Carts.updateMany(
+          { userId, for_user: { $ne: userId } },
+          { $set: { for_user: userId } }
+        ).session(session);
+        
+        // Remove parentId and reset isSubMember
+        await User.updateOne(
+          { _id: userId },
+          { 
+            $unset: { 
+              parentId: 1,
+              parentMemberId: 1  // Also unset parentMemberId
+            },
+            $set: { 
+              isSubMember: false  // Reset isSubMember to false
+            }
+          }
+        ).session(session);
+        
+        await session.commitTransaction();
+        
+        res.apiSuccess(
+          null,
+          "Left family successfully"
+        );
+      } catch (error) {
+        await session.abortTransaction();
+        throw error;
+      } finally {
+        session.endSession();
+      }
+    }
+  );
+
+  leaveFamilyAsMainMember = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      const session = await mongoose.startSession();
+      session.startTransaction();
+      
+      try {
+        const userId = req.user._id;
+        
+        // Get sub-members BEFORE removing parentId
+        const subMembers = await User.find({ parentId: userId }).session(session);
+        
+        // Make all sub-members independent
+        await User.updateMany(
+          { parentId: userId },
+          { 
+            $unset: { 
+              parentId: 1,
+              parentMemberId: 1  // Also unset parentMemberId
+            },
+            $set: { 
+              isSubMember: false  // Reset isSubMember to false
+            }
+          }
+        ).session(session);
+        
+        // Remove inherited benefits from all sub-members
+        const { Memberships } = await import("@/models/commerce");
+        const { Carts } = await import("@/models/commerce");
+        
+        for (const subMember of subMembers) {
+          await Memberships.deleteMany({ 
+            userId: subMember._id, 
+            inherited: true 
+          }).session(session);
+          
+          // Reset cart context
+          await Carts.updateMany(
+            { userId: subMember._id, for_user: { $ne: subMember._id } },
+            { $set: { for_user: subMember._id } }
+          ).session(session);
+        }
+        
+        await session.commitTransaction();
+        
+        res.apiSuccess(
+          null,
+          "Family dissolved successfully"
+        );
+      } catch (error) {
+        await session.abortTransaction();
+        throw error;
+      } finally {
+        session.endSession();
+      }
+    }
+  );
+
+  // ============================================================================
+  // FAMILY MANAGEMENT METHODS
+  // ============================================================================
+
+  /**
+   * Link to family using member ID
+   */
+  linkByMemberId = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const { memberId, relationshipToParent } = req.body;
+      const { findUserByMemberId } = await import("@/utils/memberIdGenerator");
+      const { validateSubMemberLinking: validateFamilyLinking } = await import("@/services/familyValidationService");
+
+      // Find main member by member ID
+      const mainMember = await findUserByMemberId(memberId);
+      if (!mainMember) {
+        throw new AppError("Invalid member ID", 404);
+      }
+
+      // Validate linking rules
+      const validation = await validateFamilyLinking(mainMember._id, req.user._id);
+      if (!validation.allowed) {
+        throw new AppError(validation.reason || "Cannot link to family", 400);
+      }
+
+      // Update user to become sub-member
+      await User.findByIdAndUpdate(req.user._id, {
+        isSubMember: true,        // ✅ Set isSubMember to true
+        parentMemberId: mainMember._id,  // ✅ Also set parentMemberId for consistency
+        parentId: mainMember._id,
+        relationshipToParent: relationshipToParent || "Other"
+      });
+
+      res.apiSuccess(null, "Successfully linked to family");
+    }
+  );
+
+  /**
+   * Get family information
+   */
+  getFamilyInfo = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const user = await User.findById(req.user._id).select('parentId').lean();
+      if (!user) {
+        throw new AppError("User not found", 404);
+      }
+
+      let familyInfo: any = {
+        role: 'INDEPENDENT',
+        members: []
+      };
+
+      if (user.parentId) {
+        // User is a sub-member
+        const mainMember = await User.findById(user.parentId).select('-password').lean();
+        const subMembers = await User.find({ parentId: user.parentId }).select('-password').lean();
+
+        familyInfo = {
+          role: 'SUB_MEMBER',
+          mainMember,
+          subMembers: subMembers.filter(m => m._id.toString() !== req.user._id),
+          self: subMembers.find(m => m._id.toString() === req.user._id)
+        };
+      } else {
+        // User is main member or independent
+        const subMembers = await User.find({ parentId: req.user._id }).select('-password').lean();
+        
+        familyInfo = {
+          role: subMembers.length > 0 ? 'MAIN_MEMBER' : 'INDEPENDENT',
+          subMembers,
+          mainMember: await User.findById(req.user._id).select('-password').lean()
+        };
+      }
+
+      res.apiSuccess(familyInfo, "Family information retrieved successfully");
+    }
+  );
+
+  /**
+   * Get sub-members for main member
+   */
+  getMySubMembers = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const subMembers = await User.find({ parentId: req.user._id })
+        .select('-password')
+        .lean();
+
+      res.apiSuccess({ subMembers }, "Sub-members retrieved successfully");
+    }
+  );
+
+  /**
+   * Remove sub-member
+   */
+  removeSubMember = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+      if (!req.user) {
+        throw new AppError("User not authenticated", 401);
+      }
+
+      const { subMemberId } = req.params;
+      
+      // Validate sub-member belongs to this user
+      const subMember = await User.findOne({ 
+        _id: subMemberId, 
+        parentId: req.user._id 
+      });
+
+      if (!subMember) {
+        throw new AppError("Sub-member not found", 404);
+      }
+
+      // Remove family relationship
+      await User.findByIdAndUpdate(subMemberId, {
+        $unset: { 
+          parentId: 1, 
+          parentMemberId: 1,  // Also unset parentMemberId
+          relationshipToParent: 1 
+        },
+        $set: { 
+          isSubMember: false  // Reset isSubMember to false
+        }
+      });
+
+      // Reset cart context for sub-member
+      const { Carts } = await import("@/models/commerce");
+      await Carts.updateMany(
+        { userId: subMemberId, for_user: { $ne: subMemberId } },
+        { $set: { for_user: subMemberId } }
+      );
+
+      res.apiSuccess(null, "Sub-member removed successfully");
+    }
+  );
+
+  /**
+   * Verify member ID exists
+   */
+  verifyMemberId = asyncHandler(
+    async (req: Request, res: Response): Promise<void> => {
+      const { memberId } = req.params;
+      const { findUserByMemberId } = await import("@/utils/memberIdGenerator");
+
+      const user = await findUserByMemberId(memberId);
+      
+      if (!user) {
+        throw new AppError("Member ID not found", 404);
+      }
+
+      res.apiSuccess({
+        memberId: user.memberId,
+        name: `${user.firstName} ${user.lastName}`.trim()
+      }, "Member ID verified successfully");
+    }
+  );
+}
+
+export const userController = new UserController();
